@@ -12,7 +12,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { validateApiKey, V1_HEADERS } from "@/lib/utils/api-key";
+import { V1_HEADERS } from "@/lib/utils/api-key";
 import { searchContent, SearchDoc } from "@/lib/search/meili";
 import { chatCompletion, isConfigured } from "@/lib/ai/deepseek";
 import { db } from "@/lib/db";
@@ -115,9 +115,6 @@ export async function OPTIONS() {
 }
 
 export async function POST(req: NextRequest) {
-  const deny = validateApiKey(req);
-  if (deny) return deny;
-
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
   if (!rateLimit(ip)) {
