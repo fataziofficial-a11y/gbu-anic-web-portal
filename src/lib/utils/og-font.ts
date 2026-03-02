@@ -14,10 +14,8 @@ export async function loadOgFont(
   try {
     const css = await fetch(url, {
       headers: {
-        // Chrome UA — чтобы Google Fonts вернул woff2 (а не woff/ttf)
-        "User-Agent":
-          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 " +
-          "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        // Старый UA → Google Fonts возвращает TTF (satori не поддерживает woff2)
+        "User-Agent": "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)",
       },
     }).then((r) => r.text())
 
