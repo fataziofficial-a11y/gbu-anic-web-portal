@@ -1,5 +1,6 @@
 ﻿import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
+import { AskAI } from "@/components/public/AskAI";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,6 +8,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <PublicHeader />
       <main className="flex-1 pt-[56px]">{children}</main>
       <PublicFooter />
+      <AskAI />
     </div>
   );
 }

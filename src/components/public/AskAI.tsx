@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useRef, useEffect } from "react";
-import { Sparkles, Send, Loader2, ExternalLink, X, ChevronDown } from "lucide-react";
+import { Sparkles, Send, Loader2, ExternalLink, X } from "lucide-react";
 
 type Source = { title: string; url: string; type: string };
 
@@ -20,7 +20,7 @@ export function AskAI() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (open) inputRef.current?.focus();
+    if (open) setTimeout(() => inputRef.current?.focus(), 50);
   }, [open]);
 
   function handleSubmit(e: React.FormEvent) {
@@ -49,54 +49,51 @@ export function AskAI() {
     });
   }
 
-  return (
-    <div className="relative">
-      {/* Кнопка-триггер */}
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          className="flex items-center gap-2 bg-glacial text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-glacial-dark transition-colors shadow-sm shadow-glacial/20"
-        >
-          <Sparkles className="h-4 w-4" />
-          Спросить ИИ
-        </button>
-      )}
+  function handleClose() {
+    setOpen(false);
+    setResult(null);
+    setError("");
+  }
 
+  return (
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
       {/* Панель */}
       {open && (
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-lg w-full max-w-xl">
+        <div className="w-[360px] sm:w-[400px] bg-[#050E1C] border border-white/10 shadow-2xl shadow-black/60">
           {/* Шапка */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+          <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-glacial/10 flex items-center justify-center">
-                <Sparkles className="h-3.5 w-3.5 text-glacial" />
-              </div>
-              <span className="text-sm font-semibold text-arctic-900">ИИ-помощник АНИЦ</span>
+              <Sparkles className="h-4 w-4 text-[#00E5C0]" />
+              <span className="text-sm font-black text-white uppercase tracking-wider">
+                ИИ-помощник АНИЦ
+              </span>
             </div>
             <button
-              onClick={() => { setOpen(false); setResult(null); setError(""); }}
-              className="text-slate-400 hover:text-slate-600 transition-colors"
+              onClick={handleClose}
+              className="text-white/30 hover:text-white transition-colors"
+              aria-label="Закрыть"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
           {/* Форма */}
-          <form onSubmit={handleSubmit} className="p-5 space-y-4">
-            <div className="flex gap-2">
+          <div className="p-5 space-y-4">
+            <form onSubmit={handleSubmit} className="flex gap-2">
               <input
                 ref={inputRef}
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="Задайте вопрос об АНИЦ..."
-                className="flex-1 rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-glacial/30 focus:border-glacial transition-all bg-frost-50/50"
+                className="flex-1 bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder-white/25 focus:outline-none focus:border-[#00E5C0]/50 transition-all"
                 disabled={isPending}
                 maxLength={500}
               />
               <button
                 type="submit"
                 disabled={isPending || !question.trim()}
-                className="bg-glacial text-white px-4 py-2.5 rounded-xl hover:bg-glacial-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 text-sm font-semibold"
+                className="bg-[#00E5C0] text-[#050E1C] px-4 py-2.5 hover:bg-[#00E5C0]/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center"
+                aria-label="Отправить"
               >
                 {isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -104,27 +101,27 @@ export function AskAI() {
                   <Send className="h-4 w-4" />
                 )}
               </button>
-            </div>
+            </form>
 
             {/* Ошибка */}
             {error && (
-              <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
-                {error}
-              </p>
+              <div className="flex items-start gap-2 bg-red-900/20 border border-red-500/30 px-4 py-3 text-sm text-red-400">
+                <span>{error}</span>
+              </div>
             )}
 
             {/* Результат */}
             {result && (
               <div className="space-y-4">
-                <div className="bg-slate-50 rounded-xl p-4">
-                  <p className="text-sm text-arctic-900 leading-relaxed whitespace-pre-wrap">
+                <div className="bg-white/5 p-4 border border-white/5">
+                  <p className="text-sm text-white/80 leading-relaxed whitespace-pre-wrap">
                     {result.answer}
                   </p>
                 </div>
 
                 {result.sources.length > 0 && (
                   <div>
-                    <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-2">
+                    <p className="text-[10px] text-white/20 uppercase tracking-widest font-black mb-2">
                       Источники
                     </p>
                     <ul className="space-y-1.5">
@@ -132,10 +129,10 @@ export function AskAI() {
                         <li key={s.url}>
                           <a
                             href={s.url}
-                            className="flex items-center gap-1.5 text-sm text-glacial hover:text-glacial-dark transition-colors"
+                            className="flex items-center gap-1.5 text-sm text-[#00E5C0]/70 hover:text-[#00E5C0] transition-colors"
                           >
-                            <ExternalLink className="h-3.5 w-3.5 flex-shrink-0" />
-                            {s.title}
+                            <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                            <span className="line-clamp-1">{s.title}</span>
                           </a>
                         </li>
                       ))}
@@ -146,22 +143,31 @@ export function AskAI() {
                 <button
                   type="button"
                   onClick={() => { setResult(null); setQuestion(""); inputRef.current?.focus(); }}
-                  className="text-xs text-slate-400 hover:text-slate-600 underline underline-offset-2 transition-colors"
+                  className="text-xs text-white/25 hover:text-white/50 underline underline-offset-2 transition-colors"
                 >
                   Задать другой вопрос
                 </button>
               </div>
             )}
 
-            {/* Disclaimer */}
+            {/* Hint */}
             {!result && !error && (
-              <p className="text-[10px] text-slate-400 text-center">
-                ИИ отвечает на основе материалов сайта. Может ошибаться.
+              <p className="text-[10px] text-white/20 text-center uppercase tracking-wider">
+                Отвечает на основе материалов сайта
               </p>
             )}
-          </form>
+          </div>
         </div>
       )}
+
+      {/* Кнопка-триггер */}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-2 bg-[#00E5C0] text-[#050E1C] px-5 py-3 font-black text-sm uppercase tracking-wider hover:bg-[#00E5C0]/90 transition-colors shadow-lg shadow-[#00E5C0]/20"
+      >
+        <Sparkles className="h-4 w-4" />
+        {open ? "Закрыть" : "Спросить ИИ"}
+      </button>
     </div>
   );
 }
