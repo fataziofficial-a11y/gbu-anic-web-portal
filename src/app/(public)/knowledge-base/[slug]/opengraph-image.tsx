@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+export const dynamic = "force-dynamic";
 import { db } from "@/lib/db";
 import { knowledgeItems } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
