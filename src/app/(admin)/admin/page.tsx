@@ -216,7 +216,7 @@ export default async function DashboardPage() {
           <CardContent className="space-y-2">
             {[
               { label: "Написать новость", href: "/admin/news/new", icon: Newspaper },
-              { label: "Создать страницу", href: "/admin/pages/new", icon: FileText },
+              { label: "Добавить закупку", href: "/admin/procurements/new", icon: FileText },
               { label: "Добавить в базу знаний", href: "/admin/knowledge/new", icon: BookOpen },
               { label: "Добавить сотрудника", href: "/admin/team/new", icon: Users },
             ].map((action) => (
