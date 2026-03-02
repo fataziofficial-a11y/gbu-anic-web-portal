@@ -3,9 +3,8 @@ import { knowledgeItems, kbCategories } from "@/lib/db/schema";
 import { eq, and, ne } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { renderTiptap } from "@/lib/utils/tiptap-render";
-import { ArrowLeft, Tag, Calendar, Building2, BookOpen, FileText, Download } from "lucide-react";
+import { ArrowLeft, Tag, Calendar, Building2, BookOpen, FileText } from "lucide-react";
 import type { Metadata } from "next";
 
 export const revalidate = 300;
@@ -73,8 +72,8 @@ export default async function KnowledgeItemPage({
         {/* Основной контент */}
         <div className="lg:col-span-3">
           {/* Хлебные крошки */}
-          <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8">
-            <Link href="/knowledge-base" className="hover:text-gray-700 flex items-center gap-1.5">
+          <nav className="flex items-center gap-2 text-sm text-white/30 mb-8">
+            <Link href="/knowledge-base" className="hover:text-[#00E5C0] flex items-center gap-1.5 transition-colors">
               <ArrowLeft className="h-4 w-4" />
               База знаний
             </Link>
@@ -83,7 +82,7 @@ export default async function KnowledgeItemPage({
                 <span>/</span>
                 <Link
                   href={`/knowledge-base?category=${item.category.slug}`}
-                  className="hover:text-gray-700"
+                  className="hover:text-[#00E5C0] transition-colors"
                 >
                   {item.category.name}
                 </Link>
@@ -94,14 +93,14 @@ export default async function KnowledgeItemPage({
           {/* Заголовок */}
           <div className="mb-8">
             {item.category && (
-              <Badge variant="secondary" className="mb-4">
+              <span className="inline-block text-[#00E5C0] text-[10px] font-black uppercase tracking-widest mb-4">
                 {item.category.name}
-              </Badge>
+              </span>
             )}
-            <h1 className="text-3xl font-bold text-gray-900 leading-tight">{item.title}</h1>
+            <h1 className="heading-display text-3xl text-white leading-tight">{item.title}</h1>
 
             {/* Мета */}
-            <div className="flex flex-wrap items-center gap-4 mt-6 pt-6 border-t border-gray-200 text-sm text-gray-500">
+            <div className="flex flex-wrap items-center gap-4 mt-6 pt-6 border-t border-white/10 text-sm text-white/30">
               {item.publishedAt && (
                 <div className="flex items-center gap-1.5">
                   <Calendar className="h-4 w-4" />
@@ -117,7 +116,7 @@ export default async function KnowledgeItemPage({
                   <Building2 className="h-4 w-4" />
                   <Link
                     href={`/research/departments/${item.department.slug}`}
-                    className="hover:text-blue-600"
+                    className="hover:text-[#00E5C0] transition-colors"
                   >
                     {item.department.name}
                   </Link>
@@ -131,12 +130,9 @@ export default async function KnowledgeItemPage({
             {/* Теги */}
             {item.tags && item.tags.length > 0 && (
               <div className="flex flex-wrap items-center gap-2 mt-4">
-                <Tag className="h-4 w-4 text-gray-400" />
+                <Tag className="h-4 w-4 text-white/20" />
                 {item.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full"
-                  >
+                  <span key={tag} className="text-xs text-white/20 font-bold">
                     #{tag}
                   </span>
                 ))}
@@ -147,45 +143,45 @@ export default async function KnowledgeItemPage({
           {/* Контент */}
           {html ? (
             <article
-              className="prose prose-gray max-w-none"
+              className="prose prose-invert prose-sm max-w-none"
               dangerouslySetInnerHTML={{ __html: html }}
             />
           ) : (
-            <p className="text-gray-400 italic">Содержимое не добавлено</p>
+            <p className="text-white/25 italic">Содержимое не добавлено</p>
           )}
         </div>
 
         {/* Боковая панель */}
-        <aside className="lg:col-span-1 space-y-6">
+        <aside className="lg:col-span-1 space-y-4">
           {/* О материале */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <p className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <FileText className="h-4 w-4 text-blue-600" />
+          <div className="card-dark p-5">
+            <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-4 flex items-center gap-2">
+              <FileText className="h-3.5 w-3.5" />
               О материале
             </p>
             <dl className="space-y-3 text-sm">
               {item.category && (
                 <div>
-                  <dt className="text-xs text-gray-500 font-medium">Категория</dt>
-                  <dd className="text-gray-900 mt-0.5">{item.category.name}</dd>
+                  <dt className="text-[10px] text-white/20 font-black uppercase tracking-wider">Категория</dt>
+                  <dd className="text-white mt-0.5">{item.category.name}</dd>
                 </div>
               )}
               {item.department && (
                 <div>
-                  <dt className="text-xs text-gray-500 font-medium">Подразделение</dt>
-                  <dd className="text-gray-900 mt-0.5">{item.department.name}</dd>
+                  <dt className="text-[10px] text-white/20 font-black uppercase tracking-wider">Подразделение</dt>
+                  <dd className="text-white mt-0.5">{item.department.name}</dd>
                 </div>
               )}
               {item.author && (
                 <div>
-                  <dt className="text-xs text-gray-500 font-medium">Автор</dt>
-                  <dd className="text-gray-900 mt-0.5">{item.author.name}</dd>
+                  <dt className="text-[10px] text-white/20 font-black uppercase tracking-wider">Автор</dt>
+                  <dd className="text-white mt-0.5">{item.author.name}</dd>
                 </div>
               )}
               {item.publishedAt && (
                 <div>
-                  <dt className="text-xs text-gray-500 font-medium">Дата публикации</dt>
-                  <dd className="text-gray-900 mt-0.5">
+                  <dt className="text-[10px] text-white/20 font-black uppercase tracking-wider">Дата публикации</dt>
+                  <dd className="text-white mt-0.5">
                     {new Date(item.publishedAt).toLocaleDateString("ru-RU")}
                   </dd>
                 </div>
@@ -195,9 +191,9 @@ export default async function KnowledgeItemPage({
 
           {/* Похожие материалы */}
           {related.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <p className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <BookOpen className="h-4 w-4 text-blue-600" />
+            <div className="card-dark p-5">
+              <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <BookOpen className="h-3.5 w-3.5" />
                 Читайте также
               </p>
               <ul className="space-y-3">
@@ -205,7 +201,7 @@ export default async function KnowledgeItemPage({
                   <li key={rel.id}>
                     <Link
                       href={`/knowledge-base/${rel.slug}`}
-                      className="text-sm text-gray-700 hover:text-blue-600 leading-snug block"
+                      className="text-sm text-white/40 hover:text-[#00E5C0] leading-snug block transition-colors"
                     >
                       {rel.title}
                     </Link>

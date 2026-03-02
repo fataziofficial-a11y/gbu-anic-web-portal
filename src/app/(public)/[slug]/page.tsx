@@ -81,15 +81,15 @@ export default async function DynamicPage({
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {html ? (
           <article
-            className="prose prose-gray prose-headings:font-semibold prose-a:text-glacial hover:prose-a:text-glacial-dark max-w-none"
+            className="prose prose-invert prose-sm max-w-none"
             dangerouslySetInnerHTML={{ __html: html }}
           />
         ) : (
-          <p className="text-slate-400 italic">Содержимое страницы не добавлено.</p>
+          <p className="text-white/25 italic">Содержимое страницы не добавлено.</p>
         )}
 
         {page.author?.name && (
-          <p className="mt-12 pt-6 border-t border-slate-200 text-sm text-slate-400">
+          <p className="mt-12 pt-6 border-t border-white/10 text-sm text-white/25">
             Материал подготовлен: {page.author.name}
           </p>
         )}

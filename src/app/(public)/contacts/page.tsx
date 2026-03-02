@@ -11,11 +11,11 @@ export default function ContactsPage() {
       <section className="arctic-page-header text-white py-20 relative overflow-hidden">
         <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-glacial-light/50 text-xs font-semibold tracking-[0.2em] uppercase mb-3">
+          <p className="text-[#00E5C0]/50 text-xs font-bold tracking-[0.2em] uppercase mb-3">
             Связь
           </p>
-          <h1 className="heading-serif text-4xl lg:text-5xl text-white mb-3">Контакты</h1>
-          <p className="text-slate-300/70 text-lg">Как с нами связаться</p>
+          <h1 className="heading-display text-4xl lg:text-5xl text-white mb-3">Контакты</h1>
+          <p className="text-white/40 text-lg">Как с нами связаться</p>
         </div>
       </section>
 
@@ -24,13 +24,13 @@ export default function ContactsPage() {
           {/* Contact info */}
           <div className="space-y-6">
             <div>
-              <p className="text-xs font-semibold text-glacial uppercase tracking-[0.15em] mb-2">
+              <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">
                 Реквизиты
               </p>
-              <h2 className="heading-serif text-3xl text-arctic-900 mb-6">Наш адрес</h2>
+              <h2 className="heading-display text-3xl text-white mb-6">Наш адрес</h2>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-2">
               {[
                 {
                   icon: MapPin,
@@ -55,23 +55,20 @@ export default function ContactsPage() {
                   content: "Пн–Пт: 9:00 — 18:00",
                 },
               ].map((item) => (
-                <div
-                  key={item.title}
-                  className="flex gap-4 bg-white rounded-2xl border border-slate-200/80 p-5 card-hover"
-                >
-                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-glacial/8 flex items-center justify-center">
-                    <item.icon className="h-5 w-5 text-glacial" />
+                <div key={item.title} className="card-dark p-5 flex gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 bg-white/5 flex items-center justify-center">
+                    <item.icon className="h-5 w-5 text-[#00E5C0]/50" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mb-0.5">
+                    <p className="text-[10px] text-white/20 font-black uppercase tracking-widest mb-0.5">
                       {item.title}
                     </p>
                     {item.href ? (
-                      <a href={item.href} className="font-medium text-glacial-dark hover:text-glacial transition-colors">
+                      <a href={item.href} className="font-bold text-white hover:text-[#00E5C0] transition-colors">
                         {item.content}
                       </a>
                     ) : (
-                      <p className="font-medium text-arctic-900">{item.content}</p>
+                      <p className="font-bold text-white">{item.content}</p>
                     )}
                   </div>
                 </div>
@@ -82,10 +79,10 @@ export default function ContactsPage() {
           {/* Contact form */}
           <div>
             <div className="mb-6">
-              <p className="text-xs font-semibold text-glacial uppercase tracking-[0.15em] mb-2">
+              <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">
                 Обращение
               </p>
-              <h2 className="heading-serif text-3xl text-arctic-900">Написать нам</h2>
+              <h2 className="heading-display text-3xl text-white">Написать нам</h2>
             </div>
             <ContactForm />
           </div>

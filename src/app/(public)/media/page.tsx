@@ -49,11 +49,11 @@ export default async function MediaPage({
       <section className="arctic-page-header text-white py-16 relative overflow-hidden">
         <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-glacial-light/50 text-xs font-semibold tracking-[0.2em] uppercase mb-3">
+          <p className="text-[#00E5C0]/50 text-xs font-bold tracking-[0.2em] uppercase mb-3">
             Медиацентр АНИЦ
           </p>
-          <h1 className="heading-serif text-4xl lg:text-5xl text-white mb-3">Медиа</h1>
-          <p className="text-slate-300/70 text-lg max-w-xl">
+          <h1 className="heading-display text-4xl lg:text-5xl text-white mb-3">Медиа</h1>
+          <p className="text-white/40 text-lg max-w-xl">
             Видеозаписи и фотоотчёты с мероприятий центра
           </p>
         </div>
@@ -66,10 +66,10 @@ export default async function MediaPage({
             <Link
               key={tab.value}
               href={tab.value ? `/media?type=${tab.value}` : "/media"}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`px-4 py-2 text-xs font-black uppercase tracking-wider transition-all ${
                 typeFilter === tab.value
-                  ? "bg-glacial text-white shadow-sm"
-                  : "bg-white border border-slate-200/80 text-slate-600 hover:border-glacial/40 hover:text-glacial-dark"
+                  ? "bg-[#00E5C0] text-[#050E1C]"
+                  : "border border-white/10 text-white/40 hover:border-[#00E5C0]/30 hover:text-white"
               }`}
             >
               {tab.label}
@@ -79,20 +79,17 @@ export default async function MediaPage({
 
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-5">
-              <Film className="h-8 w-8 text-slate-300" />
+            <div className="w-16 h-16 bg-white/5 flex items-center justify-center mb-5">
+              <Film className="h-8 w-8 text-white/20" />
             </div>
-            <p className="text-slate-500 text-lg font-medium">Материалов пока нет</p>
+            <p className="text-white/40 text-lg font-bold uppercase tracking-wider">Материалов пока нет</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {items.map((item) => {
               const embedUrl = item.videoUrl ? getVideoEmbed(item.videoUrl) : null;
               return (
-                <div
-                  key={item.id}
-                  className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden card-hover"
-                >
+                <div key={item.id} className="card-dark overflow-hidden">
                   {/* Media preview */}
                   {embedUrl ? (
                     <div className="relative w-full aspect-video bg-black">
@@ -105,7 +102,7 @@ export default async function MediaPage({
                       />
                     </div>
                   ) : item.thumbnail ? (
-                    <div className="relative w-full aspect-video bg-slate-100">
+                    <div className="relative w-full aspect-video bg-white/5">
                       <Image
                         src={item.thumbnail.url}
                         alt={item.title}
@@ -113,33 +110,33 @@ export default async function MediaPage({
                         className="object-cover"
                       />
                       {item.type === "photo" && (
-                        <div className="absolute top-2 right-2 bg-black/50 rounded-lg px-2 py-1 flex items-center gap-1">
-                          <Camera className="h-3 w-3 text-white" />
-                          <span className="text-white text-xs">Фото</span>
+                        <div className="absolute top-2 right-2 bg-black/60 px-2 py-1 flex items-center gap-1">
+                          <Camera className="h-3 w-3 text-[#00E5C0]" />
+                          <span className="text-white text-[10px] font-bold uppercase tracking-wider">Фото</span>
                         </div>
                       )}
                     </div>
                   ) : (
-                    <div className="w-full aspect-video bg-slate-100 flex items-center justify-center">
-                      <Film className="h-10 w-10 text-slate-300" />
+                    <div className="w-full aspect-video bg-white/5 flex items-center justify-center">
+                      <Film className="h-10 w-10 text-white/10" />
                     </div>
                   )}
 
                   {/* Content */}
                   <div className="p-5">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-glacial bg-glacial/8 px-2 py-0.5 rounded-md">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-[#00E5C0] text-[10px] font-black uppercase tracking-widest">
                         {item.type === "video" ? "Видео" : "Фотоотчёт"}
                       </span>
                       {item.eventDate && (
-                        <span className="text-xs text-slate-400">{item.eventDate}</span>
+                        <span className="text-white/20 text-xs font-bold">{item.eventDate}</span>
                       )}
                     </div>
-                    <h3 className="font-semibold text-arctic-900 leading-snug line-clamp-2">
+                    <h3 className="font-bold text-white leading-snug line-clamp-2">
                       {item.title}
                     </h3>
                     {item.description && (
-                      <p className="mt-1.5 text-sm text-slate-500 line-clamp-2">{item.description}</p>
+                      <p className="mt-1.5 text-sm text-white/30 line-clamp-2 leading-relaxed">{item.description}</p>
                     )}
                   </div>
                 </div>

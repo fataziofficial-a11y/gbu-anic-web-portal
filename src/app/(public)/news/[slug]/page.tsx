@@ -3,7 +3,6 @@ import { news } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { renderTiptap } from "@/lib/utils/tiptap-render";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
 import type { Metadata } from "next";
@@ -57,7 +56,7 @@ export default async function NewsDetailPage({
       {/* Хлебные крошки */}
       <Link
         href="/news"
-        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-8"
+        className="inline-flex items-center gap-1.5 text-sm text-white/30 hover:text-[#00E5C0] mb-8 transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         Назад к новостям
@@ -66,19 +65,19 @@ export default async function NewsDetailPage({
       {/* Шапка */}
       <div className="mb-8">
         {item.category && (
-          <Badge variant="secondary" className="mb-4">
-            {item.category}
-          </Badge>
+          <span className="inline-block text-[#00E5C0] text-[10px] font-black uppercase tracking-widest mb-4">
+            #{item.category}
+          </span>
         )}
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+        <h1 className="heading-display text-3xl lg:text-4xl text-white leading-tight">
           {item.title}
         </h1>
         {item.excerpt && (
-          <p className="mt-4 text-xl text-gray-500 leading-relaxed">{item.excerpt}</p>
+          <p className="mt-4 text-lg text-white/40 leading-relaxed">{item.excerpt}</p>
         )}
 
         {/* Мета */}
-        <div className="flex flex-wrap items-center gap-4 mt-6 pt-6 border-t border-gray-200 text-sm text-gray-500">
+        <div className="flex flex-wrap items-center gap-4 mt-6 pt-6 border-t border-white/10 text-sm text-white/30">
           {item.publishedAt && (
             <div className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4" />
@@ -91,7 +90,7 @@ export default async function NewsDetailPage({
           )}
           {item.author?.name && (
             <div className="flex items-center gap-1.5">
-              <span className="text-gray-400">Автор:</span>
+              <span className="text-white/20">Автор:</span>
               {item.author.name}
             </div>
           )}
@@ -100,9 +99,9 @@ export default async function NewsDetailPage({
         {/* Теги */}
         {item.tags && item.tags.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-4">
-            <Tag className="h-4 w-4 text-gray-400" />
+            <Tag className="h-4 w-4 text-white/20" />
             {item.tags.map((tag) => (
-              <span key={tag} className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+              <span key={tag} className="text-xs text-white/20 font-bold">
                 #{tag}
               </span>
             ))}
@@ -113,11 +112,11 @@ export default async function NewsDetailPage({
       {/* Контент */}
       {html ? (
         <article
-          className="prose prose-gray max-w-none"
+          className="prose prose-invert prose-sm max-w-none"
           dangerouslySetInnerHTML={{ __html: html }}
         />
       ) : (
-        <p className="text-gray-400 italic">Содержимое не добавлено</p>
+        <p className="text-white/25 italic">Содержимое не добавлено</p>
       )}
     </div>
   );

@@ -28,11 +28,11 @@ export default async function AboutPage() {
       <section className="arctic-page-header text-white py-20 relative overflow-hidden">
         <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-glacial-light/50 text-xs font-semibold tracking-[0.2em] uppercase mb-3">
+          <p className="text-[#00E5C0]/50 text-xs font-bold tracking-[0.2em] uppercase mb-3">
             О нас
           </p>
-          <h1 className="heading-serif text-4xl lg:text-5xl text-white mb-5">О центре</h1>
-          <p className="text-slate-300/70 text-lg max-w-2xl leading-relaxed">
+          <h1 className="heading-display text-4xl lg:text-5xl text-white mb-5">О центре</h1>
+          <p className="text-white/40 text-lg max-w-2xl leading-relaxed">
             ГБУ АНИЦ — ведущая научная организация Республики Саха (Якутия),
             специализирующаяся на комплексных исследованиях арктических
             и субарктических территорий
@@ -44,35 +44,35 @@ export default async function AboutPage() {
         {/* Mission */}
         <section className="grid grid-cols-1 lg:grid-cols-5 gap-10 items-start">
           <div className="lg:col-span-3">
-            <p className="text-xs font-semibold text-glacial uppercase tracking-[0.15em] mb-3">
+            <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">
               Наша миссия
             </p>
-            <h2 className="heading-serif text-3xl text-arctic-900 mb-6">
+            <h2 className="heading-display text-3xl text-white mb-6">
               Наука на службе Арктики
             </h2>
-            <p className="text-slate-600 leading-relaxed mb-5">
+            <p className="text-white/40 leading-relaxed mb-5">
               Арктический научно-исследовательский центр создан для проведения фундаментальных
               и прикладных исследований в области экологии Арктики, климатологии, биологии
               северных экосистем и социально-экономического развития арктических территорий.
             </p>
-            <p className="text-slate-600 leading-relaxed">
+            <p className="text-white/40 leading-relaxed">
               Центр объединяет ведущих учёных и исследователей, обеспечивает координацию
               научных проектов и международного сотрудничества в сфере арктических исследований.
             </p>
           </div>
-          <div className="lg:col-span-2 grid grid-cols-1 gap-4">
+          <div className="lg:col-span-2 grid grid-cols-1 gap-3">
             {[
               { icon: Target, title: "Наука", desc: "Фундаментальные и прикладные исследования арктических экосистем" },
               { icon: Users, title: "Команда", desc: `${team.length}+ учёных и специалистов` },
               { icon: Building2, title: "Подразделения", desc: `${depts.length} научных подразделений` },
             ].map((item) => (
-              <div key={item.title} className="flex gap-4 bg-white rounded-2xl border border-slate-200/80 p-5 card-hover">
-                <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-glacial/8 flex items-center justify-center">
-                  <item.icon className="h-5 w-5 text-glacial" />
+              <div key={item.title} className="card-dark p-5 flex gap-4">
+                <div className="flex-shrink-0 w-10 h-10 bg-white/5 flex items-center justify-center">
+                  <item.icon className="h-5 w-5 text-[#00E5C0]/70" />
                 </div>
                 <div>
-                  <p className="font-semibold text-arctic-900">{item.title}</p>
-                  <p className="text-sm text-slate-500 mt-0.5">{item.desc}</p>
+                  <p className="font-black text-white uppercase tracking-tight text-sm">{item.title}</p>
+                  <p className="text-sm text-white/35 mt-0.5">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -81,21 +81,22 @@ export default async function AboutPage() {
 
         {/* Values */}
         <section>
-          <div className="text-center mb-10">
-            <p className="text-xs font-semibold text-glacial uppercase tracking-[0.15em] mb-2">Принципы</p>
-            <h2 className="heading-serif text-3xl text-arctic-900">Наши ценности</h2>
+          <div className="mb-10">
+            <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">Принципы</p>
+            <h2 className="heading-display text-3xl text-white">Наши ценности</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {[
               { icon: Lightbulb, title: "Инновации", desc: "Применение передовых методов и технологий в исследованиях" },
               { icon: Globe, title: "Сотрудничество", desc: "Международная кооперация и обмен знаниями" },
               { icon: Target, title: "Результативность", desc: "Практическая значимость исследований для региона" },
             ].map((v) => (
-              <div key={v.title} className="group relative bg-white rounded-2xl border border-slate-200/80 p-8 text-center card-hover overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-glacial to-aurora-teal opacity-0 group-hover:opacity-100 transition-opacity rounded-t-2xl" />
-                <v.icon className="h-8 w-8 text-glacial mx-auto mb-4" />
-                <h3 className="heading-serif text-xl text-arctic-900 mb-2">{v.title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">{v.desc}</p>
+              <div key={v.title} className="card-dark p-8 flex flex-col gap-5">
+                <v.icon className="h-5 w-5 text-[#00E5C0]/50" />
+                <div>
+                  <h3 className="font-black text-white text-xl uppercase tracking-tight mb-2">{v.title}</h3>
+                  <p className="text-sm text-white/35 leading-relaxed">{v.desc}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -105,37 +106,35 @@ export default async function AboutPage() {
         {depts.length > 0 && (
           <section>
             <div className="mb-8">
-              <p className="text-xs font-semibold text-glacial uppercase tracking-[0.15em] mb-2">
+              <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">
                 Структура
               </p>
-              <h2 className="heading-serif text-3xl text-arctic-900">
+              <h2 className="heading-display text-3xl text-white">
                 Научные подразделения
               </h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {depts.map((dept) => (
                 <Link
                   key={dept.id}
                   href={`/research/departments/${dept.slug}`}
-                  className="group block bg-white rounded-2xl border border-slate-200/80 p-6 card-hover accent-border-hover"
+                  className="group card-dark p-6 flex items-start gap-4"
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-glacial/8 flex items-center justify-center">
-                      <Building2 className="h-5 w-5 text-glacial" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-arctic-900 group-hover:text-glacial-dark transition-colors">
-                        {dept.name}
-                      </h3>
-                      {dept.head && (
-                        <p className="text-xs text-slate-500 mt-1">
-                          Руководитель: {dept.head.name}
-                        </p>
-                      )}
-                      {dept.description && (
-                        <p className="text-sm text-slate-500 mt-2 line-clamp-3 leading-relaxed">{dept.description}</p>
-                      )}
-                    </div>
+                  <div className="flex-shrink-0 w-10 h-10 bg-white/5 flex items-center justify-center">
+                    <Building2 className="h-5 w-5 text-[#00E5C0]/50" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-white group-hover:text-[#00E5C0] transition-colors">
+                      {dept.name}
+                    </h3>
+                    {dept.head && (
+                      <p className="text-xs text-white/25 mt-1">
+                        Руководитель: {dept.head.name}
+                      </p>
+                    )}
+                    {dept.description && (
+                      <p className="text-sm text-white/30 mt-2 line-clamp-3 leading-relaxed">{dept.description}</p>
+                    )}
                   </div>
                 </Link>
               ))}
@@ -147,42 +146,42 @@ export default async function AboutPage() {
         {team.length > 0 && (
           <section>
             <div className="mb-8">
-              <p className="text-xs font-semibold text-glacial uppercase tracking-[0.15em] mb-2">
+              <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">
                 Люди
               </p>
-              <h2 className="heading-serif text-3xl text-arctic-900">
+              <h2 className="heading-display text-3xl text-white">
                 Наши сотрудники
               </h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {team.map((member) => (
-                <div key={member.id} className="bg-white rounded-2xl border border-slate-200/80 p-6 text-center card-hover">
+                <div key={member.id} className="card-dark p-6 text-center">
                   {member.photo ? (
                     <Image
                       src={member.photo.url}
                       alt={member.name}
                       width={80}
                       height={80}
-                      className="w-20 h-20 rounded-full object-cover mx-auto mb-4 ring-2 ring-glacial/10 ring-offset-2"
+                      className="w-20 h-20 object-cover mx-auto mb-4 border-2 border-[#00E5C0]/20"
                     />
                   ) : (
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-arctic-100 to-arctic-50 flex items-center justify-center mx-auto mb-4 ring-2 ring-glacial/10 ring-offset-2">
-                      <span className="text-2xl font-serif font-bold text-arctic-600">{member.name.charAt(0)}</span>
+                    <div className="w-20 h-20 bg-white/5 border border-[#00E5C0]/20 flex items-center justify-center mx-auto mb-4">
+                      <span className="text-2xl font-black text-[#00E5C0]/50">{member.name.charAt(0)}</span>
                     </div>
                   )}
-                  <p className="font-semibold text-arctic-900">{member.name}</p>
+                  <p className="font-bold text-white text-sm">{member.name}</p>
                   {member.position && (
-                    <p className="text-xs text-slate-500 mt-1">{member.position}</p>
+                    <p className="text-xs text-white/30 mt-1">{member.position}</p>
                   )}
                   {member.department && (
-                    <p className="text-[10px] text-glacial font-medium mt-1.5 uppercase tracking-wider">
+                    <p className="text-[10px] text-[#00E5C0]/50 font-black mt-1.5 uppercase tracking-wider">
                       {member.department.name}
                     </p>
                   )}
                   {member.email && (
                     <a
                       href={`mailto:${member.email}`}
-                      className="text-xs text-slate-400 hover:text-glacial mt-3 block transition-colors"
+                      className="text-xs text-white/20 hover:text-[#00E5C0] mt-3 block transition-colors"
                     >
                       {member.email}
                     </a>

@@ -56,17 +56,17 @@ export function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-10 flex flex-col items-center justify-center text-center shadow-sm min-h-[340px]">
-        <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-4">
-          <CheckCircle className="h-7 w-7 text-green-500" />
+      <div className="card-dark p-10 flex flex-col items-center justify-center text-center min-h-[340px]">
+        <div className="w-14 h-14 bg-[#00E5C0]/10 border border-[#00E5C0]/20 flex items-center justify-center mb-4">
+          <CheckCircle className="h-7 w-7 text-[#00E5C0]" />
         </div>
-        <h3 className="font-semibold text-arctic-900 text-lg mb-2">Сообщение отправлено!</h3>
-        <p className="text-slate-500 text-sm max-w-xs">
+        <h3 className="font-black text-white text-lg mb-2 uppercase tracking-tight">Сообщение отправлено!</h3>
+        <p className="text-white/35 text-sm max-w-xs">
           Мы получили ваше обращение и ответим в течение 1–2 рабочих дней.
         </p>
         <button
           onClick={() => setStatus("idle")}
-          className="mt-6 text-sm text-glacial hover:text-glacial-dark underline underline-offset-2 transition-colors"
+          className="mt-6 text-sm text-[#00E5C0]/60 hover:text-[#00E5C0] underline underline-offset-2 transition-colors"
         >
           Отправить ещё одно сообщение
         </button>
@@ -77,13 +77,13 @@ export function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-2xl border border-slate-200/80 p-7 space-y-5 shadow-sm"
+      className="card-dark p-7 space-y-5"
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <label
             htmlFor="name"
-            className="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+            className="text-[10px] font-black text-white/30 uppercase tracking-widest"
           >
             Имя <span className="text-red-400">*</span>
           </label>
@@ -95,13 +95,13 @@ export function ContactForm() {
             value={form.name}
             onChange={handleChange}
             placeholder="Иван Иванов"
-            className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-glacial/30 focus:border-glacial transition-all bg-frost-50/50"
+            className="w-full bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#00E5C0]/50 focus:ring-0 transition-all"
           />
         </div>
         <div className="space-y-2">
           <label
             htmlFor="email"
-            className="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+            className="text-[10px] font-black text-white/30 uppercase tracking-widest"
           >
             Email <span className="text-red-400">*</span>
           </label>
@@ -113,7 +113,7 @@ export function ContactForm() {
             value={form.email}
             onChange={handleChange}
             placeholder="ivanov@example.ru"
-            className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-glacial/30 focus:border-glacial transition-all bg-frost-50/50"
+            className="w-full bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#00E5C0]/50 focus:ring-0 transition-all"
           />
         </div>
       </div>
@@ -121,7 +121,7 @@ export function ContactForm() {
       <div className="space-y-2">
         <label
           htmlFor="subject"
-          className="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+          className="text-[10px] font-black text-white/30 uppercase tracking-widest"
         >
           Тема <span className="text-red-400">*</span>
         </label>
@@ -133,14 +133,14 @@ export function ContactForm() {
           value={form.subject}
           onChange={handleChange}
           placeholder="Тема обращения"
-          className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-glacial/30 focus:border-glacial transition-all bg-frost-50/50"
+          className="w-full bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#00E5C0]/50 focus:ring-0 transition-all"
         />
       </div>
 
       <div className="space-y-2">
         <label
           htmlFor="message"
-          className="text-xs font-semibold text-slate-600 uppercase tracking-wider"
+          className="text-[10px] font-black text-white/30 uppercase tracking-widest"
         >
           Сообщение <span className="text-red-400">*</span>
         </label>
@@ -152,12 +152,12 @@ export function ContactForm() {
           value={form.message}
           onChange={handleChange}
           placeholder="Ваше сообщение..."
-          className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-glacial/30 focus:border-glacial transition-all resize-none bg-frost-50/50"
+          className="w-full bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#00E5C0]/50 focus:ring-0 transition-all resize-none"
         />
       </div>
 
       {status === "error" && (
-        <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+        <div className="flex items-start gap-2.5 bg-red-900/20 border border-red-500/30 px-4 py-3 text-sm text-red-400">
           <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
           <span>{errorMsg}</span>
         </div>
@@ -166,7 +166,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full bg-glacial text-white py-3 rounded-xl font-semibold text-sm hover:bg-glacial-dark transition-colors flex items-center justify-center gap-2 shadow-sm shadow-glacial/20 disabled:opacity-60 disabled:cursor-not-allowed"
+        className="w-full bg-[#00E5C0] text-[#050E1C] py-3 font-black text-sm uppercase tracking-wider hover:bg-[#00E5C0]/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {isPending ? (
           <>
@@ -181,7 +181,7 @@ export function ContactForm() {
         )}
       </button>
 
-      <p className="text-[10px] text-slate-400 text-center uppercase tracking-wider">
+      <p className="text-[10px] text-white/15 text-center uppercase tracking-wider">
         Мы ответим в течение 1–2 рабочих дней
       </p>
     </form>

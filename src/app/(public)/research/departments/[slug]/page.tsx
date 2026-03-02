@@ -4,8 +4,7 @@ import { eq, asc, desc } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Building2, FlaskConical, BookMarked, Users, Calendar, ExternalLink } from "lucide-react";
+import { ArrowLeft, Building2, FlaskConical, BookMarked, Users, Calendar, ExternalLink, TrendingUp, Clock, CheckCircle2 } from "lucide-react";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
@@ -36,10 +35,15 @@ const statusLabel: Record<string, string> = {
   active: "Активный",
   completed: "Завершён",
 };
-const statusColor: Record<string, "default" | "secondary" | "outline"> = {
-  active: "default",
-  planned: "secondary",
-  completed: "outline",
+const statusColors: Record<string, string> = {
+  active: "text-[#00E5C0] border-[#00E5C0]/30",
+  planned: "text-blue-400 border-blue-400/30",
+  completed: "text-white/30 border-white/10",
+};
+const statusIcons: Record<string, typeof TrendingUp> = {
+  active: TrendingUp,
+  planned: Clock,
+  completed: CheckCircle2,
 };
 
 export default async function DepartmentPage({
@@ -79,23 +83,24 @@ export default async function DepartmentPage({
   return (
     <div>
       {/* Шапка */}
-      <section className="bg-gradient-to-br from-blue-800 to-blue-900 text-white py-14">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="arctic-page-header text-white py-14 relative overflow-hidden">
+        <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
             href="/about"
-            className="inline-flex items-center gap-1.5 text-blue-200 hover:text-white text-sm mb-6"
+            className="inline-flex items-center gap-1.5 text-white/30 hover:text-[#00E5C0] text-sm mb-6 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Все подразделения
           </Link>
           <div className="flex items-start gap-5">
-            <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center">
-              <Building2 className="h-7 w-7 text-white" />
+            <div className="flex-shrink-0 w-14 h-14 bg-white/5 flex items-center justify-center">
+              <Building2 className="h-7 w-7 text-[#00E5C0]/60" />
             </div>
             <div>
-              <h1 className="text-3xl lg:text-4xl font-bold">{dept.name}</h1>
+              <h1 className="heading-display text-3xl lg:text-4xl text-white">{dept.name}</h1>
               {dept.head && (
-                <p className="text-blue-200 mt-2">
+                <p className="text-white/40 mt-2">
                   Руководитель: {dept.head.name}
                   {dept.head.position && ` — ${dept.head.position}`}
                 </p>
@@ -105,25 +110,24 @@ export default async function DepartmentPage({
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
         {/* Описание */}
         {dept.description && (
-          <section className="bg-white rounded-xl border border-gray-200 p-8">
-            <p className="text-gray-600 leading-relaxed text-lg">{dept.description}</p>
+          <section className="card-dark p-8">
+            <p className="text-white/40 leading-relaxed text-lg">{dept.description}</p>
           </section>
         )}
 
         {/* Статистика */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 gap-px border border-white/5 bg-white/5">
           {[
-            { icon: Users, label: "Сотрудников", value: deptTeam.length, color: "text-blue-600" },
-            { icon: FlaskConical, label: "Проектов", value: deptProjects.length, color: "text-green-600" },
-            { icon: BookMarked, label: "Публикаций", value: deptPubs.length, color: "text-purple-600" },
+            { icon: Users, label: "Сотрудников", value: deptTeam.length, color: "text-[#00E5C0]" },
+            { icon: FlaskConical, label: "Проектов", value: deptProjects.length, color: "text-blue-400" },
+            { icon: BookMarked, label: "Публикаций", value: deptPubs.length, color: "text-white/50" },
           ].map((stat) => (
-            <div key={stat.label} className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-              <stat.icon className={`h-8 w-8 mx-auto mb-2 ${stat.color}`} />
-              <p className={`text-3xl font-bold ${stat.color}`}>{stat.value}</p>
-              <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+            <div key={stat.label} className="bg-[#050E1C] p-6 text-center">
+              <p className={`text-3xl font-black ${stat.color}`}>{stat.value}</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/30 mt-1">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -131,39 +135,36 @@ export default async function DepartmentPage({
         {/* Сотрудники */}
         {deptTeam.length > 0 && (
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
-              <Users className="h-5 w-5 text-blue-600" />
+            <h2 className="heading-display text-xl text-white mb-5 flex items-center gap-2">
+              <Users className="h-5 w-5 text-[#00E5C0]/50" />
               Сотрудники
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {deptTeam.map((member) => (
-                <div
-                  key={member.id}
-                  className="bg-white rounded-xl border border-gray-200 p-4 text-center"
-                >
+                <div key={member.id} className="card-dark p-4 text-center">
                   {member.photo ? (
                     <Image
                       src={member.photo.url}
                       alt={member.name}
                       width={64}
                       height={64}
-                      className="w-16 h-16 rounded-full object-cover mx-auto mb-3"
+                      className="w-16 h-16 object-cover mx-auto mb-3 border border-[#00E5C0]/15"
                     />
                   ) : (
-                    <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-3">
-                      <span className="text-xl font-bold text-blue-600">
+                    <div className="w-16 h-16 bg-white/5 border border-[#00E5C0]/20 flex items-center justify-center mx-auto mb-3">
+                      <span className="text-xl font-black text-[#00E5C0]/50">
                         {member.name.charAt(0)}
                       </span>
                     </div>
                   )}
-                  <p className="font-medium text-gray-900 text-sm leading-snug">{member.name}</p>
+                  <p className="font-bold text-white text-sm leading-snug">{member.name}</p>
                   {member.position && (
-                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">{member.position}</p>
+                    <p className="text-xs text-white/25 mt-1 line-clamp-2">{member.position}</p>
                   )}
                   {member.email && (
                     <a
                       href={`mailto:${member.email}`}
-                      className="text-xs text-gray-400 hover:text-blue-600 mt-2 block"
+                      className="text-xs text-white/15 hover:text-[#00E5C0] mt-2 block transition-colors"
                     >
                       {member.email}
                     </a>
@@ -177,33 +178,35 @@ export default async function DepartmentPage({
         {/* Активные проекты */}
         {activeProjects.length > 0 && (
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
-              <FlaskConical className="h-5 w-5 text-green-600" />
+            <h2 className="heading-display text-xl text-white mb-5 flex items-center gap-2">
+              <FlaskConical className="h-5 w-5 text-[#00E5C0]/50" />
               Активные проекты
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {activeProjects.map((project) => (
-                <div
-                  key={project.id}
-                  className="bg-white rounded-xl border border-gray-200 p-6 border-l-4 border-l-green-500"
-                >
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <h3 className="font-semibold text-gray-900 leading-snug">{project.title}</h3>
-                    <Badge variant={statusColor[project.status ?? "active"]}>
-                      {statusLabel[project.status ?? "active"]}
-                    </Badge>
-                  </div>
-                  {project.description && (
-                    <p className="text-sm text-gray-500 leading-relaxed">{project.description}</p>
-                  )}
-                  {(project.startDate || project.endDate) && (
-                    <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-3">
-                      <Calendar className="h-3.5 w-3.5" />
-                      {project.startDate ?? "?"} — {project.endDate ?? "н.в."}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {activeProjects.map((project) => {
+                const status = project.status ?? "active";
+                const StatusIcon = statusIcons[status] ?? TrendingUp;
+                return (
+                  <div key={project.id} className="card-dark p-6 border-l-2 border-l-[#00E5C0]/40">
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <h3 className="font-bold text-white leading-snug">{project.title}</h3>
+                      <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider border px-2 py-0.5 ${statusColors[status]}`}>
+                        <StatusIcon className="h-3 w-3" />
+                        {statusLabel[status]}
+                      </span>
                     </div>
-                  )}
-                </div>
-              ))}
+                    {project.description && (
+                      <p className="text-sm text-white/30 leading-relaxed">{project.description}</p>
+                    )}
+                    {(project.startDate || project.endDate) && (
+                      <div className="flex items-center gap-1.5 text-xs text-white/20 mt-3">
+                        <Calendar className="h-3.5 w-3.5" />
+                        {project.startDate ?? "?"} — {project.endDate ?? "н.в."}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}
@@ -211,24 +214,26 @@ export default async function DepartmentPage({
         {/* Завершённые и планируемые */}
         {otherProjects.length > 0 && (
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-5">Другие проекты</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {otherProjects.map((project) => (
-                <div
-                  key={project.id}
-                  className="bg-white rounded-xl border border-gray-200 p-5 flex items-start justify-between gap-3"
-                >
-                  <div>
-                    <h3 className="font-medium text-gray-900 leading-snug">{project.title}</h3>
-                    {project.description && (
-                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">{project.description}</p>
-                    )}
+            <h2 className="heading-display text-xl text-white mb-5">Другие проекты</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {otherProjects.map((project) => {
+                const status = project.status ?? "planned";
+                const StatusIcon = statusIcons[status] ?? Clock;
+                return (
+                  <div key={project.id} className="card-dark p-5 flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="font-bold text-white leading-snug">{project.title}</h3>
+                      {project.description && (
+                        <p className="text-sm text-white/30 mt-1 line-clamp-2">{project.description}</p>
+                      )}
+                    </div>
+                    <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider border px-2 py-0.5 ${statusColors[status]}`}>
+                      <StatusIcon className="h-3 w-3" />
+                      {statusLabel[status]}
+                    </span>
                   </div>
-                  <Badge variant={statusColor[project.status ?? "planned"]} className="flex-shrink-0">
-                    {statusLabel[project.status ?? "planned"]}
-                  </Badge>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
         )}
@@ -236,24 +241,23 @@ export default async function DepartmentPage({
         {/* Публикации */}
         {deptPubs.length > 0 && (
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
-              <BookMarked className="h-5 w-5 text-purple-600" />
+            <h2 className="heading-display text-xl text-white mb-5 flex items-center gap-2">
+              <BookMarked className="h-5 w-5 text-white/20" />
               Публикации
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {deptPubs.map((pub) => (
-                <div
-                  key={pub.id}
-                  className="bg-white rounded-xl border border-gray-200 p-5 flex items-start gap-4"
-                >
+                <div key={pub.id} className="card-dark p-5 flex items-start gap-4">
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 leading-snug">{pub.title}</p>
+                    <p className="font-bold text-white leading-snug">{pub.title}</p>
                     {pub.authors && (
-                      <p className="text-sm text-gray-500 mt-1">{pub.authors}</p>
+                      <p className="text-sm text-white/30 mt-1">{pub.authors}</p>
                     )}
-                    <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-400">
+                    <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-white/20">
                       {pub.journal && <span>{pub.journal}</span>}
-                      {pub.year && <span>{pub.year}</span>}
+                      {pub.year && (
+                        <span className="border border-white/10 px-2 py-0.5 font-bold">{pub.year}</span>
+                      )}
                     </div>
                   </div>
                   {pub.doi && (
@@ -261,7 +265,7 @@ export default async function DepartmentPage({
                       href={pub.doi.startsWith("http") ? pub.doi : `https://doi.org/${pub.doi}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-shrink-0 text-blue-500 hover:text-blue-700"
+                      className="flex-shrink-0 w-8 h-8 bg-white/5 flex items-center justify-center text-[#00E5C0]/40 hover:text-[#00E5C0] transition-colors"
                       title="Открыть DOI"
                     >
                       <ExternalLink className="h-4 w-4" />
