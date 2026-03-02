@@ -52,25 +52,37 @@ type ContextItem = {
 
 type RetrieveResult = {
   items: ContextItem[];
-  search_mode: "meili" | "db_fallback";
+  search_mode: "meili" | "meili+db" | "db_fallback";
 };
 
 async function retrieveContext(question: string): Promise<RetrieveResult> {
-  // Попытка через Meilisearch
+  // Попытка через Meilisearch (null = Meili недоступен, [] = нет результатов)
   const hits = await searchContent(question, { limit: 5 });
-  if (hits !== null && hits.length > 0) {
-    return {
-      items: hits.map((h: SearchDoc) => ({
-        title: h.title,
-        slug: h.slug,
-        type: h.type,
-        body: h.body,
-      })),
-      search_mode: "meili",
-    };
+
+  if (hits !== null) {
+    // Meilisearch ответил — используем его результаты (даже если пустые)
+    if (hits.length > 0) {
+      return {
+        items: hits.map((h: SearchDoc) => ({
+          title: h.title,
+          slug: h.slug,
+          type: h.type,
+          body: h.body,
+        })),
+        search_mode: "meili",
+      };
+    }
+    // Meili ответил 0 hits — дополняем через DB
+    const dbItems = await dbFallbackSearch(question);
+    return { items: dbItems, search_mode: dbItems.length > 0 ? "meili+db" : "meili" };
   }
 
-  // Fallback: DB ilike поиск
+  // Meilisearch недоступен — полный DB fallback
+  const dbItems = await dbFallbackSearch(question);
+  return { items: dbItems, search_mode: "db_fallback" };
+}
+
+async function dbFallbackSearch(question: string): Promise<ContextItem[]> {
   const pattern = `%${question.slice(0, 60)}%`;
   const results: ContextItem[] = [];
 
@@ -94,7 +106,7 @@ async function retrieveContext(question: string): Promise<RetrieveResult> {
   });
   results.push(...newsResults.map((i) => ({ title: i.title, slug: i.slug, type: "news", body: i.excerpt ?? "" })));
 
-  return { items: results, search_mode: "db_fallback" };
+  return results;
 }
 
 // ── System prompt ────────────────────────────────────────────────────────────
