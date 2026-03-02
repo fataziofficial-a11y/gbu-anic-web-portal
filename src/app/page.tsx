@@ -4,6 +4,7 @@ import { eq, desc, count } from "drizzle-orm";
 import Link from "next/link";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
+import { AskAI } from "@/components/public/AskAI";
 import {
   ArrowRight,
   FlaskConical,
@@ -271,6 +272,7 @@ export default async function HomePage() {
 
       </main>
       <PublicFooter />
+      <AskAI />
     </div>
   );
 }
