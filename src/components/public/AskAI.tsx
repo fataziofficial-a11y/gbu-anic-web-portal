@@ -67,12 +67,11 @@ export function AskAI() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-3">
 
       {/* ── Чат-панель ─────────────────────────────────────────────── */}
       {open && (
-        <div className="w-[340px] sm:w-[380px] flex flex-col bg-[#050E1C] border border-white/10 shadow-2xl shadow-black/70"
-          style={{ height: "480px" }}>
+        <div className="w-screen h-[100dvh] sm:w-[380px] sm:h-[480px] flex flex-col bg-[#050E1C] sm:border sm:border-white/10 shadow-2xl shadow-black/70">
 
           {/* Шапка */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 flex-shrink-0">
@@ -206,7 +205,7 @@ export function AskAI() {
       {/* ── Кнопка-триггер ─────────────────────────────────────────── */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-14 h-14 bg-[#00E5C0] text-[#050E1C] flex items-center justify-center shadow-lg shadow-[#00E5C0]/20 hover:bg-[#00E5C0]/90 transition-colors"
+        className={`w-14 h-14 bg-[#00E5C0] text-[#050E1C] items-center justify-center shadow-lg shadow-[#00E5C0]/20 hover:bg-[#00E5C0]/90 transition-colors m-4 sm:m-0 ${open ? "hidden sm:flex" : "flex"}`}
         aria-label={open ? "Закрыть чат" : "Открыть ИИ-помощник"}
       >
         {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
