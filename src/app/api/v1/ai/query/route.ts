@@ -50,16 +50,24 @@ type ContextItem = {
   body: string;
 };
 
-async function retrieveContext(question: string): Promise<ContextItem[]> {
+type RetrieveResult = {
+  items: ContextItem[];
+  search_mode: "meili" | "db_fallback";
+};
+
+async function retrieveContext(question: string): Promise<RetrieveResult> {
   // Попытка через Meilisearch
   const hits = await searchContent(question, { limit: 5 });
   if (hits !== null && hits.length > 0) {
-    return hits.map((h: SearchDoc) => ({
-      title: h.title,
-      slug: h.slug,
-      type: h.type,
-      body: h.body,
-    }));
+    return {
+      items: hits.map((h: SearchDoc) => ({
+        title: h.title,
+        slug: h.slug,
+        type: h.type,
+        body: h.body,
+      })),
+      search_mode: "meili",
+    };
   }
 
   // Fallback: DB ilike поиск
@@ -86,7 +94,7 @@ async function retrieveContext(question: string): Promise<ContextItem[]> {
   });
   results.push(...newsResults.map((i) => ({ title: i.title, slug: i.slug, type: "news", body: i.excerpt ?? "" })));
 
-  return results;
+  return { items: results, search_mode: "db_fallback" };
 }
 
 // ── System prompt ────────────────────────────────────────────────────────────
@@ -159,7 +167,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Поиск релевантного контекста
-  const context = await retrieveContext(question);
+  const { items: context, search_mode } = await retrieveContext(question);
 
   // Вызов DeepSeek
   const answer = await chatCompletion(
@@ -197,6 +205,7 @@ export async function POST(req: NextRequest) {
       question,
       configured: true,
       model: process.env.DEEPSEEK_MODEL ?? "deepseek-chat",
+      search_mode,
     },
     { status: 200, headers: V1_HEADERS }
   );
