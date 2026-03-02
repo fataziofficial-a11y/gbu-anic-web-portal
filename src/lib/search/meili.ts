@@ -95,15 +95,20 @@ export async function searchContent(
   query: string,
   opts: { type?: SearchDoc["type"]; limit?: number } = {}
 ): Promise<SearchDoc[] | null> {
-  const index = await getIndex();
-  if (!index) return null;
+  const client = getClient();
+  if (!client) {
+    logger.warn("Meili: no client (MEILISEARCH_HOST not set)");
+    return null;
+  }
 
   try {
+    const index = client.index<SearchDoc>(INDEX_NAME);
     const { hits } = await index.search(query, {
       limit: opts.limit ?? 20,
       filter: opts.type ? `type = "${opts.type}"` : undefined,
       attributesToHighlight: ["title", "body"],
     });
+    logger.info("Meili search OK", { query, hits: hits.length });
     return hits as SearchDoc[];
   } catch (err) {
     logger.warn("Meili search failed", { query, err: String(err) });
