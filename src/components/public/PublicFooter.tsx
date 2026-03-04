@@ -1,8 +1,10 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { getPublicSettings } from "@/lib/public-settings";
 
-export function PublicFooter() {
+export async function PublicFooter() {
   const year = new Date().getFullYear();
+  const s = await getPublicSettings();
 
   return (
     <footer className="mt-16 border-t border-[#d9d9d9] bg-white">
@@ -11,8 +13,8 @@ export function PublicFooter() {
           <div className="mb-4 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#00C9A7] text-white font-black">A</div>
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.15em] text-[#111111]">ГБУ АНИЦ</p>
-              <p className="text-xs text-[#777777]">Арктический научно-исследовательский центр</p>
+              <p className="text-sm font-black uppercase tracking-[0.15em] text-[#111111]">{s.site_name}</p>
+              <p className="text-xs text-[#777777]">{s.site_description}</p>
             </div>
           </div>
           <p className="max-w-lg text-sm leading-relaxed text-[#666666]">
@@ -40,15 +42,17 @@ export function PublicFooter() {
           <div className="space-y-3 text-sm text-[#555555]">
             <div className="flex items-start gap-2">
               <MapPin className="mt-0.5 h-4 w-4 text-[#00a98b]" />
-              <span>г. Якутск, Республика Саха (Якутия)</span>
+              <span>{s.contact_address}</span>
             </div>
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-[#00a98b]" />
-              <a href="mailto:info@anic.ru" className="hover:text-[#00a98b]">info@anic.ru</a>
+              <a href={`mailto:${s.contact_email}`} className="hover:text-[#00a98b]">{s.contact_email}</a>
             </div>
             <div className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-[#00a98b]" />
-              <span>+7 (4112) XX-XX-XX</span>
+              <a href={`tel:${s.contact_phone.replace(/[^+\d]/g, "")}`} className="hover:text-[#00a98b]">
+                {s.contact_phone}
+              </a>
             </div>
           </div>
         </div>
@@ -56,11 +60,10 @@ export function PublicFooter() {
 
       <div className="border-t border-[#e3e3e3] bg-[#f8f8f8]">
         <div className="mx-auto flex max-w-[1400px] flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-[#777777] sm:flex-row sm:px-6 lg:px-8">
-          <span>© {year} ГБУ АНИЦ. Все права защищены.</span>
+          <span>© {year} {s.site_name}. Все права защищены.</span>
           <Link href="/admin" className="hover:text-[#00a98b]">Панель управления</Link>
         </div>
       </div>
     </footer>
   );
 }
-
