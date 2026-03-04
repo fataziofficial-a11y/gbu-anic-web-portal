@@ -51,14 +51,14 @@ export default async function NewsListPage({
   return (
     <div>
       {/* Page header */}
-      <section className="arctic-page-header text-white py-16 relative overflow-hidden">
+      <section className="arctic-page-header py-16 relative overflow-hidden">
         <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-glacial-light/50 text-xs font-semibold tracking-[0.2em] uppercase mb-3">
             Центр новостей
           </p>
-          <h1 className="heading-serif text-4xl lg:text-5xl text-white mb-3">Новости</h1>
-          <p className="text-slate-300/70 text-lg max-w-xl">
+          <h1 className="heading-display text-4xl lg:text-5xl mb-3">Новости</h1>
+          <p className="text-[#666666] text-lg max-w-xl">
             {q ? `Результаты поиска «${q}»: ${total}` : `Актуальные события и публикации центра`}
           </p>
         </div>
@@ -194,3 +194,4 @@ export default async function NewsListPage({
     </div>
   );
 }
+

@@ -30,6 +30,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
+      <head>
+        <meta charSet="utf-8" />
+      </head>
       <body className={`${cormorant.variable} ${manrope.variable} font-sans antialiased`}>{children}</body>
     </html>
   );

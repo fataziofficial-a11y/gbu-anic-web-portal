@@ -42,16 +42,16 @@ export default async function ResearchPage() {
 
   return (
     <div>
-      <section className="arctic-page-header text-white py-20 relative overflow-hidden">
+      <section className="arctic-page-header py-20 relative overflow-hidden">
         <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-[#00E5C0]/50 text-xs font-bold tracking-[0.2em] uppercase mb-3">
             Наука
           </p>
-          <h1 className="heading-display text-4xl lg:text-5xl text-white mb-4">
+          <h1 className="heading-display text-4xl lg:text-5xl mb-4">
             Исследования и проекты
           </h1>
-          <p className="text-white/40 text-lg max-w-2xl">
+          <p className="text-[#666666] text-lg max-w-2xl">
             Научные проекты и исследовательские программы Арктического НИЦ
           </p>
         </div>
@@ -63,11 +63,11 @@ export default async function ResearchPage() {
           {[
             { label: "Активных", count: active.length, color: "text-[#00E5C0]", icon: TrendingUp },
             { label: "Планируется", count: planned.length, color: "text-blue-400", icon: Clock },
-            { label: "Завершено", count: completed.length, color: "text-white/30", icon: CheckCircle2 },
+            { label: "Завершено", count: completed.length, color: "text-[#777777]", icon: CheckCircle2 },
           ].map((stat) => (
-            <div key={stat.label} className="bg-[#050E1C] p-6 text-center">
+            <div key={stat.label} className="card-dark p-6 text-center">
               <p className={`text-3xl font-black ${stat.color}`}>{stat.count}</p>
-              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/30 mt-1">{stat.label}</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#777777] mt-1">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -90,7 +90,7 @@ export default async function ResearchPage() {
               .filter((g) => g.items.length > 0)
               .map((group) => (
                 <section key={group.title}>
-                  <h2 className="heading-display text-2xl text-white mb-6">{group.title}</h2>
+                  <h2 className="heading-display text-2xl mb-6">{group.title}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {group.items.map((project) => {
                       const status = project.status ?? "planned";
@@ -143,7 +143,7 @@ export default async function ResearchPage() {
         {/* Publications */}
         {recentPubs.length > 0 && (
           <section>
-            <h2 className="heading-display text-2xl text-white mb-6">Последние публикации</h2>
+            <h2 className="heading-display text-2xl mb-6">Последние публикации</h2>
             <div className="space-y-2">
               {recentPubs.map((pub) => (
                 <div key={pub.id} className="card-dark p-5 flex items-start gap-4">
@@ -185,3 +185,5 @@ export default async function ResearchPage() {
     </div>
   );
 }
+
+
