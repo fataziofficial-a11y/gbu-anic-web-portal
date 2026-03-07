@@ -5,10 +5,10 @@ module.exports = {
       name: "anic-portal",
       script: "node",
       args: ".next/standalone/server.js",
-      cwd: "/var/www/anic-portal",
-      instances: "max",
+      cwd: "/var/www/gbu-anic",
+      instances: 2,
       exec_mode: "cluster",
-      env_production: {
+      env: {
         NODE_ENV: "production",
         PORT: 3000,
         HOSTNAME: "0.0.0.0",
