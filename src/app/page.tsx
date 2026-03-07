@@ -17,14 +17,7 @@ import {
 
 export const revalidate = 60;
 
-type HomeData = {
-  latestNews: Awaited<ReturnType<typeof db.query.news.findMany>>;
-  activeProjects: Awaited<ReturnType<typeof db.query.projects.findMany>>;
-  teamCount: number;
-  newsCount: number;
-};
-
-async function getHomeData(): Promise<HomeData> {
+async function getHomeData() {
   if (!process.env.DATABASE_URL) {
     logger.warn("HomePage: DATABASE_URL is not set, rendering fallback data");
     return { latestNews: [], activeProjects: [], teamCount: 0, newsCount: 0 };
