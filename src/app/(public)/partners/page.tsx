@@ -17,55 +17,47 @@ export default async function PartnersPage() {
 
   return (
     <div>
-      <section className="arctic-page-header text-white py-16 relative overflow-hidden">
-        <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-[#00E5C0]/50 text-xs font-bold tracking-[0.2em] uppercase mb-3">
-            Сотрудничество
-          </p>
-          <h1 className="heading-display text-4xl lg:text-5xl text-white mb-3">Партнёрам</h1>
-          <p className="text-white/40 text-lg max-w-xl">
+      <section className="border-b border-[#DDE8F0] bg-[#F7FAFD] py-16">
+        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Сотрудничество</p>
+          <h1 className="mt-2 text-4xl font-black text-[#0D1C2E] lg:text-5xl">Партнёрам</h1>
+          <p className="mt-3 max-w-xl text-lg text-[#4B6075]">
             Организации, с которыми сотрудничает АНИЦ, и возможности для партнёрства
           </p>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-16">
-
-        {/* Partners grid */}
+      <div className="mx-auto max-w-[1240px] space-y-16 px-4 py-14 sm:px-6">
         {items.length > 0 && (
           <section>
-            <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">Партнёры</p>
-            <h2 className="heading-display text-3xl lg:text-4xl text-white mb-8">Наши партнёры</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Партнёры</p>
+            <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Наши партнёры</h2>
+            <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {items.map((item) => (
-                <div key={item.id} className="card-dark p-6 flex flex-col gap-4">
-                  {/* Logo */}
+                <div key={item.id} className="flex flex-col gap-4 rounded-2xl border border-[#DDE8F0] bg-white p-6">
                   {item.logo ? (
-                    <div className="relative h-14 w-full flex items-center">
+                    <div className="flex h-14 w-full items-center">
                       <Image
                         src={item.logo.url}
                         alt={item.name}
                         width={160}
                         height={56}
-                        className="object-contain max-h-14"
+                        className="max-h-14 object-contain"
                       />
                     </div>
                   ) : (
-                    <div className="h-12 w-12 bg-white/5 flex items-center justify-center">
-                      <Handshake className="h-5 w-5 text-[#00E5C0]/50" />
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
+                      <Handshake className="h-5 w-5" />
                     </div>
                   )}
 
                   <div className="flex-1">
-                    <h3 className="font-bold text-white mb-1">{item.name}</h3>
+                    <h3 className="font-bold text-[#0D1C2E]">{item.name}</h3>
                     {item.description && (
-                      <p className="text-sm text-white/35 leading-relaxed line-clamp-3">
-                        {item.description}
-                      </p>
+                      <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-[#4B6075]">{item.description}</p>
                     )}
                     {item.services && (
-                      <p className="text-xs text-white/20 mt-2 line-clamp-2">{item.services}</p>
+                      <p className="mt-2 line-clamp-2 text-xs text-[#8B9BAD]">{item.services}</p>
                     )}
                   </div>
 
@@ -74,7 +66,7 @@ export default async function PartnersPage() {
                       href={item.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm text-[#00E5C0]/70 hover:text-[#00E5C0] transition-colors"
+                      className="flex items-center gap-2 text-sm font-semibold text-[#1A3A6B] transition hover:text-[#5CAFD6]"
                     >
                       <Globe className="h-4 w-4" />
                       Сайт организации
@@ -87,58 +79,41 @@ export default async function PartnersPage() {
         )}
 
         {/* Cooperation info */}
-        <section className="border border-[#00E5C0]/20 p-8 lg:p-12">
-          <div className="max-w-3xl">
-            <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">
-              Возможности
-            </p>
-            <h2 className="heading-display text-3xl text-white mb-6">
-              Услуги и возможности АНИЦ
-            </h2>
-            <div className="space-y-4 text-white/35 text-sm leading-relaxed">
-              <p>
-                Арктический научно-исследовательский центр РС(Я) предлагает широкий спектр услуг
-                для государственных организаций, коммерческих структур и научных учреждений.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
-                {[
-                  {
-                    title: "Историко-культурная экспертиза",
-                    desc: "Проведение экспертизы земельных участков и объектов культурного наследия",
-                  },
-                  {
-                    title: "Полевые исследования",
-                    desc: "Организация археологических, этнографических и природных экспедиций",
-                  },
-                  {
-                    title: "Научные консультации",
-                    desc: "Экспертная поддержка проектов в области арктических исследований",
-                  },
-                  {
-                    title: "Совместные проекты",
-                    desc: "Участие в грантовых программах и исследовательских консорциумах",
-                  },
-                ].map((s) => (
-                  <div key={s.title} className="card-dark p-5">
-                    <FlaskConical className="h-4 w-4 text-[#00E5C0]/50 mb-3" />
-                    <h3 className="font-black text-white text-sm uppercase tracking-tight mb-1">{s.title}</h3>
-                    <p className="text-white/30 text-xs leading-relaxed">{s.desc}</p>
-                  </div>
-                ))}
+        <section className="rounded-3xl bg-[#F7FAFD] p-8 lg:p-12">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Возможности</p>
+          <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Услуги и возможности АНИЦ</h2>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#4B6075]">
+            Арктический научно-исследовательский центр РС(Я) предлагает широкий спектр услуг
+            для государственных организаций, коммерческих структур и научных учреждений.
+          </p>
+
+          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {[
+              { title: "Историко-культурная экспертиза", desc: "Проведение экспертизы земельных участков и объектов культурного наследия" },
+              { title: "Полевые исследования", desc: "Организация археологических, этнографических и природных экспедиций" },
+              { title: "Научные консультации", desc: "Экспертная поддержка проектов в области арктических исследований" },
+              { title: "Совместные проекты", desc: "Участие в грантовых программах и исследовательских консорциумах" },
+            ].map((s) => (
+              <div key={s.title} className="rounded-2xl border border-[#DDE8F0] bg-white p-5">
+                <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-lg bg-[#EEF4FB] text-[#1A3A6B]">
+                  <FlaskConical className="h-4 w-4" />
+                </div>
+                <h3 className="font-bold text-[#0D1C2E]">{s.title}</h3>
+                <p className="mt-1 text-xs leading-relaxed text-[#4B6075]">{s.desc}</p>
               </div>
-            </div>
-            <div className="mt-8">
-              <Link
-                href="/contacts"
-                className="inline-flex items-center gap-2 bg-[#00E5C0] text-[#050E1C] px-6 py-3 font-black text-sm uppercase tracking-wider hover:bg-[#00E5C0]/90 transition-colors"
-              >
-                Связаться с нами
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
+            ))}
+          </div>
+
+          <div className="mt-8">
+            <Link
+              href="/contacts"
+              className="inline-flex items-center gap-2 rounded-full bg-[#1A3A6B] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#0D2743]"
+            >
+              Связаться с нами
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </section>
-
       </div>
     </div>
   );

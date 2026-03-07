@@ -12,11 +12,13 @@ const statusLabel: Record<string, string> = {
   active: "Активный",
   completed: "Завершён",
 };
+
 const statusColors: Record<string, string> = {
-  active: "text-[#00E5C0] border-[#00E5C0]/30",
-  planned: "text-blue-400 border-blue-400/30",
-  completed: "text-white/30 border-white/10",
+  active: "text-[#1A7A5A] bg-[#E8F5F0] border-[#B8DDD1]",
+  planned: "text-[#1A3A6B] bg-[#EEF4FB] border-[#C0D5EE]",
+  completed: "text-[#4B6075] bg-[#F0F4F8] border-[#DDE8F0]",
 };
+
 const statusIcons: Record<string, typeof TrendingUp> = {
   active: TrendingUp,
   planned: Clock,
@@ -42,32 +44,30 @@ export default async function ResearchPage() {
 
   return (
     <div>
-      <section className="arctic-page-header py-20 relative overflow-hidden">
-        <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-[#00E5C0]/50 text-xs font-bold tracking-[0.2em] uppercase mb-3">
-            Наука
-          </p>
-          <h1 className="heading-display text-4xl lg:text-5xl mb-4">
-            Исследования и проекты
-          </h1>
-          <p className="text-[#666666] text-lg max-w-2xl">
+      <section className="border-b border-[#DDE8F0] bg-[#F7FAFD] py-16">
+        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Наука</p>
+          <h1 className="mt-2 text-4xl font-black text-[#0D1C2E] lg:text-5xl">Исследования и проекты</h1>
+          <p className="mt-3 text-lg text-[#4B6075]">
             Научные проекты и исследовательские программы Арктического НИЦ
           </p>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-14">
+      <div className="mx-auto max-w-[1240px] space-y-14 px-4 py-14 sm:px-6">
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-px border border-white/5 bg-white/5">
+        <div className="grid grid-cols-3 gap-4">
           {[
-            { label: "Активных", count: active.length, color: "text-[#00E5C0]", icon: TrendingUp },
-            { label: "Планируется", count: planned.length, color: "text-blue-400", icon: Clock },
-            { label: "Завершено", count: completed.length, color: "text-[#777777]", icon: CheckCircle2 },
+            { label: "Активных", count: active.length, icon: TrendingUp, color: "text-[#1A7A5A]", bg: "bg-[#E8F5F0]" },
+            { label: "Планируется", count: planned.length, icon: Clock, color: "text-[#1A3A6B]", bg: "bg-[#EEF4FB]" },
+            { label: "Завершено", count: completed.length, icon: CheckCircle2, color: "text-[#4B6075]", bg: "bg-[#F0F4F8]" },
           ].map((stat) => (
-            <div key={stat.label} className="card-dark p-6 text-center">
+            <div key={stat.label} className="rounded-2xl border border-[#DDE8F0] bg-white p-6 text-center">
+              <div className={`mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${stat.bg} ${stat.color}`}>
+                <stat.icon className="h-5 w-5" />
+              </div>
               <p className={`text-3xl font-black ${stat.color}`}>{stat.count}</p>
-              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#777777] mt-1">{stat.label}</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-[#8B9BAD]">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -75,10 +75,10 @@ export default async function ResearchPage() {
         {/* Projects */}
         {allProjects.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 bg-white/5 flex items-center justify-center mb-5">
-              <FlaskConical className="h-8 w-8 text-white/20" />
+            <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#EEF4FB]">
+              <FlaskConical className="h-8 w-8 text-[#1A3A6B]" />
             </div>
-            <p className="text-white/40 text-lg font-bold uppercase tracking-wider">Проектов пока нет</p>
+            <p className="text-lg font-bold text-[#4B6075]">Проектов пока нет</p>
           </div>
         ) : (
           <>
@@ -90,43 +90,41 @@ export default async function ResearchPage() {
               .filter((g) => g.items.length > 0)
               .map((group) => (
                 <section key={group.title}>
-                  <h2 className="heading-display text-2xl mb-6">{group.title}</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <h2 className="mb-6 text-2xl font-black text-[#0D1C2E]">{group.title}</h2>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     {group.items.map((project) => {
                       const status = project.status ?? "planned";
                       const StatusIcon = statusIcons[status] ?? Clock;
                       return (
-                        <div key={project.id} className="card-dark p-6">
-                          <div className="flex items-start justify-between gap-3 mb-3">
+                        <div key={project.id} className="rounded-2xl border border-[#DDE8F0] bg-white p-6">
+                          <div className="mb-3 flex items-start justify-between gap-3">
                             <div className="flex items-start gap-4">
-                              <div className="flex-shrink-0 w-10 h-10 bg-white/5 flex items-center justify-center mt-0.5">
-                                <FlaskConical className="h-5 w-5 text-[#00E5C0]/50" />
+                              <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
+                                <FlaskConical className="h-5 w-5" />
                               </div>
                               <div>
-                                <h3 className="font-bold text-white leading-snug">
-                                  {project.title}
-                                </h3>
+                                <h3 className="font-bold leading-snug text-[#0D1C2E]">{project.title}</h3>
                                 {project.department && (
-                                  <p className="text-[10px] text-[#00E5C0]/40 mt-1 font-black uppercase tracking-wider">
+                                  <p className="mt-1 text-xs font-bold uppercase tracking-wider text-[#5CAFD6]">
                                     {project.department.name}
                                   </p>
                                 )}
                               </div>
                             </div>
-                            <span className={`flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider border ${statusColors[status]}`}>
+                            <span className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${statusColors[status]}`}>
                               <StatusIcon className="h-3 w-3" />
                               {statusLabel[status]}
                             </span>
                           </div>
 
                           {project.description && (
-                            <p className="text-sm text-white/30 leading-relaxed mb-4 ml-14">
+                            <p className="ml-14 text-sm leading-relaxed text-[#4B6075]">
                               {project.description}
                             </p>
                           )}
 
                           {(project.startDate || project.endDate) && (
-                            <div className="flex items-center gap-1.5 text-xs text-white/20 ml-14">
+                            <div className="ml-14 mt-3 flex items-center gap-1.5 text-xs text-[#8B9BAD]">
                               <Calendar className="h-3.5 w-3.5" />
                               {project.startDate ?? "?"} — {project.endDate ?? "н.в."}
                             </div>
@@ -143,24 +141,22 @@ export default async function ResearchPage() {
         {/* Publications */}
         {recentPubs.length > 0 && (
           <section>
-            <h2 className="heading-display text-2xl mb-6">Последние публикации</h2>
+            <h2 className="mb-6 text-2xl font-black text-[#0D1C2E]">Последние публикации</h2>
             <div className="space-y-2">
               {recentPubs.map((pub) => (
-                <div key={pub.id} className="card-dark p-5 flex items-start gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-white/5 flex items-center justify-center">
-                    <BookMarked className="h-5 w-5 text-white/20" />
+                <div key={pub.id} className="flex items-start gap-4 rounded-2xl border border-[#DDE8F0] bg-white p-5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
+                    <BookMarked className="h-5 w-5" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-white leading-snug">{pub.title}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-bold leading-snug text-[#0D1C2E]">{pub.title}</p>
                     {pub.authors && (
-                      <p className="text-sm text-white/30 mt-1">{pub.authors}</p>
+                      <p className="mt-1 text-sm text-[#4B6075]">{pub.authors}</p>
                     )}
-                    <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-white/20">
+                    <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-[#8B9BAD]">
                       {pub.journal && <span>{pub.journal}</span>}
                       {pub.year && (
-                        <span className="border border-white/10 px-2 py-0.5 font-bold">
-                          {pub.year}
-                        </span>
+                        <span className="rounded border border-[#DDE8F0] px-2 py-0.5 font-bold">{pub.year}</span>
                       )}
                       {pub.department && <span>{pub.department.name}</span>}
                     </div>
@@ -170,7 +166,7 @@ export default async function ResearchPage() {
                       href={pub.doi.startsWith("http") ? pub.doi : `https://doi.org/${pub.doi}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-shrink-0 w-8 h-8 bg-white/5 flex items-center justify-center text-[#00E5C0]/50 hover:text-[#00E5C0] transition-colors"
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#DDE8F0] text-[#4B6075] transition hover:border-[#1A3A6B] hover:text-[#1A3A6B]"
                       title="Открыть DOI"
                     >
                       <ExternalLink className="h-4 w-4" />
@@ -185,5 +181,3 @@ export default async function ResearchPage() {
     </div>
   );
 }
-
-

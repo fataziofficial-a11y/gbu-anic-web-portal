@@ -52,35 +52,32 @@ export default async function NewsDetailPage({
   const html = renderTiptap(item.content);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Хлебные крошки */}
+    <div className="mx-auto max-w-[800px] px-4 py-12 sm:px-6">
       <Link
         href="/news"
-        className="inline-flex items-center gap-1.5 text-sm text-white/30 hover:text-[#00E5C0] mb-8 transition-colors"
+        className="mb-8 inline-flex items-center gap-1.5 text-sm font-semibold text-[#1A3A6B] transition hover:text-[#5CAFD6]"
       >
         <ArrowLeft className="h-4 w-4" />
         Назад к новостям
       </Link>
 
-      {/* Шапка */}
-      <div className="mb-8">
+      <div className="mb-10">
         {item.category && (
-          <span className="inline-block text-[#00E5C0] text-[10px] font-black uppercase tracking-widest mb-4">
-            #{item.category}
+          <span className="mb-4 inline-block text-xs font-bold uppercase tracking-[0.12em] text-[#5CAFD6]">
+            {item.category}
           </span>
         )}
-        <h1 className="heading-display text-3xl lg:text-4xl text-white leading-tight">
+        <h1 className="text-3xl font-black leading-tight text-[#0D1C2E] lg:text-4xl">
           {item.title}
         </h1>
         {item.excerpt && (
-          <p className="mt-4 text-lg text-white/40 leading-relaxed">{item.excerpt}</p>
+          <p className="mt-4 text-lg leading-relaxed text-[#4B6075]">{item.excerpt}</p>
         )}
 
-        {/* Мета */}
-        <div className="flex flex-wrap items-center gap-4 mt-6 pt-6 border-t border-white/10 text-sm text-white/30">
+        <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-[#DDE8F0] pt-6 text-sm text-[#8B9BAD]">
           {item.publishedAt && (
             <div className="flex items-center gap-1.5">
-              <Calendar className="h-4 w-4" />
+              <Calendar className="h-4 w-4 text-[#5CAFD6]" />
               {new Date(item.publishedAt).toLocaleDateString("ru-RU", {
                 day: "numeric",
                 month: "long",
@@ -90,33 +87,31 @@ export default async function NewsDetailPage({
           )}
           {item.author?.name && (
             <div className="flex items-center gap-1.5">
-              <span className="text-white/20">Автор:</span>
-              {item.author.name}
+              <span>Автор:</span>
+              <span className="font-semibold text-[#4B6075]">{item.author.name}</span>
             </div>
           )}
         </div>
 
-        {/* Теги */}
         {item.tags && item.tags.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2 mt-4">
-            <Tag className="h-4 w-4 text-white/20" />
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <Tag className="h-4 w-4 text-[#8B9BAD]" />
             {item.tags.map((tag) => (
-              <span key={tag} className="text-xs text-white/20 font-bold">
-                #{tag}
+              <span key={tag} className="rounded-full border border-[#DDE8F0] px-2.5 py-0.5 text-xs font-semibold text-[#4B6075]">
+                {tag}
               </span>
             ))}
           </div>
         )}
       </div>
 
-      {/* Контент */}
       {html ? (
         <article
-          className="prose prose-invert prose-sm max-w-none"
+          className="prose max-w-none"
           dangerouslySetInnerHTML={{ __html: html }}
         />
       ) : (
-        <p className="text-white/25 italic">Содержимое не добавлено</p>
+        <p className="italic text-[#8B9BAD]">Содержимое не добавлено</p>
       )}
     </div>
   );

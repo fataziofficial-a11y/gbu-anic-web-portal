@@ -52,21 +52,19 @@ export default async function DynamicPage({
 
   return (
     <div>
-      {/* Page header */}
-      <section className="arctic-page-header text-white py-16 relative overflow-hidden">
-        <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="border-b border-[#DDE8F0] bg-[#F7FAFD] py-16">
+        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-glacial-light/60 hover:text-white text-sm mb-6 transition-colors"
+            className="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[#1A3A6B] transition hover:text-[#5CAFD6]"
           >
             <ArrowLeft className="h-4 w-4" />
             На главную
           </Link>
-          <h1 className="heading-serif text-4xl lg:text-5xl text-white">{page.title}</h1>
+          <h1 className="text-4xl font-black text-[#0D1C2E] lg:text-5xl">{page.title}</h1>
           {(page.updatedAt || page.createdAt) && (
-            <div className="flex items-center gap-1.5 text-slate-300/60 text-sm mt-4">
-              <Calendar className="h-4 w-4" />
+            <div className="mt-4 flex items-center gap-1.5 text-sm text-[#8B9BAD]">
+              <Calendar className="h-4 w-4 text-[#5CAFD6]" />
               {new Date(page.updatedAt ?? page.createdAt!).toLocaleDateString("ru-RU", {
                 day: "numeric",
                 month: "long",
@@ -77,20 +75,16 @@ export default async function DynamicPage({
         </div>
       </section>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="mx-auto max-w-[800px] px-4 py-12 sm:px-6">
         {html ? (
-          <article
-            className="prose prose-invert prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: html }}
-          />
+          <article className="prose max-w-none" dangerouslySetInnerHTML={{ __html: html }} />
         ) : (
-          <p className="text-white/25 italic">Содержимое страницы не добавлено.</p>
+          <p className="italic text-[#8B9BAD]">Содержимое страницы не добавлено.</p>
         )}
 
         {page.author?.name && (
-          <p className="mt-12 pt-6 border-t border-white/10 text-sm text-white/25">
-            Материал подготовлен: {page.author.name}
+          <p className="mt-12 border-t border-[#DDE8F0] pt-6 text-sm text-[#8B9BAD]">
+            Материал подготовлен: <span className="font-semibold text-[#4B6075]">{page.author.name}</span>
           </p>
         )}
       </div>

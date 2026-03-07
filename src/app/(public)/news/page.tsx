@@ -51,29 +51,26 @@ export default async function NewsListPage({
   return (
     <div>
       {/* Page header */}
-      <section className="arctic-page-header py-16 relative overflow-hidden">
-        <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-glacial-light/50 text-xs font-semibold tracking-[0.2em] uppercase mb-3">
-            Центр новостей
-          </p>
-          <h1 className="heading-display text-4xl lg:text-5xl mb-3">Новости</h1>
-          <p className="text-[#666666] text-lg max-w-xl">
-            {q ? `Результаты поиска «${q}»: ${total}` : `Актуальные события и публикации центра`}
+      <section className="border-b border-[#DDE8F0] bg-[#F7FAFD] py-16">
+        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Центр новостей</p>
+          <h1 className="mt-2 text-4xl font-black text-[#0D1C2E] lg:text-5xl">Новости</h1>
+          <p className="mt-3 text-lg text-[#4B6075]">
+            {q ? `Результаты поиска «${q}»: ${total}` : "Актуальные события и публикации центра"}
           </p>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="mx-auto max-w-[1240px] px-4 py-10 sm:px-6">
         {/* Search + filters */}
-        <div className="flex items-start justify-between gap-4 mb-8 flex-wrap">
+        <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
           <div className="flex flex-wrap gap-2">
             <Link
               href="/news"
-              className={`px-4 py-2 text-xs font-black uppercase tracking-wider transition-all ${
+              className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors ${
                 !category
-                  ? "bg-[#00E5C0] text-[#050E1C]"
-                  : "border border-white/10 text-white/40 hover:border-[#00E5C0]/30 hover:text-white"
+                  ? "bg-[#1A3A6B] text-white"
+                  : "border border-[#DDE8F0] text-[#4B6075] hover:border-[#1A3A6B] hover:text-[#1A3A6B]"
               }`}
             >
               Все
@@ -82,10 +79,10 @@ export default async function NewsListPage({
               <Link
                 key={cat}
                 href={`/news?category=${encodeURIComponent(cat)}`}
-                className={`px-4 py-2 text-xs font-black uppercase tracking-wider transition-all ${
+                className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors ${
                   category === cat
-                    ? "bg-[#00E5C0] text-[#050E1C]"
-                    : "border border-white/10 text-white/40 hover:border-[#00E5C0]/30 hover:text-white"
+                    ? "bg-[#1A3A6B] text-white"
+                    : "border border-[#DDE8F0] text-[#4B6075] hover:border-[#1A3A6B] hover:text-[#1A3A6B]"
                 }`}
               >
                 {cat}
@@ -99,56 +96,39 @@ export default async function NewsListPage({
 
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 bg-white/5 flex items-center justify-center mb-5">
-              <Newspaper className="h-8 w-8 text-white/20" />
+            <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#EEF4FB]">
+              <Newspaper className="h-8 w-8 text-[#1A3A6B]" />
             </div>
-            <p className="text-white/40 text-lg font-bold uppercase tracking-wider">Новостей пока нет</p>
-            <p className="text-sm text-white/20 mt-1">Попробуйте изменить параметры поиска</p>
+            <p className="text-lg font-bold text-[#4B6075]">Новостей пока нет</p>
+            <p className="mt-1 text-sm text-[#8B9BAD]">Попробуйте изменить параметры поиска</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => {
               const d = item.publishedAt ? new Date(item.publishedAt) : null;
-              const dayMonth = d
-                ? `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}`
+              const dateStr = d
+                ? d.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" })
                 : null;
               return (
                 <Link
                   key={item.id}
                   href={`/news/${item.slug}`}
-                  className="group card-dark p-6 flex flex-col justify-between min-h-[200px] relative overflow-hidden"
+                  className="group flex flex-col rounded-2xl border border-[#DDE8F0] bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-md"
                 >
-                  {dayMonth && (
-                    <span className="absolute top-2 right-3 text-[64px] font-black text-white/[0.04] leading-none select-none pointer-events-none">
-                      {dayMonth}
+                  {item.category && (
+                    <span className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[#5CAFD6]">
+                      {item.category}
                     </span>
                   )}
-                  <div>
-                    {item.category && (
-                      <span className="text-[#00E5C0] text-[10px] font-black uppercase tracking-widest mb-3 block">
-                        #{item.category}
-                      </span>
-                    )}
-                    <h2 className="font-bold text-white text-base leading-snug group-hover:text-[#00E5C0] transition-colors line-clamp-4">
-                      {item.title}
-                    </h2>
-                    {item.excerpt && (
-                      <p className="mt-2 text-sm text-white/30 line-clamp-2 leading-relaxed">{item.excerpt}</p>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between mt-4">
-                    {item.tags && item.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {item.tags.slice(0, 2).map((tag) => (
-                          <span key={tag} className="text-[10px] text-white/20 font-bold">
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    {dayMonth && (
-                      <p className="text-white/20 text-xs font-bold ml-auto">{dayMonth}</p>
-                    )}
+                  <h2 className="flex-1 text-lg font-bold leading-snug text-[#0D1C2E] line-clamp-4 group-hover:text-[#1A3A6B] transition-colors">
+                    {item.title}
+                  </h2>
+                  {item.excerpt && (
+                    <p className="mt-2 text-sm leading-relaxed text-[#4B6075] line-clamp-2">{item.excerpt}</p>
+                  )}
+                  <div className="mt-4 flex items-center justify-between">
+                    {dateStr && <p className="text-xs text-[#8B9BAD]">{dateStr}</p>}
+                    <p className="ml-auto text-xs font-semibold text-[#1A3A6B]">Читать →</p>
                   </div>
                 </Link>
               );
@@ -158,11 +138,11 @@ export default async function NewsListPage({
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-1.5 mt-12">
+          <div className="mt-12 flex items-center justify-center gap-1.5">
             {page > 1 && (
               <Link
                 href={`/news?page=${page - 1}${category ? `&category=${encodeURIComponent(category)}` : ""}`}
-                className="w-10 h-10 flex items-center justify-center border border-white/10 text-white/40 hover:border-[#00E5C0]/30 hover:text-white transition-all"
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#DDE8F0] text-[#4B6075] transition hover:border-[#1A3A6B] hover:text-[#1A3A6B]"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Link>
@@ -171,10 +151,10 @@ export default async function NewsListPage({
               <Link
                 key={p}
                 href={`/news?page=${p}${category ? `&category=${encodeURIComponent(category)}` : ""}`}
-                className={`w-10 h-10 flex items-center justify-center text-sm font-black transition-all ${
+                className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold transition ${
                   p === page
-                    ? "bg-[#00E5C0] text-[#050E1C]"
-                    : "border border-white/10 text-white/40 hover:border-[#00E5C0]/30 hover:text-white"
+                    ? "bg-[#1A3A6B] text-white"
+                    : "border border-[#DDE8F0] text-[#4B6075] hover:border-[#1A3A6B] hover:text-[#1A3A6B]"
                 }`}
               >
                 {p}
@@ -183,7 +163,7 @@ export default async function NewsListPage({
             {page < totalPages && (
               <Link
                 href={`/news?page=${page + 1}${category ? `&category=${encodeURIComponent(category)}` : ""}`}
-                className="w-10 h-10 flex items-center justify-center border border-white/10 text-white/40 hover:border-[#00E5C0]/30 hover:text-white transition-all"
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#DDE8F0] text-[#4B6075] transition hover:border-[#1A3A6B] hover:text-[#1A3A6B]"
               >
                 <ChevronRight className="h-4 w-4" />
               </Link>
@@ -194,4 +174,3 @@ export default async function NewsListPage({
     </div>
   );
 }
-

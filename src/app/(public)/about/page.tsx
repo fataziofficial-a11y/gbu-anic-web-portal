@@ -4,7 +4,7 @@ import { asc } from "drizzle-orm";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Building2, Users, FlaskConical, Target, Globe, Lightbulb } from "lucide-react";
+import { Building2, Users, Target, Globe, Lightbulb } from "lucide-react";
 
 export const metadata: Metadata = { title: "О центре" };
 export const revalidate = 3600;
@@ -24,55 +24,47 @@ export default async function AboutPage() {
 
   return (
     <div>
-      {/* Hero */}
-      <section className="arctic-page-header text-white py-20 relative overflow-hidden">
-        <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-[#00E5C0]/50 text-xs font-bold tracking-[0.2em] uppercase mb-3">
-            О нас
-          </p>
-          <h1 className="heading-display text-4xl lg:text-5xl text-white mb-5">О центре</h1>
-          <p className="text-white/40 text-lg max-w-2xl leading-relaxed">
+      {/* Header */}
+      <section className="border-b border-[#DDE8F0] bg-[#F7FAFD] py-16">
+        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">О нас</p>
+          <h1 className="mt-2 text-4xl font-black text-[#0D1C2E] lg:text-5xl">О центре</h1>
+          <p className="mt-3 max-w-2xl text-lg leading-relaxed text-[#4B6075]">
             ГБУ АНИЦ — ведущая научная организация Республики Саха (Якутия),
-            специализирующаяся на комплексных исследованиях арктических
-            и субарктических территорий
+            специализирующаяся на комплексных исследованиях арктических и субарктических территорий.
           </p>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
+      <div className="mx-auto max-w-[1240px] space-y-20 px-4 py-16 sm:px-6">
         {/* Mission */}
-        <section className="grid grid-cols-1 lg:grid-cols-5 gap-10 items-start">
+        <section className="grid grid-cols-1 items-start gap-10 lg:grid-cols-5">
           <div className="lg:col-span-3">
-            <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">
-              Наша миссия
-            </p>
-            <h2 className="heading-display text-3xl text-white mb-6">
-              Наука на службе Арктики
-            </h2>
-            <p className="text-white/40 leading-relaxed mb-5">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Наша миссия</p>
+            <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Наука на службе Арктики</h2>
+            <p className="mt-6 leading-relaxed text-[#4B6075]">
               Арктический научно-исследовательский центр создан для проведения фундаментальных
               и прикладных исследований в области экологии Арктики, климатологии, биологии
               северных экосистем и социально-экономического развития арктических территорий.
             </p>
-            <p className="text-white/40 leading-relaxed">
+            <p className="mt-4 leading-relaxed text-[#4B6075]">
               Центр объединяет ведущих учёных и исследователей, обеспечивает координацию
               научных проектов и международного сотрудничества в сфере арктических исследований.
             </p>
           </div>
-          <div className="lg:col-span-2 grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-1 gap-3 lg:col-span-2">
             {[
               { icon: Target, title: "Наука", desc: "Фундаментальные и прикладные исследования арктических экосистем" },
               { icon: Users, title: "Команда", desc: `${team.length}+ учёных и специалистов` },
               { icon: Building2, title: "Подразделения", desc: `${depts.length} научных подразделений` },
             ].map((item) => (
-              <div key={item.title} className="card-dark p-5 flex gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-white/5 flex items-center justify-center">
-                  <item.icon className="h-5 w-5 text-[#00E5C0]/70" />
+              <div key={item.title} className="flex gap-4 rounded-2xl border border-[#DDE8F0] bg-white p-5">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
+                  <item.icon className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="font-black text-white uppercase tracking-tight text-sm">{item.title}</p>
-                  <p className="text-sm text-white/35 mt-0.5">{item.desc}</p>
+                  <p className="font-bold text-[#0D1C2E]">{item.title}</p>
+                  <p className="mt-0.5 text-sm text-[#4B6075]">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -81,21 +73,21 @@ export default async function AboutPage() {
 
         {/* Values */}
         <section>
-          <div className="mb-10">
-            <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">Принципы</p>
-            <h2 className="heading-display text-3xl text-white">Наши ценности</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Принципы</p>
+          <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Наши ценности</h2>
+          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
             {[
-              { icon: Lightbulb, title: "Инновации", desc: "Применение передовых методов и технологий в исследованиях" },
-              { icon: Globe, title: "Сотрудничество", desc: "Международная кооперация и обмен знаниями" },
-              { icon: Target, title: "Результативность", desc: "Практическая значимость исследований для региона" },
+              { icon: Lightbulb, title: "Инновации", desc: "Применение передовых методов и технологий в исследованиях", color: "bg-[#EEF4FB]" },
+              { icon: Globe, title: "Сотрудничество", desc: "Международная кооперация и обмен знаниями", color: "bg-[#E8F5F0]" },
+              { icon: Target, title: "Результативность", desc: "Практическая значимость исследований для региона", color: "bg-[#F5F0EE]" },
             ].map((v) => (
-              <div key={v.title} className="card-dark p-8 flex flex-col gap-5">
-                <v.icon className="h-5 w-5 text-[#00E5C0]/50" />
+              <div key={v.title} className={`flex flex-col gap-5 rounded-3xl ${v.color} p-8`}>
+                <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/70 text-[#1A3A6B]">
+                  <v.icon className="h-5 w-5" />
+                </div>
                 <div>
-                  <h3 className="font-black text-white text-xl uppercase tracking-tight mb-2">{v.title}</h3>
-                  <p className="text-sm text-white/35 leading-relaxed">{v.desc}</p>
+                  <h3 className="text-xl font-bold text-[#0D1C2E]">{v.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[#4B6075]">{v.desc}</p>
                 </div>
               </div>
             ))}
@@ -105,35 +97,27 @@ export default async function AboutPage() {
         {/* Departments */}
         {depts.length > 0 && (
           <section>
-            <div className="mb-8">
-              <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">
-                Структура
-              </p>
-              <h2 className="heading-display text-3xl text-white">
-                Научные подразделения
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Структура</p>
+            <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Научные подразделения</h2>
+            <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {depts.map((dept) => (
                 <Link
                   key={dept.id}
                   href={`/research/departments/${dept.slug}`}
-                  className="group card-dark p-6 flex items-start gap-4"
+                  className="group flex items-start gap-4 rounded-2xl border border-[#DDE8F0] bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-md"
                 >
-                  <div className="flex-shrink-0 w-10 h-10 bg-white/5 flex items-center justify-center">
-                    <Building2 className="h-5 w-5 text-[#00E5C0]/50" />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
+                    <Building2 className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-white group-hover:text-[#00E5C0] transition-colors">
+                    <h3 className="font-bold text-[#0D1C2E] transition-colors group-hover:text-[#1A3A6B]">
                       {dept.name}
                     </h3>
                     {dept.head && (
-                      <p className="text-xs text-white/25 mt-1">
-                        Руководитель: {dept.head.name}
-                      </p>
+                      <p className="mt-1 text-xs text-[#8B9BAD]">Руководитель: {dept.head.name}</p>
                     )}
                     {dept.description && (
-                      <p className="text-sm text-white/30 mt-2 line-clamp-3 leading-relaxed">{dept.description}</p>
+                      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-[#4B6075]">{dept.description}</p>
                     )}
                   </div>
                 </Link>
@@ -145,43 +129,37 @@ export default async function AboutPage() {
         {/* Team */}
         {team.length > 0 && (
           <section>
-            <div className="mb-8">
-              <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">
-                Люди
-              </p>
-              <h2 className="heading-display text-3xl text-white">
-                Наши сотрудники
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Люди</p>
+            <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Наши сотрудники</h2>
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {team.map((member) => (
-                <div key={member.id} className="card-dark p-6 text-center">
+                <div key={member.id} className="rounded-2xl border border-[#DDE8F0] bg-white p-6 text-center">
                   {member.photo ? (
                     <Image
                       src={member.photo.url}
                       alt={member.name}
                       width={80}
                       height={80}
-                      className="w-20 h-20 object-cover mx-auto mb-4 border-2 border-[#00E5C0]/20"
+                      className="mx-auto mb-4 h-20 w-20 rounded-full object-cover ring-2 ring-[#DDE8F0]"
                     />
                   ) : (
-                    <div className="w-20 h-20 bg-white/5 border border-[#00E5C0]/20 flex items-center justify-center mx-auto mb-4">
-                      <span className="text-2xl font-black text-[#00E5C0]/50">{member.name.charAt(0)}</span>
+                    <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-[#EEF4FB]">
+                      <span className="text-2xl font-black text-[#1A3A6B]">{member.name.charAt(0)}</span>
                     </div>
                   )}
-                  <p className="font-bold text-white text-sm">{member.name}</p>
+                  <p className="font-bold text-[#0D1C2E]">{member.name}</p>
                   {member.position && (
-                    <p className="text-xs text-white/30 mt-1">{member.position}</p>
+                    <p className="mt-1 text-xs text-[#4B6075]">{member.position}</p>
                   )}
                   {member.department && (
-                    <p className="text-[10px] text-[#00E5C0]/50 font-black mt-1.5 uppercase tracking-wider">
+                    <p className="mt-1.5 text-xs font-bold uppercase tracking-wider text-[#5CAFD6]">
                       {member.department.name}
                     </p>
                   )}
                   {member.email && (
                     <a
                       href={`mailto:${member.email}`}
-                      className="text-xs text-white/20 hover:text-[#00E5C0] mt-3 block transition-colors"
+                      className="mt-3 block text-xs text-[#8B9BAD] transition hover:text-[#1A3A6B]"
                     >
                       {member.email}
                     </a>

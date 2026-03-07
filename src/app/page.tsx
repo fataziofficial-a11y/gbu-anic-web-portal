@@ -3,17 +3,10 @@ import { news, projects, teamMembers } from "@/lib/db/schema";
 import { eq, desc, count } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import Link from "next/link";
-import Image from "next/image";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { AskAI } from "@/components/public/AskAI";
-import {
-  ArrowRight,
-  FlaskConical,
-  Thermometer,
-  Globe,
-  BookOpen,
-} from "lucide-react";
+import { ArrowRight, FlaskConical, Thermometer, Globe, BookOpen, Users, FileText, Layers } from "lucide-react";
 
 export const revalidate = 60;
 
@@ -58,92 +51,88 @@ async function getHomeData() {
 export default async function HomePage() {
   const { latestNews, activeProjects, teamCount, newsCount } = await getHomeData();
 
-  const stats = [
-    { value: newsCount, label: "Публикаций" },
-    { value: activeProjects.length, label: "Активных проектов" },
-    { value: teamCount, label: "Сотрудников" },
-    { value: "13+", label: "Лет исследований" },
-  ];
-
   return (
-    <div className="anic-theme flex min-h-screen flex-col bg-white text-[#0F172A]">
+    <div className="flex min-h-screen flex-col bg-white text-[#0D1C2E]">
       <PublicHeader />
+
       <main className="flex-1">
-        <section className="border-b border-[#EDEDED]">
-          <div className="mx-auto grid max-w-[1240px] grid-cols-1 gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-14 lg:py-18">
-            <div className="space-y-6">
-              <p className="inline-flex rounded-full border border-[#EDEDED] px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#3334CC]">
-                ГБУ Республики Саха (Якутия)
-              </p>
-              <h1 className="text-4xl font-semibold leading-[1.05] text-[#0F0F0F] sm:text-5xl lg:text-6xl">
-                Арктический центр, который превращает данные в решения
-              </h1>
-              <p className="max-w-xl text-base leading-7 text-[#878787] sm:text-lg">
-                Исследования климата, экосистем и устойчивого развития северных территорий.
-                Публикации, аналитика и проекты в едином цифровом портале.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="/research"
-                  className="inline-flex items-center gap-2 rounded-full bg-[#3334CC] px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
-                >
-                  Исследования
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link
-                  href="/knowledge-base"
-                  className="inline-flex items-center gap-2 rounded-full border border-[#EDEDED] px-6 py-3 text-sm font-semibold text-[#0F0F0F] transition hover:border-[#3334CC] hover:text-[#3334CC]"
-                >
-                  База знаний
-                </Link>
-              </div>
-              <div className="grid grid-cols-2 gap-3 pt-2 sm:grid-cols-4">
-                {stats.map((s) => (
-                  <div key={String(s.label)} className="rounded-2xl border border-[#EDEDED] bg-white px-4 py-3">
-                    <p className="text-2xl font-semibold text-[#0F0F0F]">{s.value}</p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.09em] text-[#878787]">{s.label}</p>
-                  </div>
-                ))}
-              </div>
+        {/* ── Hero ── */}
+        <section className="relative overflow-hidden bg-[#0D1C2E] pb-20 pt-36 text-white">
+          {/* decorative circles */}
+          <svg
+            className="pointer-events-none absolute right-0 top-0 h-[520px] w-[520px] translate-x-1/3 -translate-y-1/4 opacity-10"
+            viewBox="0 0 520 520" fill="none"
+          >
+            <circle cx="260" cy="260" r="259" stroke="#5CAFD6" strokeWidth="1.5" />
+            <circle cx="260" cy="260" r="200" stroke="#5CAFD6" strokeWidth="1" />
+            <circle cx="260" cy="260" r="140" stroke="#5CAFD6" strokeWidth="0.8" />
+          </svg>
+          <svg
+            className="pointer-events-none absolute -bottom-24 -left-24 h-[360px] w-[360px] opacity-8"
+            viewBox="0 0 360 360" fill="none"
+          >
+            <circle cx="180" cy="180" r="179" stroke="#5CAFD6" strokeWidth="1" />
+            <circle cx="180" cy="180" r="120" stroke="#5CAFD6" strokeWidth="0.8" />
+          </svg>
+
+          <div className="relative mx-auto max-w-[1240px] px-4 sm:px-6">
+            <p className="mb-5 inline-flex rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#5CAFD6]">
+              ГБУ Республики Саха (Якутия)
+            </p>
+
+            <h1 className="max-w-3xl text-[clamp(2.4rem,5vw,4rem)] font-black leading-[1.06] tracking-tight">
+              Арктический<br />
+              научно&#8209;исследовательский<br />
+              центр
+            </h1>
+
+            <p className="mt-6 max-w-xl text-base leading-7 text-white/60 sm:text-lg">
+              Государственное бюджетное учреждение, выполняющее комплексные научные
+              исследования Арктики. Данные, аналитика и проекты в едином цифровом портале.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/research"
+                className="inline-flex items-center gap-2 rounded-full bg-[#5CAFD6] px-7 py-3.5 text-sm font-bold text-[#0D1C2E] transition hover:bg-[#7CC4E8]"
+              >
+                Наши исследования
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/about"
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white transition hover:border-white/50 hover:bg-white/5"
+              >
+                О центре
+              </Link>
             </div>
 
-            <div className="relative">
-              <div className="absolute -left-8 -top-8 h-28 w-28 rounded-full bg-[#50CD89]/25 blur-2xl" />
-              <div className="absolute -bottom-10 -right-8 h-40 w-40 rounded-full bg-[#3334CC]/20 blur-3xl" />
-              <div className="relative overflow-hidden rounded-[28px] border border-[#EDEDED] bg-white p-4">
-                <div className="overflow-hidden rounded-2xl">
-                  <Image
-                    src="/anic-hero.png"
-                    alt="Арктические исследования"
-                    width={640}
-                    height={420}
-                    className="h-auto w-full object-cover"
-                    priority
-                  />
+            {/* Stats row */}
+            <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {[
+                { value: newsCount || "40+", label: "Публикаций" },
+                { value: activeProjects.length || "10+", label: "Активных проектов" },
+                { value: teamCount || "80+", label: "Сотрудников" },
+                { value: "13+", label: "Лет исследований" },
+              ].map((s) => (
+                <div key={s.label} className="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 backdrop-blur-sm">
+                  <p className="text-3xl font-black text-white">{s.value}</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.1em] text-white/50">{s.label}</p>
                 </div>
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <div className="rounded-xl bg-[#F8FAFC] p-3">
-                    <p className="text-xs text-[#878787]">Новых материалов</p>
-                    <p className="mt-1 text-xl font-semibold text-[#0F0F0F]">+128</p>
-                  </div>
-                  <div className="rounded-xl bg-[#F8FAFC] p-3">
-                    <p className="text-xs text-[#878787]">Открытых проектов</p>
-                    <p className="mt-1 text-xl font-semibold text-[#0F0F0F]">24</p>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className="mx-auto max-w-[1240px] px-4 py-14 sm:px-6">
-          <div className="mb-8 flex items-end justify-between gap-4">
+        {/* ── Research areas ── */}
+        <section className="mx-auto max-w-[1240px] px-4 py-20 sm:px-6">
+          <div className="mb-10 flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#878787]">Направления</p>
-              <h2 className="mt-2 text-3xl font-semibold text-[#0F0F0F]">Ключевые области исследований</h2>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Направления</p>
+              <h2 className="mt-2 text-3xl font-black text-[#0D1C2E] sm:text-4xl">Ключевые области</h2>
             </div>
-            <Link href="/research" className="hidden text-sm font-semibold text-[#3334CC] sm:inline-flex">
-              Смотреть все
+            <Link href="/research" className="hidden text-sm font-semibold text-[#1A3A6B] hover:underline sm:inline-flex">
+              Все исследования →
             </Link>
           </div>
 
@@ -153,81 +142,99 @@ export default async function HomePage() {
                 icon: Thermometer,
                 title: "Климатология",
                 desc: "Мониторинг климатических изменений и адаптация северных территорий.",
+                color: "bg-[#EEF4FB]",
+                iconColor: "text-[#1A3A6B]",
               },
               {
                 icon: FlaskConical,
                 title: "Экология Арктики",
                 desc: "Изучение экосистем, биоразнообразия и антропогенных факторов.",
+                color: "bg-[#E8F5F0]",
+                iconColor: "text-[#1A7A5A]",
               },
               {
                 icon: Globe,
                 title: "Устойчивое развитие",
                 desc: "Научная экспертиза для решений в экономике и социальной сфере Арктики.",
+                color: "bg-[#F5F0EE]",
+                iconColor: "text-[#8B4B2A]",
               },
             ].map((area) => (
-              <article key={area.title} className="rounded-3xl border border-[#EDEDED] bg-white p-7">
-                <area.icon className="mb-5 h-6 w-6 text-[#3334CC]" />
-                <h3 className="text-xl font-semibold text-[#0F0F0F]">{area.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-[#878787]">{area.desc}</p>
+              <article key={area.title} className={`rounded-3xl ${area.color} p-8`}>
+                <div className={`mb-5 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white/70 ${area.iconColor}`}>
+                  <area.icon className="h-5 w-5" />
+                </div>
+                <h3 className="text-xl font-bold text-[#0D1C2E]">{area.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-[#4B6075]">{area.desc}</p>
               </article>
             ))}
           </div>
         </section>
 
+        {/* ── Latest news ── */}
         {latestNews.length > 0 && (
-          <section className="mx-auto max-w-[1240px] px-4 py-4 sm:px-6">
-            <div className="mb-8 flex items-end justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#878787]">Актуальное</p>
-                <h2 className="mt-2 text-3xl font-semibold text-[#0F0F0F]">Новости</h2>
-              </div>
-              <Link href="/news" className="text-sm font-semibold text-[#3334CC]">
-                Все новости
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {latestNews.map((item) => (
-                <Link
-                  key={item.id}
-                  href={`/news/${item.slug}`}
-                  className="rounded-2xl border border-[#EDEDED] bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-sm"
-                >
-                  {item.category && (
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#50CD89]">
-                      {item.category}
-                    </p>
-                  )}
-                  <h3 className="line-clamp-4 text-lg font-semibold text-[#0F0F0F]">{item.title}</h3>
-                  <p className="mt-5 text-xs text-[#878787]">Подробнее</p>
+          <section className="bg-[#F7FAFD] py-20">
+            <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
+              <div className="mb-10 flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Актуальное</p>
+                  <h2 className="mt-2 text-3xl font-black text-[#0D1C2E] sm:text-4xl">Новости</h2>
+                </div>
+                <Link href="/news" className="text-sm font-semibold text-[#1A3A6B] hover:underline">
+                  Все новости →
                 </Link>
-              ))}
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                {latestNews.map((item) => (
+                  <Link
+                    key={item.id}
+                    href={`/news/${item.slug}`}
+                    className="group flex flex-col rounded-2xl border border-[#DDE8F0] bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    {item.category && (
+                      <p className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[#5CAFD6]">
+                        {item.category}
+                      </p>
+                    )}
+                    <h3 className="line-clamp-4 flex-1 text-lg font-bold text-[#0D1C2E] group-hover:text-[#1A3A6B]">
+                      {item.title}
+                    </h3>
+                    <p className="mt-5 text-xs font-semibold text-[#1A3A6B]">Читать →</p>
+                  </Link>
+                ))}
+              </div>
             </div>
           </section>
         )}
 
+        {/* ── Active projects ── */}
         {activeProjects.length > 0 && (
-          <section className="mx-auto max-w-[1240px] px-4 py-14 sm:px-6">
-            <div className="mb-8 flex items-end justify-between gap-4">
+          <section className="mx-auto max-w-[1240px] px-4 py-20 sm:px-6">
+            <div className="mb-10 flex items-end justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#878787]">Проекты</p>
-                <h2 className="mt-2 text-3xl font-semibold text-[#0F0F0F]">Активные проекты</h2>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Проекты</p>
+                <h2 className="mt-2 text-3xl font-black text-[#0D1C2E] sm:text-4xl">Активные проекты</h2>
               </div>
-              <Link href="/research" className="text-sm font-semibold text-[#3334CC]">
-                Все проекты
+              <Link href="/research" className="text-sm font-semibold text-[#1A3A6B] hover:underline">
+                Все проекты →
               </Link>
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {activeProjects.map((project) => (
-                <article key={project.id} className="rounded-2xl border border-[#EDEDED] bg-white p-6">
-                  <FlaskConical className="mb-4 h-5 w-5 text-[#3334CC]" />
-                  <h3 className="text-lg font-semibold text-[#0F0F0F]">{project.title}</h3>
+                <article key={project.id} className="flex flex-col rounded-2xl border border-[#DDE8F0] bg-white p-6">
+                  <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
+                    <FlaskConical className="h-5 w-5" />
+                  </div>
+                  <h3 className="flex-1 text-lg font-bold text-[#0D1C2E]">{project.title}</h3>
                   {project.department && (
-                    <p className="mt-2 text-xs uppercase tracking-[0.12em] text-[#878787]">{project.department.name}</p>
+                    <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#5CAFD6]">
+                      {project.department.name}
+                    </p>
                   )}
                   {project.description && (
-                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-[#878787]">{project.description}</p>
+                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-[#4B6075]">{project.description}</p>
                   )}
                 </article>
               ))}
@@ -235,33 +242,52 @@ export default async function HomePage() {
           </section>
         )}
 
-        <section className="mx-auto w-full max-w-[1240px] px-4 pb-14 sm:px-6">
-          <div className="flex flex-col gap-6 rounded-[28px] border border-[#EDEDED] bg-[#F7F8FF] p-8 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <BookOpen className="mb-3 h-6 w-6 text-[#3334CC]" />
-              <h2 className="text-2xl font-semibold text-[#0F0F0F]">База знаний и публикации</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#878787]">
-                Доступ к научным материалам, аналитике и методическим публикациям центра.
-              </p>
-            </div>
-            <div className="flex shrink-0 flex-wrap gap-3">
-              <Link
-                href="/knowledge-base"
-                className="inline-flex items-center gap-2 rounded-full bg-[#3334CC] px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110"
-              >
-                База знаний
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/contacts"
-                className="inline-flex items-center gap-2 rounded-full border border-[#D6D6D6] bg-white px-6 py-3 text-sm font-semibold text-[#0F0F0F] transition hover:border-[#3334CC] hover:text-[#3334CC]"
-              >
-                Связаться с нами
-              </Link>
+        {/* ── CTA banner ── */}
+        <section className="bg-[#0D1C2E] py-20 text-white">
+          <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
+              {[
+                {
+                  icon: BookOpen,
+                  title: "База знаний",
+                  desc: "Научные материалы, аналитика и методические публикации центра.",
+                  href: "/knowledge-base",
+                  cta: "Перейти",
+                },
+                {
+                  icon: Layers,
+                  title: "Документы",
+                  desc: "Нормативные акты, уставные документы и отчёты о деятельности.",
+                  href: "/documents",
+                  cta: "Открыть",
+                },
+                {
+                  icon: Users,
+                  title: "Партнёрам",
+                  desc: "Информация о сотрудничестве, грантах и совместных проектах.",
+                  href: "/partners",
+                  cta: "Узнать больше",
+                },
+              ].map((block) => (
+                <div key={block.title} className="flex flex-col">
+                  <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-[#5CAFD6]">
+                    <block.icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white">{block.title}</h3>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-white/50">{block.desc}</p>
+                  <Link
+                    href={block.href}
+                    className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-white transition hover:border-[#5CAFD6] hover:text-[#5CAFD6]"
+                  >
+                    {block.cta} <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              ))}
             </div>
           </div>
         </section>
       </main>
+
       <PublicFooter />
       <AskAI />
     </div>

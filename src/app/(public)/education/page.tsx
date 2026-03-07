@@ -42,31 +42,25 @@ export default async function EducationPage({
 
   return (
     <div>
-      <section className="arctic-page-header text-white py-16 relative overflow-hidden">
-        <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-[#00E5C0]/50 text-xs font-bold tracking-[0.2em] uppercase mb-3">
-            Знания для всех
-          </p>
-          <h1 className="heading-display text-4xl lg:text-5xl text-white mb-3">
-            Образовательный контент
-          </h1>
-          <p className="text-white/40 text-lg max-w-xl">
+      <section className="border-b border-[#DDE8F0] bg-[#F7FAFD] py-16">
+        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Знания для всех</p>
+          <h1 className="mt-2 text-4xl font-black text-[#0D1C2E] lg:text-5xl">Образовательный контент</h1>
+          <p className="mt-3 max-w-xl text-lg text-[#4B6075]">
             Статьи, материалы и научно-популярные публикации центра
           </p>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Category filter */}
+      <div className="mx-auto max-w-[1240px] px-4 py-10 sm:px-6">
         {categories.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-8">
+          <div className="mb-8 flex flex-wrap gap-2">
             <Link
               href="/education"
-              className={`px-4 py-2 text-xs font-black uppercase tracking-wider transition-all ${
+              className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors ${
                 !categorySlug
-                  ? "bg-[#00E5C0] text-[#050E1C]"
-                  : "border border-white/10 text-white/40 hover:border-[#00E5C0]/30 hover:text-white"
+                  ? "bg-[#1A3A6B] text-white"
+                  : "border border-[#DDE8F0] text-[#4B6075] hover:border-[#1A3A6B] hover:text-[#1A3A6B]"
               }`}
             >
               Все
@@ -75,10 +69,10 @@ export default async function EducationPage({
               <Link
                 key={cat.id}
                 href={`/education?category=${encodeURIComponent(cat.slug)}`}
-                className={`px-4 py-2 text-xs font-black uppercase tracking-wider transition-all ${
+                className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors ${
                   categoryId === cat.id
-                    ? "bg-[#00E5C0] text-[#050E1C]"
-                    : "border border-white/10 text-white/40 hover:border-[#00E5C0]/30 hover:text-white"
+                    ? "bg-[#1A3A6B] text-white"
+                    : "border border-[#DDE8F0] text-[#4B6075] hover:border-[#1A3A6B] hover:text-[#1A3A6B]"
                 }`}
               >
                 {cat.name}
@@ -89,31 +83,31 @@ export default async function EducationPage({
 
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 bg-white/5 flex items-center justify-center mb-5">
-              <BookOpen className="h-8 w-8 text-white/20" />
+            <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#EEF4FB]">
+              <BookOpen className="h-8 w-8 text-[#1A3A6B]" />
             </div>
-            <p className="text-white/40 text-lg font-bold uppercase tracking-wider">Материалов пока нет</p>
-            <p className="text-sm text-white/20 mt-1">Попробуйте изменить параметры поиска</p>
+            <p className="text-lg font-bold text-[#4B6075]">Материалов пока нет</p>
+            <p className="mt-1 text-sm text-[#8B9BAD]">Попробуйте изменить параметры поиска</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
               <Link
                 key={item.id}
                 href={`/knowledge-base/${item.slug}`}
-                className="group card-dark p-6 flex flex-col justify-between min-h-[180px]"
+                className="group flex min-h-[180px] flex-col justify-between rounded-2xl border border-[#DDE8F0] bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div>
-                  <span className="text-[#00E5C0] text-[10px] font-black uppercase tracking-widest mb-3 block">
+                  <span className="mb-3 block text-xs font-bold uppercase tracking-[0.12em] text-[#5CAFD6]">
                     Статья
                   </span>
-                  <h2 className="font-bold text-white text-base leading-snug group-hover:text-[#00E5C0] transition-colors line-clamp-4">
+                  <h2 className="line-clamp-4 text-base font-bold leading-snug text-[#0D1C2E] transition-colors group-hover:text-[#1A3A6B]">
                     {item.title}
                   </h2>
                 </div>
-                <div className="flex items-center justify-between mt-4">
+                <div className="mt-4 flex items-center justify-between">
                   {item.publishedAt && (
-                    <p className="text-white/20 text-xs font-bold">
+                    <p className="text-xs text-[#8B9BAD]">
                       {new Date(item.publishedAt).toLocaleDateString("ru-RU", {
                         day: "numeric",
                         month: "long",
@@ -121,7 +115,7 @@ export default async function EducationPage({
                       })}
                     </p>
                   )}
-                  <ArrowRight className="h-3.5 w-3.5 text-[#00E5C0]/40 group-hover:text-[#00E5C0] transition-colors ml-auto" />
+                  <ArrowRight className="ml-auto h-3.5 w-3.5 text-[#5CAFD6] transition-colors group-hover:text-[#1A3A6B]" />
                 </div>
               </Link>
             ))}

@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { MapPin, Mail, Phone, Clock } from "lucide-react";
 import { ContactForm } from "@/components/public/ContactForm";
 import { getPublicSettings } from "@/lib/public-settings";
@@ -10,71 +10,50 @@ export default async function ContactsPage() {
 
   return (
     <div>
-      <section className="arctic-page-header text-white py-20 relative overflow-hidden">
-        <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-[#00E5C0]/50 text-xs font-bold tracking-[0.2em] uppercase mb-3">Связь</p>
-          <h1 className="heading-display text-4xl lg:text-5xl text-white mb-3">Контакты</h1>
-          <p className="text-white/40 text-lg">Как с нами связаться</p>
+      <section className="border-b border-[#DDE8F0] bg-[#F7FAFD] py-16">
+        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Связь</p>
+          <h1 className="mt-2 text-4xl font-black text-[#0D1C2E] lg:text-5xl">Контакты</h1>
+          <p className="mt-3 text-lg text-[#4B6075]">Как с нами связаться</p>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <div className="space-y-6">
+      <div className="mx-auto max-w-[1240px] px-4 py-14 sm:px-6">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+          <div className="space-y-4">
             <div>
-              <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">Реквизиты</p>
-              <h2 className="heading-display text-3xl text-white mb-6">Наш адрес</h2>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Реквизиты</p>
+              <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Наш адрес</h2>
             </div>
 
-            <div className="space-y-2">
-              {[
-                {
-                  icon: MapPin,
-                  title: "Адрес",
-                  content: s.contact_address,
-                },
-                {
-                  icon: Mail,
-                  title: "Электронная почта",
-                  content: s.contact_email,
-                  href: `mailto:${s.contact_email}`,
-                },
-                {
-                  icon: Phone,
-                  title: "Телефон",
-                  content: s.contact_phone,
-                  href: `tel:${s.contact_phone.replace(/[^+\d]/g, "")}`,
-                },
-                {
-                  icon: Clock,
-                  title: "Режим работы",
-                  content: "Пн–Пт: 9:00 — 18:00",
-                },
-              ].map((item) => (
-                <div key={item.title} className="card-dark p-5 flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-white/5 flex items-center justify-center">
-                    <item.icon className="h-5 w-5 text-[#00E5C0]/50" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-white/20 font-black uppercase tracking-widest mb-0.5">{item.title}</p>
-                    {item.href ? (
-                      <a href={item.href} className="font-bold text-white hover:text-[#00E5C0] transition-colors">
-                        {item.content}
-                      </a>
-                    ) : (
-                      <p className="font-bold text-white">{item.content}</p>
-                    )}
-                  </div>
+            {[
+              { icon: MapPin, title: "Адрес", content: s.contact_address, href: undefined },
+              { icon: Mail, title: "Электронная почта", content: s.contact_email, href: `mailto:${s.contact_email}` },
+              { icon: Phone, title: "Телефон", content: s.contact_phone, href: `tel:${s.contact_phone.replace(/[^+\d]/g, "")}` },
+              { icon: Clock, title: "Режим работы", content: "Пн–Пт: 9:00 — 18:00", href: undefined },
+            ].map((item) => (
+              <div key={item.title} className="flex gap-4 rounded-2xl border border-[#DDE8F0] bg-white p-5">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#5CAFD6]">
+                  <item.icon className="h-5 w-5" />
                 </div>
-              ))}
-            </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#8B9BAD]">{item.title}</p>
+                  {item.href ? (
+                    <a href={item.href} className="mt-0.5 font-semibold text-[#0D1C2E] transition hover:text-[#1A3A6B]">
+                      {item.content}
+                    </a>
+                  ) : (
+                    <p className="mt-0.5 font-semibold text-[#0D1C2E]">{item.content}</p>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
 
           <div>
             <div className="mb-6">
-              <p className="text-[#00E5C0] text-[10px] font-black uppercase tracking-[0.3em] mb-2">Обращение</p>
-              <h2 className="heading-display text-3xl text-white">Написать нам</h2>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Обращение</p>
+              <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Написать нам</h2>
             </div>
             <ContactForm />
           </div>

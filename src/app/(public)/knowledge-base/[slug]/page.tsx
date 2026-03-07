@@ -50,7 +50,6 @@ export default async function KnowledgeItemPage({
 
   if (!item) notFound();
 
-  // Похожие материалы из той же категории
   const related = item.categoryId
     ? await db.query.knowledgeItems.findMany({
         where: and(
@@ -67,13 +66,12 @@ export default async function KnowledgeItemPage({
   const html = renderTiptap(item.content);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Основной контент */}
+    <div className="mx-auto max-w-[1240px] px-4 py-10 sm:px-6">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+        {/* Main content */}
         <div className="lg:col-span-3">
-          {/* Хлебные крошки */}
-          <nav className="flex items-center gap-2 text-sm text-white/30 mb-8">
-            <Link href="/knowledge-base" className="hover:text-[#00E5C0] flex items-center gap-1.5 transition-colors">
+          <nav className="mb-8 flex items-center gap-2 text-sm text-[#8B9BAD]">
+            <Link href="/knowledge-base" className="inline-flex items-center gap-1.5 font-semibold text-[#1A3A6B] transition hover:text-[#5CAFD6]">
               <ArrowLeft className="h-4 w-4" />
               База знаний
             </Link>
@@ -82,7 +80,7 @@ export default async function KnowledgeItemPage({
                 <span>/</span>
                 <Link
                   href={`/knowledge-base?category=${item.category.slug}`}
-                  className="hover:text-[#00E5C0] transition-colors"
+                  className="transition hover:text-[#1A3A6B]"
                 >
                   {item.category.name}
                 </Link>
@@ -90,20 +88,18 @@ export default async function KnowledgeItemPage({
             )}
           </nav>
 
-          {/* Заголовок */}
-          <div className="mb-8">
+          <div className="mb-10">
             {item.category && (
-              <span className="inline-block text-[#00E5C0] text-[10px] font-black uppercase tracking-widest mb-4">
+              <span className="mb-4 inline-block text-xs font-bold uppercase tracking-[0.12em] text-[#5CAFD6]">
                 {item.category.name}
               </span>
             )}
-            <h1 className="heading-display text-3xl text-white leading-tight">{item.title}</h1>
+            <h1 className="text-3xl font-black leading-tight text-[#0D1C2E]">{item.title}</h1>
 
-            {/* Мета */}
-            <div className="flex flex-wrap items-center gap-4 mt-6 pt-6 border-t border-white/10 text-sm text-white/30">
+            <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-[#DDE8F0] pt-6 text-sm text-[#8B9BAD]">
               {item.publishedAt && (
                 <div className="flex items-center gap-1.5">
-                  <Calendar className="h-4 w-4" />
+                  <Calendar className="h-4 w-4 text-[#5CAFD6]" />
                   {new Date(item.publishedAt).toLocaleDateString("ru-RU", {
                     day: "numeric",
                     month: "long",
@@ -113,75 +109,67 @@ export default async function KnowledgeItemPage({
               )}
               {item.department && (
                 <div className="flex items-center gap-1.5">
-                  <Building2 className="h-4 w-4" />
+                  <Building2 className="h-4 w-4 text-[#5CAFD6]" />
                   <Link
                     href={`/research/departments/${item.department.slug}`}
-                    className="hover:text-[#00E5C0] transition-colors"
+                    className="font-semibold text-[#4B6075] transition hover:text-[#1A3A6B]"
                   >
                     {item.department.name}
                   </Link>
                 </div>
               )}
-              {item.author && (
-                <span>Автор: {item.author.name}</span>
-              )}
+              {item.author && <span>Автор: <span className="font-semibold text-[#4B6075]">{item.author.name}</span></span>}
             </div>
 
-            {/* Теги */}
             {item.tags && item.tags.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2 mt-4">
-                <Tag className="h-4 w-4 text-white/20" />
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <Tag className="h-4 w-4 text-[#8B9BAD]" />
                 {item.tags.map((tag) => (
-                  <span key={tag} className="text-xs text-white/20 font-bold">
-                    #{tag}
+                  <span key={tag} className="rounded-full border border-[#DDE8F0] px-2.5 py-0.5 text-xs font-semibold text-[#4B6075]">
+                    {tag}
                   </span>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Контент */}
           {html ? (
-            <article
-              className="prose prose-invert prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: html }}
-            />
+            <article className="prose max-w-none" dangerouslySetInnerHTML={{ __html: html }} />
           ) : (
-            <p className="text-white/25 italic">Содержимое не добавлено</p>
+            <p className="italic text-[#8B9BAD]">Содержимое не добавлено</p>
           )}
         </div>
 
-        {/* Боковая панель */}
-        <aside className="lg:col-span-1 space-y-4">
-          {/* О материале */}
-          <div className="card-dark p-5">
-            <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-4 flex items-center gap-2">
+        {/* Sidebar */}
+        <aside className="space-y-4 lg:col-span-1">
+          <div className="rounded-2xl border border-[#DDE8F0] bg-white p-5">
+            <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#8B9BAD]">
               <FileText className="h-3.5 w-3.5" />
               О материале
             </p>
             <dl className="space-y-3 text-sm">
               {item.category && (
                 <div>
-                  <dt className="text-[10px] text-white/20 font-black uppercase tracking-wider">Категория</dt>
-                  <dd className="text-white mt-0.5">{item.category.name}</dd>
+                  <dt className="text-xs font-bold uppercase tracking-wider text-[#8B9BAD]">Категория</dt>
+                  <dd className="mt-0.5 font-semibold text-[#0D1C2E]">{item.category.name}</dd>
                 </div>
               )}
               {item.department && (
                 <div>
-                  <dt className="text-[10px] text-white/20 font-black uppercase tracking-wider">Подразделение</dt>
-                  <dd className="text-white mt-0.5">{item.department.name}</dd>
+                  <dt className="text-xs font-bold uppercase tracking-wider text-[#8B9BAD]">Подразделение</dt>
+                  <dd className="mt-0.5 font-semibold text-[#0D1C2E]">{item.department.name}</dd>
                 </div>
               )}
               {item.author && (
                 <div>
-                  <dt className="text-[10px] text-white/20 font-black uppercase tracking-wider">Автор</dt>
-                  <dd className="text-white mt-0.5">{item.author.name}</dd>
+                  <dt className="text-xs font-bold uppercase tracking-wider text-[#8B9BAD]">Автор</dt>
+                  <dd className="mt-0.5 font-semibold text-[#0D1C2E]">{item.author.name}</dd>
                 </div>
               )}
               {item.publishedAt && (
                 <div>
-                  <dt className="text-[10px] text-white/20 font-black uppercase tracking-wider">Дата публикации</dt>
-                  <dd className="text-white mt-0.5">
+                  <dt className="text-xs font-bold uppercase tracking-wider text-[#8B9BAD]">Дата публикации</dt>
+                  <dd className="mt-0.5 font-semibold text-[#0D1C2E]">
                     {new Date(item.publishedAt).toLocaleDateString("ru-RU")}
                   </dd>
                 </div>
@@ -189,10 +177,9 @@ export default async function KnowledgeItemPage({
             </dl>
           </div>
 
-          {/* Похожие материалы */}
           {related.length > 0 && (
-            <div className="card-dark p-5">
-              <p className="text-[10px] font-black text-white/20 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <div className="rounded-2xl border border-[#DDE8F0] bg-white p-5">
+              <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-[#8B9BAD]">
                 <BookOpen className="h-3.5 w-3.5" />
                 Читайте также
               </p>
@@ -201,7 +188,7 @@ export default async function KnowledgeItemPage({
                   <li key={rel.id}>
                     <Link
                       href={`/knowledge-base/${rel.slug}`}
-                      className="text-sm text-white/40 hover:text-[#00E5C0] leading-snug block transition-colors"
+                      className="block text-sm leading-snug text-[#4B6075] transition hover:text-[#1A3A6B]"
                     >
                       {rel.title}
                     </Link>

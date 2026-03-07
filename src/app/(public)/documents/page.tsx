@@ -16,10 +16,10 @@ const DOC_TYPE_LABELS: Record<string, string> = {
 };
 
 const DOC_TYPE_COLORS: Record<string, string> = {
-  normative: "text-blue-400 border-blue-400/30",
-  order: "text-amber-400 border-amber-400/30",
-  regulation: "text-emerald-400 border-emerald-400/30",
-  other: "text-white/30 border-white/10",
+  normative: "text-[#1A3A6B] bg-[#EEF4FB] border-[#C0D5EE]",
+  order: "text-[#7A4D1A] bg-[#FEF3E2] border-[#F0C87A]",
+  regulation: "text-[#1A7A5A] bg-[#E8F5F0] border-[#B8DDD1]",
+  other: "text-[#4B6075] bg-[#F0F4F8] border-[#DDE8F0]",
 };
 
 export default async function DocumentsPage({
@@ -35,10 +35,7 @@ export default async function DocumentsPage({
   });
 
   const activeItems = allItems.filter((d) => d.status === "active");
-  const items = typeFilter
-    ? activeItems.filter((d) => d.docType === typeFilter)
-    : activeItems;
-
+  const items = typeFilter ? activeItems.filter((d) => d.docType === typeFilter) : activeItems;
   const types = [...new Set(activeItems.map((d) => d.docType ?? "other"))];
 
   const tabs = [
@@ -48,33 +45,25 @@ export default async function DocumentsPage({
 
   return (
     <div>
-      <section className="arctic-page-header text-white py-16 relative overflow-hidden">
-        <div className="arctic-grid-pattern absolute inset-0 pointer-events-none" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-[#00E5C0]/50 text-xs font-bold tracking-[0.2em] uppercase mb-3">
-            Правовая база
-          </p>
-          <h1 className="heading-display text-4xl lg:text-5xl text-white mb-3">
-            Нормативные документы
-          </h1>
-          <p className="text-white/40 text-lg max-w-xl">
-            Регламенты, приказы и положения ГБУ АНИЦ
-          </p>
+      <section className="border-b border-[#DDE8F0] bg-[#F7FAFD] py-16">
+        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Правовая база</p>
+          <h1 className="mt-2 text-4xl font-black text-[#0D1C2E] lg:text-5xl">Нормативные документы</h1>
+          <p className="mt-3 text-lg text-[#4B6075]">Регламенты, приказы и положения ГБУ АНИЦ</p>
         </div>
       </section>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Type filter */}
+      <div className="mx-auto max-w-[900px] px-4 py-10 sm:px-6">
         {tabs.length > 1 && (
-          <div className="flex flex-wrap gap-2 mb-8">
+          <div className="mb-8 flex flex-wrap gap-2">
             {tabs.map((tab) => (
               <Link
                 key={tab.value}
                 href={tab.value ? `/documents?type=${tab.value}` : "/documents"}
-                className={`px-4 py-2 text-xs font-black uppercase tracking-wider transition-all ${
+                className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors ${
                   typeFilter === tab.value
-                    ? "bg-[#00E5C0] text-[#050E1C]"
-                    : "border border-white/10 text-white/40 hover:border-[#00E5C0]/30 hover:text-white"
+                    ? "bg-[#1A3A6B] text-white"
+                    : "border border-[#DDE8F0] text-[#4B6075] hover:border-[#1A3A6B] hover:text-[#1A3A6B]"
                 }`}
               >
                 {tab.label}
@@ -85,10 +74,10 @@ export default async function DocumentsPage({
 
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 bg-white/5 flex items-center justify-center mb-5">
-              <FileText className="h-8 w-8 text-white/20" />
+            <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#EEF4FB]">
+              <FileText className="h-8 w-8 text-[#1A3A6B]" />
             </div>
-            <p className="text-white/40 text-lg font-bold uppercase tracking-wider">Документов пока нет</p>
+            <p className="text-lg font-bold text-[#4B6075]">Документов пока нет</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -96,33 +85,30 @@ export default async function DocumentsPage({
               const colorClass = DOC_TYPE_COLORS[item.docType ?? "other"] ?? DOC_TYPE_COLORS.other;
               const typeLabel = DOC_TYPE_LABELS[item.docType ?? "other"] ?? item.docType;
               return (
-                <div
-                  key={item.id}
-                  className="card-dark p-5 flex items-start gap-4"
-                >
-                  <div className="flex-shrink-0 w-10 h-10 bg-white/5 flex items-center justify-center">
-                    <FileText className="h-5 w-5 text-white/30" />
+                <div key={item.id} className="flex items-start gap-4 rounded-2xl border border-[#DDE8F0] bg-white p-5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
+                    <FileText className="h-5 w-5" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-1.5">
-                      <span className={`inline-block text-[10px] font-black uppercase tracking-wider border px-2 py-0.5 ${colorClass}`}>
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1.5 flex items-center gap-3">
+                      <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${colorClass}`}>
                         {typeLabel}
                       </span>
                       {item.issuedAt && (
-                        <span className="text-xs text-white/20 font-bold">{item.issuedAt}</span>
+                        <span className="text-xs font-semibold text-[#8B9BAD]">{item.issuedAt}</span>
                       )}
                     </div>
-                    <p className="font-bold text-white leading-snug">{item.title}</p>
+                    <p className="font-bold leading-snug text-[#0D1C2E]">{item.title}</p>
                   </div>
                   {item.fileUrl && (
                     <a
                       href={item.fileUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-shrink-0 flex items-center gap-1.5 text-sm text-[#00E5C0]/70 hover:text-[#00E5C0] transition-colors"
+                      className="flex shrink-0 items-center gap-1.5 text-sm font-semibold text-[#1A3A6B] transition hover:text-[#5CAFD6]"
                     >
                       <Download className="h-4 w-4" />
-                      <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">Открыть</span>
+                      <span className="hidden sm:inline text-xs uppercase tracking-wider">Открыть</span>
                     </a>
                   )}
                 </div>

@@ -168,10 +168,8 @@
    =========================== */
 
 body {
-  background:
-    radial-gradient(circle at 82% 12%, rgba(92, 175, 214, 0.14) 0%, transparent 38%),
-    linear-gradient(165deg, #f5f8fb 0%, #ecf2f7 55%, #e2eaf2 100%);
-  color: #24364a;
+  background: #ffffff;
+  color: #0D1C2E;
 }
 
 .arctic-hero {
