@@ -6,8 +6,8 @@ module.exports = {
       script: "node",
       args: ".next/standalone/server.js",
       cwd: "/var/www/gbu-anic",
-      instances: 2,
-      exec_mode: "cluster",
+      instances: 1,
+      exec_mode: "fork",
       env: {
         NODE_ENV: "production",
         PORT: 3000,
