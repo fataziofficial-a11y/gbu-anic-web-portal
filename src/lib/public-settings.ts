@@ -2,6 +2,7 @@
 import { inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { settings } from "@/lib/db/schema";
+import { logger } from "@/lib/logger";
 
 const PUBLIC_SETTING_KEYS = [
   "site_name",
@@ -31,10 +32,23 @@ export async function getPublicSettings(): Promise<PublicSettings> {
   // Always read fresh settings so admin changes are reflected immediately.
   noStore();
 
-  const rows = await db
-    .select({ key: settings.key, value: settings.value })
-    .from(settings)
-    .where(inArray(settings.key, [...PUBLIC_SETTING_KEYS]));
+  if (!process.env.DATABASE_URL) {
+    logger.warn("Public settings: DATABASE_URL is not set, using defaults");
+    return DEFAULT_PUBLIC_SETTINGS;
+  }
+
+  let rows: Array<{ key: string; value: string | null }> = [];
+  try {
+    rows = await db
+      .select({ key: settings.key, value: settings.value })
+      .from(settings)
+      .where(inArray(settings.key, [...PUBLIC_SETTING_KEYS]));
+  } catch (error) {
+    logger.error("Public settings: failed to load from DB, using defaults", {
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+    return DEFAULT_PUBLIC_SETTINGS;
+  }
 
   const values: Record<string, string> = {};
   for (const row of rows) {

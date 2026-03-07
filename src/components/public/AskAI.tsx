@@ -71,19 +71,19 @@ export function AskAI() {
 
       {/* ── Чат-панель ─────────────────────────────────────────────── */}
       {open && (
-        <div className="w-screen h-[100dvh] sm:w-[380px] sm:h-[480px] flex flex-col bg-[#050E1C] sm:border sm:border-white/10 shadow-2xl shadow-black/70">
+        <div className="w-screen h-[100dvh] sm:w-[380px] sm:h-[480px] flex flex-col bg-[#0D2743] sm:border sm:border-[#5CAFD6]/30 shadow-2xl shadow-[#0D2743]/70">
 
           {/* Шапка */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 flex-shrink-0">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-[#00E5C0]/10 border border-[#00E5C0]/20 flex items-center justify-center">
-                <Sparkles className="h-4 w-4 text-[#00E5C0]" />
+              <div className="w-8 h-8 bg-[#5CAFD6]/15 border border-[#5CAFD6]/35 flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-[#A9D2EA]" />
               </div>
               <div>
                 <p className="text-[11px] font-black text-white uppercase tracking-wider leading-none">
                   ИИ-помощник АНИЦ
                 </p>
-                <p className="text-[10px] text-[#00E5C0]/50 mt-0.5">
+                <p className="text-[10px] text-[#A9D2EA]/70 mt-0.5">
                   На основе материалов сайта
                 </p>
               </div>
@@ -101,8 +101,8 @@ export function AskAI() {
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.length === 0 && (
               <div className="flex flex-col items-center justify-center h-full text-center gap-3 pb-6">
-                <div className="w-12 h-12 bg-[#00E5C0]/10 border border-[#00E5C0]/20 flex items-center justify-center">
-                  <Sparkles className="h-5 w-5 text-[#00E5C0]/60" />
+                  <div className="w-12 h-12 bg-[#5CAFD6]/15 border border-[#5CAFD6]/35 flex items-center justify-center">
+                  <Sparkles className="h-5 w-5 text-[#A9D2EA]/80" />
                 </div>
                 <div>
                   <p className="text-white/50 text-sm font-bold">Задайте вопрос об АНИЦ</p>
@@ -130,8 +130,8 @@ export function AskAI() {
                   <div
                     className={
                       msg.role === "user"
-                        ? "bg-[#00E5C0] text-[#050E1C] text-sm px-3.5 py-2.5 font-medium leading-relaxed"
-                        : "bg-white/[0.06] border border-white/[0.08] text-white/80 text-sm px-3.5 py-2.5 leading-relaxed"
+                        ? "bg-[#A9D2EA] text-[#0D2743] text-sm px-3.5 py-2.5 font-medium leading-relaxed"
+                        : "bg-white/[0.08] border border-white/[0.12] text-white/85 text-sm px-3.5 py-2.5 leading-relaxed"
                     }
                   >
                     {msg.content}
@@ -144,7 +144,7 @@ export function AskAI() {
                         <a
                           key={s.url}
                           href={s.url}
-                          className="flex items-center gap-1 text-[11px] text-[#00E5C0]/40 hover:text-[#00E5C0] transition-colors"
+                          className="flex items-center gap-1 text-[11px] text-[#A9D2EA]/70 hover:text-[#A9D2EA] transition-colors"
                         >
                           <ExternalLink className="h-2.5 w-2.5 flex-shrink-0" />
                           <span className="line-clamp-1">{s.title}</span>
@@ -159,13 +159,13 @@ export function AskAI() {
             {/* Индикатор печати */}
             {loading && (
               <div className="flex justify-start gap-2">
-                <div className="w-6 h-6 bg-[#00E5C0]/10 border border-[#00E5C0]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Sparkles className="h-3 w-3 text-[#00E5C0]" />
+                <div className="w-6 h-6 bg-[#5CAFD6]/15 border border-[#5CAFD6]/35 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Sparkles className="h-3 w-3 text-[#A9D2EA]" />
                 </div>
                 <div className="bg-white/[0.06] border border-white/[0.08] px-4 py-3.5 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-[#00E5C0]/60 rounded-full animate-bounce [animation-delay:0ms]" />
-                  <span className="w-1.5 h-1.5 bg-[#00E5C0]/60 rounded-full animate-bounce [animation-delay:150ms]" />
-                  <span className="w-1.5 h-1.5 bg-[#00E5C0]/60 rounded-full animate-bounce [animation-delay:300ms]" />
+                  <span className="w-1.5 h-1.5 bg-[#A9D2EA]/80 rounded-full animate-bounce [animation-delay:0ms]" />
+                  <span className="w-1.5 h-1.5 bg-[#A9D2EA]/80 rounded-full animate-bounce [animation-delay:150ms]" />
+                  <span className="w-1.5 h-1.5 bg-[#A9D2EA]/80 rounded-full animate-bounce [animation-delay:300ms]" />
                 </div>
               </div>
             )}
@@ -183,12 +183,12 @@ export function AskAI() {
                 placeholder="Напишите сообщение..."
                 disabled={loading}
                 maxLength={500}
-                className="flex-1 bg-white/5 border border-white/10 px-3 py-2.5 text-sm text-white placeholder-white/25 focus:outline-none focus:border-[#00E5C0]/50 transition-all disabled:opacity-50"
+                className="flex-1 bg-white/5 border border-white/10 px-3 py-2.5 text-sm text-white placeholder-white/25 focus:outline-none focus:border-[#A9D2EA]/60 transition-all disabled:opacity-50"
               />
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
-                className="bg-[#00E5C0] text-[#050E1C] px-3.5 py-2.5 hover:bg-[#00E5C0]/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center"
+                className="bg-[#A9D2EA] text-[#0D2743] px-3.5 py-2.5 hover:bg-[#A9D2EA]/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center"
                 aria-label="Отправить"
               >
                 {loading ? (
@@ -205,7 +205,7 @@ export function AskAI() {
       {/* ── Кнопка-триггер ─────────────────────────────────────────── */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`w-14 h-14 bg-[#00E5C0] text-[#050E1C] items-center justify-center shadow-lg shadow-[#00E5C0]/20 hover:bg-[#00E5C0]/90 transition-colors m-4 sm:m-0 ${open ? "hidden sm:flex" : "flex"}`}
+        className={`w-14 h-14 bg-[#A9D2EA] text-[#0D2743] items-center justify-center shadow-lg shadow-[#0D2743]/20 hover:bg-[#A9D2EA]/90 transition-colors m-4 sm:m-0 ${open ? "hidden sm:flex" : "flex"}`}
         aria-label={open ? "Закрыть чат" : "Открыть ИИ-помощник"}
       >
         {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}

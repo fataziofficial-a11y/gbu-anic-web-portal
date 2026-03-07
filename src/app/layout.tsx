@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { Cormorant, Manrope } from "next/font/google";
+import { Montserrat, PT_Sans } from "next/font/google";
 import "./globals.css";
 
-const cormorant = Cormorant({
-  variable: "--font-cormorant",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin", "cyrillic"],
   display: "swap",
 });
 
-const manrope = Manrope({
-  variable: "--font-manrope",
+const ptSans = PT_Sans({
+  variable: "--font-pt-sans",
   subsets: ["latin", "cyrillic"],
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -33,7 +34,7 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body className={`${cormorant.variable} ${manrope.variable} font-sans antialiased`}>{children}</body>
+      <body className={`${montserrat.variable} ${ptSans.variable} font-sans antialiased`}>{children}</body>
     </html>
   );
 }

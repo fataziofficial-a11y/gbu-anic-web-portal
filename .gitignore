@@ -41,3 +41,11 @@ yarn-error.log*
 next-env.d.ts
 .claude
 /public/uploads
+
+/src/generated/prisma
+
+# Python venv
+.venv/
+
+# Backups
+/backups/

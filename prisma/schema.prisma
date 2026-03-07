@@ -1,0 +1,267 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model api_logs {
+  id               Int       @id @default(autoincrement())
+  timestamp        DateTime? @default(now()) @db.Timestamp(6)
+  method           String?   @db.VarChar(10)
+  path             String?   @db.VarChar(500)
+  query_params     String?
+  status_code      Int?
+  response_time_ms Int?
+  ip_address       String?   @db.VarChar(45)
+  user_agent       String?   @db.VarChar(500)
+
+  @@index([timestamp], map: "idx_api_logs_timestamp")
+}
+
+model crosspost_log {
+  id               Int       @id @default(autoincrement())
+  content_type     String    @db.VarChar(50)
+  content_id       Int
+  platform         String    @db.VarChar(20)
+  status           String?   @default("queued") @db.VarChar(20)
+  external_post_id String?   @db.VarChar(255)
+  external_url     String?   @db.VarChar(1000)
+  error_message    String?
+  sent_at          DateTime? @db.Timestamp(6)
+  created_at       DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([content_type, content_id], map: "idx_crosspost_content")
+  @@index([status], map: "idx_crosspost_status")
+}
+
+model departments {
+  id              Int               @id @default(autoincrement())
+  name            String            @db.VarChar(255)
+  slug            String            @unique(map: "departments_slug_unique") @db.VarChar(255)
+  description     String?
+  head_id         Int?
+  sort_order      Int?              @default(0)
+  created_at      DateTime?         @default(now()) @db.Timestamp(6)
+  knowledge_items knowledge_items[]
+  projects        projects[]
+  publications    publications[]
+  team_members    team_members[]
+}
+
+model documents {
+  id         Int       @id @default(autoincrement())
+  title      String    @db.VarChar(1000)
+  doc_type   String?   @default("normative") @db.VarChar(50)
+  file_id    Int?
+  file_url   String?   @db.VarChar(1000)
+  issued_at  DateTime? @db.Date
+  status     String?   @default("active") @db.VarChar(20)
+  sort_order Int?      @default(0)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  files      files?    @relation(fields: [file_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documents_file_id_files_id_fk")
+}
+
+model files {
+  id            Int            @id @default(autoincrement())
+  filename      String         @db.VarChar(500)
+  original_name String         @db.VarChar(500)
+  mime_type     String?        @db.VarChar(100)
+  size_bytes    Int?
+  url           String         @db.VarChar(1000)
+  thumbnail_url String?        @db.VarChar(1000)
+  alt_text      String?        @db.VarChar(500)
+  folder        String?        @default("media") @db.VarChar(50)
+  uploaded_by   Int?
+  created_at    DateTime?      @default(now()) @db.Timestamp(6)
+  documents     documents[]
+  users         users?         @relation(fields: [uploaded_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "files_uploaded_by_users_id_fk")
+  media_items   media_items[]
+  news          news[]
+  partners      partners[]
+  publications  publications[]
+  team_members  team_members[]
+
+  @@index([folder], map: "idx_files_folder")
+}
+
+model kb_categories {
+  id              Int               @id @default(autoincrement())
+  name            String            @db.VarChar(255)
+  slug            String            @unique(map: "kb_categories_slug_unique") @db.VarChar(255)
+  description     String?
+  parent_id       Int?
+  sort_order      Int?              @default(0)
+  knowledge_items knowledge_items[]
+}
+
+model knowledge_items {
+  id            Int            @id @default(autoincrement())
+  title         String         @db.VarChar(500)
+  slug          String         @unique(map: "knowledge_items_slug_unique") @db.VarChar(500)
+  content       Json?
+  category_id   Int?
+  tags          String[]       @default([])
+  department_id Int?
+  author_id     Int?
+  status        String?        @default("draft") @db.VarChar(20)
+  published_at  DateTime?      @db.Timestamp(6)
+  metadata      Json?          @default("{}")
+  created_at    DateTime?      @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?      @default(now()) @db.Timestamp(6)
+  users         users?         @relation(fields: [author_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "knowledge_items_author_id_users_id_fk")
+  kb_categories kb_categories? @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "knowledge_items_category_id_kb_categories_id_fk")
+  departments   departments?   @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "knowledge_items_department_id_departments_id_fk")
+
+  @@index([category_id], map: "idx_knowledge_category")
+  @@index([slug], map: "idx_knowledge_slug")
+  @@index([status], map: "idx_knowledge_status")
+}
+
+model media_items {
+  id           Int       @id @default(autoincrement())
+  title        String    @db.VarChar(500)
+  description  String?
+  type         String    @default("video") @db.VarChar(20)
+  video_url    String?   @db.VarChar(1000)
+  thumbnail_id Int?
+  event_date   DateTime? @db.Date
+  sort_order   Int?      @default(0)
+  status       String?   @default("published") @db.VarChar(20)
+  created_at   DateTime? @default(now()) @db.Timestamp(6)
+  files        files?    @relation(fields: [thumbnail_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "media_items_thumbnail_id_files_id_fk")
+}
+
+model news {
+  id              Int       @id @default(autoincrement())
+  title           String    @db.VarChar(500)
+  slug            String    @unique(map: "news_slug_unique") @db.VarChar(500)
+  content         Json?
+  excerpt         String?
+  cover_image_id  Int?
+  category        String?   @db.VarChar(100)
+  tags            String[]  @default([])
+  author_id       Int?
+  status          String?   @default("draft") @db.VarChar(20)
+  published_at    DateTime? @db.Timestamp(6)
+  seo_title       String?   @db.VarChar(500)
+  seo_description String?
+  created_at      DateTime? @default(now()) @db.Timestamp(6)
+  updated_at      DateTime? @default(now()) @db.Timestamp(6)
+  users           users?    @relation(fields: [author_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "news_author_id_users_id_fk")
+  files           files?    @relation(fields: [cover_image_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "news_cover_image_id_files_id_fk")
+
+  @@index([published_at], map: "idx_news_published")
+  @@index([slug], map: "idx_news_slug")
+  @@index([status], map: "idx_news_status")
+}
+
+model pages {
+  id              Int       @id @default(autoincrement())
+  title           String    @db.VarChar(500)
+  slug            String    @unique(map: "pages_slug_unique") @db.VarChar(500)
+  content         Json?
+  parent_id       Int?
+  sort_order      Int?      @default(0)
+  template        String?   @default("default") @db.VarChar(50)
+  status          String?   @default("draft") @db.VarChar(20)
+  author_id       Int?
+  seo_title       String?   @db.VarChar(500)
+  seo_description String?
+  created_at      DateTime? @default(now()) @db.Timestamp(6)
+  updated_at      DateTime? @default(now()) @db.Timestamp(6)
+  users           users?    @relation(fields: [author_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "pages_author_id_users_id_fk")
+
+  @@index([parent_id], map: "idx_pages_parent")
+  @@index([slug], map: "idx_pages_slug")
+}
+
+model partners {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  logo_id     Int?
+  description String?
+  services    String?
+  website_url String?   @db.VarChar(1000)
+  project_ids Json?     @default("[]")
+  sort_order  Int?      @default(0)
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  files       files?    @relation(fields: [logo_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "partners_logo_id_files_id_fk")
+}
+
+model procurements {
+  id           Int       @id @default(autoincrement())
+  title        String    @db.VarChar(1000)
+  description  String?
+  eis_url      String?   @db.VarChar(1000)
+  published_at DateTime? @db.Date
+  deadline     DateTime? @db.Date
+  amount       String?   @db.VarChar(255)
+  status       String?   @default("open") @db.VarChar(20)
+  created_at   DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model projects {
+  id            Int          @id @default(autoincrement())
+  title         String       @db.VarChar(500)
+  slug          String       @unique(map: "projects_slug_unique") @db.VarChar(500)
+  description   String?
+  department_id Int?
+  status        String?      @default("active") @db.VarChar(20)
+  start_date    DateTime?    @db.Date
+  end_date      DateTime?    @db.Date
+  created_at    DateTime?    @default(now()) @db.Timestamp(6)
+  departments   departments? @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "projects_department_id_departments_id_fk")
+}
+
+model publications {
+  id            Int          @id @default(autoincrement())
+  title         String       @db.VarChar(1000)
+  authors       String?
+  abstract      String?
+  year          Int?
+  journal       String?      @db.VarChar(500)
+  doi           String?      @db.VarChar(255)
+  file_id       Int?
+  department_id Int?
+  created_at    DateTime?    @default(now()) @db.Timestamp(6)
+  departments   departments? @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publications_department_id_departments_id_fk")
+  files         files?       @relation(fields: [file_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publications_file_id_files_id_fk")
+}
+
+model settings {
+  id         Int       @id @default(autoincrement())
+  key        String    @unique(map: "settings_key_unique") @db.VarChar(255)
+  value      String?
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model team_members {
+  id            Int          @id @default(autoincrement())
+  name          String       @db.VarChar(255)
+  position      String?      @db.VarChar(255)
+  department_id Int?
+  photo_id      Int?
+  bio           String?
+  email         String?      @db.VarChar(255)
+  sort_order    Int?         @default(0)
+  created_at    DateTime?    @default(now()) @db.Timestamp(6)
+  departments   departments? @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "team_members_department_id_departments_id_fk")
+  files         files?       @relation(fields: [photo_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "team_members_photo_id_files_id_fk")
+}
+
+model users {
+  id              Int               @id @default(autoincrement())
+  email           String            @unique(map: "users_email_unique") @db.VarChar(255)
+  name            String            @db.VarChar(255)
+  password_hash   String            @db.VarChar(255)
+  role            String            @default("author") @db.VarChar(20)
+  avatar_url      String?           @db.VarChar(500)
+  created_at      DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?         @default(now()) @db.Timestamp(6)
+  files           files[]
+  knowledge_items knowledge_items[]
+  news            news[]
+  pages           pages[]
+}

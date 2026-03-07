@@ -7,8 +7,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-cormorant), ui-serif, Georgia, serif;
+  --font-sans: var(--font-pt-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -72,6 +72,17 @@
   --color-frost-50: #F0F4F8;
   --color-frost-100: #E2E8F0;
   --color-frost-200: #CBD5E1;
+
+  /* New silver + arctic-blue accents */
+  --color-silver-50: #F5F8FB;
+  --color-silver-100: #EAF0F5;
+  --color-silver-200: #D5DFE8;
+  --color-silver-300: #B8C6D3;
+  --color-arctic-blue-700: #1D4E89;
+  --color-arctic-blue-600: #2A6AA7;
+  --color-arctic-blue-500: #3B82B8;
+  --color-arctic-cyan-500: #5CAFD6;
+  --color-arctic-deep-900: #0D2743;
 }
 
 :root {
@@ -157,15 +168,17 @@
    =========================== */
 
 body {
-  background: #eeeeee;
-  color: #333333;
+  background:
+    radial-gradient(circle at 82% 12%, rgba(92, 175, 214, 0.14) 0%, transparent 38%),
+    linear-gradient(165deg, #f5f8fb 0%, #ecf2f7 55%, #e2eaf2 100%);
+  color: #24364a;
 }
 
 .arctic-hero {
   background:
-    radial-gradient(circle at 78% 18%, rgba(0, 201, 167, 0.14) 0%, transparent 34%),
-    linear-gradient(160deg, #f7f7f7 0%, #ececec 60%, #e7e7e7 100%);
-  border-bottom: 1px solid #dddddd;
+    radial-gradient(circle at 78% 18%, rgba(92, 175, 214, 0.2) 0%, transparent 36%),
+    linear-gradient(160deg, #f7fafd 0%, #edf3f9 60%, #e5edf5 100%);
+  border-bottom: 1px solid #d5dfe8;
 }
 
 .anic-hero-art {
@@ -173,13 +186,13 @@ body {
     linear-gradient(to bottom, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.12)),
     url("/anic-hero.png") center / cover no-repeat;
   border: 1px solid #d5d5d5;
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 32px rgba(13, 39, 67, 0.14);
 }
 
 .arctic-page-header {
   background:
-    linear-gradient(180deg, rgba(0, 201, 167, 0.08) 0%, rgba(0, 201, 167, 0.03) 28%, #eeeeee 100%);
-  border-bottom: 1px solid #d9d9d9;
+    linear-gradient(180deg, rgba(92, 175, 214, 0.12) 0%, rgba(92, 175, 214, 0.04) 28%, #eef4f9 100%);
+  border-bottom: 1px solid #d5dfe8;
 }
 
 .arctic-grid-pattern {
@@ -191,28 +204,28 @@ body {
 
 .card-violet,
 .card-dark {
-  background: #ffffff;
-  border: 1px solid #dcdcdc;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  background: #fefeff;
+  border: 1px solid #d5dfe8;
+  box-shadow: 0 6px 18px rgba(29, 78, 137, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .card-violet {
-  border-top: 3px solid #00c9a7;
+  border-top: 3px solid #3b82b8;
 }
 
 .card-violet:hover,
 .card-dark:hover {
-  border-color: #00c9a7;
+  border-color: #3b82b8;
   transform: translateY(-2px);
-  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 22px rgba(29, 78, 137, 0.14);
 }
 
 .btn-neon-arrow {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  color: #00a98b;
+  color: #2a6aa7;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -221,7 +234,7 @@ body {
 }
 
 .btn-neon-arrow:hover {
-  color: #ce2127;
+  color: #1d4e89;
 }
 
 .card-hover {
@@ -244,7 +257,7 @@ body {
   top: 0;
   bottom: 0;
   width: 3px;
-  background: #00c9a7;
+  background: #3b82b8;
   border-radius: 3px 0 0 3px;
   opacity: 0;
   transition: opacity 0.2s ease;
@@ -335,33 +348,33 @@ body {
 }
 
 .heading-display {
-  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 900;
-  letter-spacing: -0.02em;
+  font-family: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.015em;
   line-height: 1;
   text-transform: uppercase;
-  color: #111111;
+  color: #0d2743;
 }
 
 .heading-serif {
-  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 900;
-  letter-spacing: -0.02em;
+  font-family: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.015em;
   line-height: 1;
   text-transform: uppercase;
-  color: #111111;
+  color: #0d2743;
 }
 
 /* Light-theme compatibility for legacy public page classes */
 .anic-theme {
-  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-pt-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 .anic-theme h1,
 .anic-theme h2,
 .anic-theme h3,
 .anic-theme h4 {
-  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   letter-spacing: -0.01em;
 }
 
@@ -402,11 +415,11 @@ body {
 .anic-theme .text-\[\#00E5C0\]\/60,
 .anic-theme .text-\[\#00E5C0\]\/50,
 .anic-theme .text-\[\#00E5C0\]\/40 {
-  color: #00a98b !important;
+  color: #2a6aa7 !important;
 }
 
 .anic-theme .bg-\[\#00E5C0\] {
-  background: #00c9a7 !important;
+  background: #3b82b8 !important;
 }
 
 .anic-theme .text-\[\#050E1C\] {
@@ -422,7 +435,7 @@ body {
 .anic-theme .border-\[\#00E5C0\]\/20,
 .anic-theme .border-\[\#00E5C0\]\/10,
 .anic-theme .border-\[\#00E5C0\]\/8 {
-  border-color: rgba(0, 169, 139, 0.3) !important;
+  border-color: rgba(59, 130, 184, 0.35) !important;
 }
 /* === Tiptap Editor Styles === */
 .ProseMirror {
@@ -530,8 +543,8 @@ body {
   line-height: 1.75;
 }
 .prose p { margin-bottom: 1rem; }
-.prose h2 { font-family: var(--font-cormorant), ui-serif, Georgia, serif; font-size: 1.75rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 0.75rem; color: #0B1A2F; }
-.prose h3 { font-family: var(--font-cormorant), ui-serif, Georgia, serif; font-size: 1.35rem; font-weight: 600; margin-top: 1.75rem; margin-bottom: 0.5rem; color: #112240; }
+.prose h2 { font-family: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif; font-size: 1.75rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 0.75rem; color: #0D2743; }
+.prose h3 { font-family: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif; font-size: 1.35rem; font-weight: 700; margin-top: 1.75rem; margin-bottom: 0.5rem; color: #1D4E89; }
 .prose ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
 .prose ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
 .prose li { margin-bottom: 0.375rem; }
@@ -544,5 +557,4 @@ body {
 .prose pre { background: #0B1A2F; color: #E2E8F0; border-radius: 0.75rem; padding: 1.25rem; overflow-x: auto; margin-bottom: 1rem; }
 .prose pre code { background: none; padding: 0; color: inherit; }
 .prose hr { border: none; border-top: 1px solid #E2E8F0; margin: 2.5rem 0; }
-
 
