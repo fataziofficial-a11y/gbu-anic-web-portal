@@ -56,17 +56,17 @@ export function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="card-dark p-10 flex flex-col items-center justify-center text-center min-h-[340px]">
-        <div className="w-14 h-14 bg-[#00E5C0]/10 border border-[#00E5C0]/20 flex items-center justify-center mb-4">
-          <CheckCircle className="h-7 w-7 text-[#00E5C0]" />
+      <div className="flex min-h-85 flex-col items-center justify-center rounded-2xl border border-[#DDE8F0] bg-white p-10 text-center">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50">
+          <CheckCircle className="h-7 w-7 text-green-500" />
         </div>
-        <h3 className="font-black text-white text-lg mb-2 uppercase tracking-tight">Сообщение отправлено!</h3>
-        <p className="text-white/35 text-sm max-w-xs">
+        <h3 className="mb-2 text-lg font-black text-[#0D1C2E]">Сообщение отправлено!</h3>
+        <p className="max-w-xs text-sm text-[#4B6075]">
           Мы получили ваше обращение и ответим в течение 1–2 рабочих дней.
         </p>
         <button
           onClick={() => setStatus("idle")}
-          className="mt-6 text-sm text-[#00E5C0]/60 hover:text-[#00E5C0] underline underline-offset-2 transition-colors"
+          className="mt-6 cursor-pointer text-sm text-arctic-cyan-500 underline underline-offset-2 transition-colors hover:text-[#1A3A6B]"
         >
           Отправить ещё одно сообщение
         </button>
@@ -74,17 +74,19 @@ export function ContactForm() {
     );
   }
 
+  const inputClass =
+    "w-full rounded-xl border border-[#DDE8F0] bg-[#F7FAFD] px-4 py-2.5 text-sm text-[#0D1C2E] placeholder-[#8B9BAD] transition-all focus:border-[#5CAFD6] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#5CAFD6]/20";
+
+  const labelClass = "text-[10px] font-bold uppercase tracking-widest text-[#8B9BAD]";
+
   return (
     <form
       onSubmit={handleSubmit}
-      className="card-dark p-7 space-y-5"
+      className="rounded-2xl border border-[#DDE8F0] bg-white p-7 space-y-5"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label
-            htmlFor="name"
-            className="text-[10px] font-black text-white/30 uppercase tracking-widest"
-          >
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <label htmlFor="name" className={labelClass}>
             Имя <span className="text-red-400">*</span>
           </label>
           <input
@@ -95,14 +97,11 @@ export function ContactForm() {
             value={form.name}
             onChange={handleChange}
             placeholder="Иван Иванов"
-            className="w-full bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#00E5C0]/50 focus:ring-0 transition-all"
+            className={inputClass}
           />
         </div>
-        <div className="space-y-2">
-          <label
-            htmlFor="email"
-            className="text-[10px] font-black text-white/30 uppercase tracking-widest"
-          >
+        <div className="space-y-1.5">
+          <label htmlFor="email" className={labelClass}>
             Email <span className="text-red-400">*</span>
           </label>
           <input
@@ -113,16 +112,13 @@ export function ContactForm() {
             value={form.email}
             onChange={handleChange}
             placeholder="ivanov@example.ru"
-            className="w-full bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#00E5C0]/50 focus:ring-0 transition-all"
+            className={inputClass}
           />
         </div>
       </div>
 
-      <div className="space-y-2">
-        <label
-          htmlFor="subject"
-          className="text-[10px] font-black text-white/30 uppercase tracking-widest"
-        >
+      <div className="space-y-1.5">
+        <label htmlFor="subject" className={labelClass}>
           Тема <span className="text-red-400">*</span>
         </label>
         <input
@@ -133,15 +129,12 @@ export function ContactForm() {
           value={form.subject}
           onChange={handleChange}
           placeholder="Тема обращения"
-          className="w-full bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#00E5C0]/50 focus:ring-0 transition-all"
+          className={inputClass}
         />
       </div>
 
-      <div className="space-y-2">
-        <label
-          htmlFor="message"
-          className="text-[10px] font-black text-white/30 uppercase tracking-widest"
-        >
+      <div className="space-y-1.5">
+        <label htmlFor="message" className={labelClass}>
           Сообщение <span className="text-red-400">*</span>
         </label>
         <textarea
@@ -152,13 +145,13 @@ export function ContactForm() {
           value={form.message}
           onChange={handleChange}
           placeholder="Ваше сообщение..."
-          className="w-full bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#00E5C0]/50 focus:ring-0 transition-all resize-none"
+          className={`${inputClass} resize-none`}
         />
       </div>
 
       {status === "error" && (
-        <div className="flex items-start gap-2.5 bg-red-900/20 border border-red-500/30 px-4 py-3 text-sm text-red-400">
-          <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>{errorMsg}</span>
         </div>
       )}
@@ -166,7 +159,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full bg-[#00E5C0] text-[#050E1C] py-3 font-black text-sm uppercase tracking-wider hover:bg-[#00E5C0]/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#1A3A6B] py-3 text-sm font-black uppercase tracking-wider text-white transition-colors hover:bg-arctic-deep-900 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isPending ? (
           <>
@@ -181,7 +174,7 @@ export function ContactForm() {
         )}
       </button>
 
-      <p className="text-[10px] text-white/15 text-center uppercase tracking-wider">
+      <p className="text-center text-[10px] uppercase tracking-wider text-[#8B9BAD]">
         Мы ответим в течение 1–2 рабочих дней
       </p>
     </form>
