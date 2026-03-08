@@ -12,6 +12,7 @@ const NAV = [
   { label: "Медиа", href: "/media" },
   { label: "Партнёрам", href: "/partners" },
   { label: "Документы", href: "/documents" },
+  { label: "Закупки", href: "/procurement" },
 ];
 
 export function PublicHeader() {
@@ -63,7 +64,7 @@ export function PublicHeader() {
           <div className="flex items-center gap-3">
             <Link
               href="/contacts"
-              className="hidden xl:inline-flex items-center bg-[#5CAFD6] text-[#060E18] px-5 py-2 text-[12px] font-black uppercase tracking-[0.1em] transition-colors hover:bg-[#7CC4E8]"
+              className="hidden xl:inline-flex items-center bg-[#5CAFD6] text-[#060E18] px-5 py-2 text-[13px] font-bold transition-colors hover:bg-[#7CC4E8]"
             >
               Связаться с нами
             </Link>

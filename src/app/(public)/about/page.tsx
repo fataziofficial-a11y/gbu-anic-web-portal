@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import { departments, teamMembers } from "@/lib/db/schema";
 import { asc } from "drizzle-orm";
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Building2, Users, Target, Globe, Lightbulb } from "lucide-react";
@@ -132,49 +131,7 @@ export default async function AboutPage() {
           </section>
         )}
 
-        {/* Team */}
-        {team.length > 0 && (
-          <section>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Люди</p>
-            <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Наши сотрудники</h2>
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {team.map((member) => (
-                <div key={member.id} className="rounded-2xl border border-[#DDE8F0] bg-white p-6 text-center">
-                  {member.photo ? (
-                    <Image
-                      src={member.photo.url}
-                      alt={member.name}
-                      width={80}
-                      height={80}
-                      className="mx-auto mb-4 h-20 w-20 rounded-full object-cover ring-2 ring-[#DDE8F0]"
-                    />
-                  ) : (
-                    <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-[#EEF4FB]">
-                      <span className="text-2xl font-black text-[#1A3A6B]">{member.name.charAt(0)}</span>
-                    </div>
-                  )}
-                  <p className="font-bold text-[#0D1C2E]">{member.name}</p>
-                  {member.position && (
-                    <p className="mt-1 text-xs text-[#4B6075]">{member.position}</p>
-                  )}
-                  {member.department && (
-                    <p className="mt-1.5 text-xs font-bold uppercase tracking-wider text-[#5CAFD6]">
-                      {member.department.name}
-                    </p>
-                  )}
-                  {member.email && (
-                    <a
-                      href={`mailto:${member.email}`}
-                      className="mt-3 block text-xs text-[#8B9BAD] transition hover:text-[#1A3A6B]"
-                    >
-                      {member.email}
-                    </a>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+        {/* Team section intentionally hidden — will be added later with photos */}
       </div>
     </div>
   );

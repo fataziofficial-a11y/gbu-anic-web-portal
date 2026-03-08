@@ -3,10 +3,11 @@ import { news, projects, teamMembers } from "@/lib/db/schema";
 import { eq, desc, count } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import Link from "next/link";
+import Image from "next/image";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { AskAI } from "@/components/public/AskAI";
-import { ArrowRight, FlaskConical, Thermometer, Globe, BookOpen, Users, FileText, Layers, ChevronRight } from "lucide-react";
+import { ArrowRight, FlaskConical, Calendar, BookOpen, Users, Layers, ChevronRight } from "lucide-react";
 
 export const revalidate = 60;
 
@@ -22,7 +23,8 @@ async function getHomeData() {
         where: eq(news.status, "published"),
         orderBy: [desc(news.publishedAt)],
         limit: 3,
-        columns: { id: true, title: true, slug: true, category: true, publishedAt: true },
+        columns: { id: true, title: true, slug: true, category: true, publishedAt: true, excerpt: true },
+        with: { coverImage: { columns: { url: true, altText: true } } },
       }),
       db.query.projects.findMany({
         where: eq(projects.status, "active"),
@@ -48,6 +50,35 @@ async function getHomeData() {
   }
 }
 
+// Gradient placeholders for news cards without photos
+const NEWS_PLACEHOLDERS = [
+  "from-[#1A3A6B] to-[#0D1C2E]",
+  "from-[#0D4F8C] to-[#1A3A6B]",
+  "from-[#2C5F8A] to-[#060E18]",
+];
+
+// Research area cards
+const RESEARCH_AREAS = [
+  {
+    title: "Климатология",
+    desc: "Мониторинг климатических изменений и разработка моделей адаптации северных территорий к глобальному потеплению.",
+    num: "01",
+    img: "/images/card-climate.jpg",
+  },
+  {
+    title: "Экология Арктики",
+    desc: "Изучение экосистем, биоразнообразия арктических регионов и влияния антропогенных факторов на природную среду.",
+    num: "02",
+    img: "/images/card-ecology.jpg",
+  },
+  {
+    title: "Устойчивое развитие",
+    desc: "Научная экспертиза и прикладные решения для экономики и социальной сферы арктических территорий.",
+    num: "03",
+    img: "/images/card-sustainability.jpg",
+  },
+];
+
 export default async function HomePage() {
   const { latestNews, activeProjects, teamCount, newsCount } = await getHomeData();
 
@@ -58,36 +89,34 @@ export default async function HomePage() {
       <main className="flex-1">
 
         {/* ── Hero ──────────────────────────────────────────────────── */}
-        <section className="relative bg-[#060E18] text-white overflow-hidden" style={{ minHeight: "92vh" }}>
+        <section
+          className="relative bg-[#060E18] text-white overflow-hidden"
+          style={{ minHeight: "92vh" }}
+        >
+          {/* Background photo */}
+          <div className="absolute inset-0">
+            <Image
+              src="/images/hero-arctic.jpg"
+              alt="Арктический пейзаж"
+              fill
+              priority
+              className="object-cover object-center opacity-40"
+              sizes="100vw"
+            />
+            {/* Dark gradient overlay for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#060E18] via-[#060E18]/80 to-[#060E18]/30" />
+          </div>
 
-          {/* Angular geometric overlay — ANL-style structural element */}
+          {/* Decorative elements */}
           <div className="absolute inset-0 pointer-events-none select-none">
-            {/* Right diagonal panel */}
-            <div
-              className="absolute right-0 top-0 h-full w-[55%] origin-top-right"
-              style={{
-                background: "linear-gradient(135deg, transparent 30%, #0D1C2E 30%)",
-                opacity: 0.6,
-              }}
-            />
-            {/* Cyan accent line — top */}
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#5CAFD6]" />
-            {/* Grid dots pattern */}
-            <svg
-              className="absolute inset-0 w-full h-full opacity-[0.04]"
-              style={{ backgroundImage: "radial-gradient(#5CAFD6 1px, transparent 1px)", backgroundSize: "32px 32px" }}
-            />
-            {/* Large circle — right side decorative */}
-            <svg className="absolute right-[-120px] top-[-60px] h-[600px] w-[600px] opacity-[0.06]" viewBox="0 0 600 600" fill="none">
-              <circle cx="300" cy="300" r="298" stroke="#5CAFD6" strokeWidth="1" />
-              <circle cx="300" cy="300" r="230" stroke="#5CAFD6" strokeWidth="0.8" />
-              <circle cx="300" cy="300" r="155" stroke="#5CAFD6" strokeWidth="0.6" />
-            </svg>
           </div>
 
           {/* Hero content */}
-          <div className="relative mx-auto max-w-[1240px] px-4 sm:px-6 flex flex-col justify-center" style={{ minHeight: "92vh", paddingTop: "120px", paddingBottom: "80px" }}>
-
+          <div
+            className="relative mx-auto max-w-[1240px] px-4 sm:px-6 flex flex-col justify-center"
+            style={{ minHeight: "92vh", paddingTop: "120px", paddingBottom: "80px" }}
+          >
             {/* Eyebrow label */}
             <div className="flex items-start gap-3 mb-8 max-w-[42ch]">
               <div className="h-[2px] w-8 bg-[#5CAFD6] shrink-0 mt-[6px]" />
@@ -143,7 +172,6 @@ export default async function HomePage() {
         <section className="bg-white py-24">
           <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
 
-            {/* Section header */}
             <div className="flex items-end justify-between gap-6 mb-14">
               <div>
                 <div className="flex items-center gap-3 mb-4">
@@ -159,44 +187,29 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            {/* Areas grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#DDE8F0]">
-              {[
-                {
-                  icon: Thermometer,
-                  title: "Климатология",
-                  desc: "Мониторинг климатических изменений и разработка моделей адаптации северных территорий к глобальному потеплению.",
-                  num: "01",
-                },
-                {
-                  icon: FlaskConical,
-                  title: "Экология Арктики",
-                  desc: "Изучение экосистем, биоразнообразия арктических регионов и влияния антропогенных факторов на природную среду.",
-                  num: "02",
-                },
-                {
-                  icon: Globe,
-                  title: "Устойчивое развитие",
-                  desc: "Научная экспертиза и прикладные решения для экономики и социальной сферы арктических территорий.",
-                  num: "03",
-                },
-              ].map((area) => (
-                <article key={area.title} className="bg-white p-10 group hover:bg-[#F4F8FB] transition-colors">
-                  <p className="text-[11px] font-black text-[#DDE8F0] tracking-[0.2em] mb-8">{area.num}</p>
-                  <div className="mb-6 inline-flex h-12 w-12 items-center justify-center bg-[#EEF4FB] text-[#1A3A6B]">
-                    <area.icon className="h-6 w-6" />
+            {/* Areas grid with photos */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {RESEARCH_AREAS.map((area) => (
+                <article key={area.title} className="group relative overflow-hidden" style={{ minHeight: "320px" }}>
+                  {/* Background photo */}
+                  <Image
+                    src={area.img}
+                    alt={area.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                  {/* Dark overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#060E18] via-[#060E18]/60 to-[#060E18]/20" />
+                  {/* Content */}
+                  <div className="absolute inset-0 flex flex-col justify-end p-8">
+                    <p className="text-[10px] font-black text-[#5CAFD6]/60 tracking-[0.2em] mb-3">{area.num}</p>
+                    <h3 className="text-xl font-black text-white mb-3">{area.title}</h3>
+                    <p className="text-sm leading-relaxed text-white/60">{area.desc}</p>
+                    <div className="mt-5 h-[2px] w-0 bg-[#5CAFD6] group-hover:w-12 transition-all duration-300" />
                   </div>
-                  <h3 className="text-xl font-black text-[#0D1C2E] mb-3">{area.title}</h3>
-                  <p className="text-sm leading-relaxed text-[#4B6075]">{area.desc}</p>
-                  <div className="mt-8 h-[2px] w-0 bg-[#5CAFD6] group-hover:w-12 transition-all duration-300" />
                 </article>
               ))}
-            </div>
-
-            <div className="mt-6 sm:hidden">
-              <Link href="/research" className="inline-flex items-center gap-1.5 text-[13px] font-bold text-[#1A3A6B]">
-                Все исследования <ChevronRight className="h-4 w-4" />
-              </Link>
             </div>
           </div>
         </section>
@@ -221,30 +234,52 @@ export default async function HomePage() {
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#DDE8F0]">
+              {/* News feed — same style as /news page */}
+              <div className="space-y-4">
                 {latestNews.map((item, i) => (
                   <Link
                     key={item.id}
                     href={`/news/${item.slug}`}
-                    className="group flex flex-col bg-white p-8 hover:bg-[#EEF4FB] transition-colors"
+                    className="group flex gap-5 bg-white border border-[#DDE8F0] hover:border-[#5CAFD6]/40 transition-colors overflow-hidden"
                   >
-                    <div className="flex items-center justify-between mb-6">
-                      {item.category && (
-                        <span className="text-[10px] font-black uppercase tracking-[0.18em] text-[#5CAFD6] border border-[#5CAFD6]/30 px-2.5 py-1">
-                          {item.category}
-                        </span>
+                    {/* Cover image / placeholder */}
+                    <div className="relative shrink-0 w-[200px] sm:w-[240px] overflow-hidden">
+                      {item.coverImage?.url ? (
+                        <Image
+                          src={item.coverImage.url}
+                          alt={item.coverImage.altText ?? item.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          sizes="240px"
+                        />
+                      ) : (
+                        <div className={`absolute inset-0 bg-gradient-to-br ${NEWS_PLACEHOLDERS[i % NEWS_PLACEHOLDERS.length]}`} />
                       )}
-                      <span className="text-[11px] text-[#8EA8C0] ml-auto">
-                        {item.publishedAt
-                          ? new Date(item.publishedAt).toLocaleDateString("ru-RU", { day: "2-digit", month: "short", year: "numeric" })
-                          : ""}
-                      </span>
                     </div>
-                    <h3 className="flex-1 text-[1.05rem] font-bold text-[#0D1C2E] leading-snug group-hover:text-[#1A3A6B] line-clamp-4 transition-colors">
-                      {item.title}
-                    </h3>
-                    <div className="mt-6 flex items-center gap-2 text-[12px] font-black text-[#5CAFD6] uppercase tracking-[0.12em]">
-                      Читать <ArrowRight className="h-3.5 w-3.5" />
+                    {/* Text */}
+                    <div className="flex flex-col justify-center py-5 pr-6 min-w-0">
+                      <div className="flex items-center gap-3 mb-3">
+                        {item.category && (
+                          <span className="text-[10px] font-black uppercase tracking-[0.18em] text-[#5CAFD6] border border-[#5CAFD6]/30 px-2.5 py-1">
+                            {item.category}
+                          </span>
+                        )}
+                        {item.publishedAt && (
+                          <span className="flex items-center gap-1 text-[11px] text-[#8EA8C0]">
+                            <Calendar className="h-3 w-3" />
+                            {new Date(item.publishedAt).toLocaleDateString("ru-RU", { day: "2-digit", month: "short", year: "numeric" })}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-[1.05rem] font-bold text-[#0D1C2E] leading-snug group-hover:text-[#1A3A6B] line-clamp-2 transition-colors mb-2">
+                        {item.title}
+                      </h3>
+                      {item.excerpt && (
+                        <p className="text-sm text-[#4B6075] leading-relaxed line-clamp-2">{item.excerpt}</p>
+                      )}
+                      <div className="mt-4 flex items-center gap-2 text-[12px] font-black text-[#5CAFD6] uppercase tracking-[0.12em]">
+                        Читать далее <ArrowRight className="h-3.5 w-3.5" />
+                      </div>
                     </div>
                   </Link>
                 ))}
@@ -273,21 +308,29 @@ export default async function HomePage() {
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#DDE8F0]">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {activeProjects.map((project) => (
-                  <article key={project.id} className="bg-white p-8 hover:bg-[#F4F8FB] transition-colors">
-                    <div className="mb-6 inline-flex h-12 w-12 items-center justify-center bg-[#EEF4FB] text-[#1A3A6B]">
-                      <FlaskConical className="h-6 w-6" />
+                  <article key={project.id} className="group relative overflow-hidden" style={{ minHeight: "260px" }}>
+                    {/* Background photo */}
+                    <Image
+                      src="/images/card-research.jpg"
+                      alt={project.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#060E18] via-[#060E18]/70 to-[#060E18]/30" />
+                    <div className="absolute inset-0 flex flex-col justify-end p-7">
+                      {project.department && (
+                        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#5CAFD6] mb-2">
+                          {project.department.name}
+                        </p>
+                      )}
+                      <h3 className="text-[1rem] font-bold text-white leading-snug">{project.title}</h3>
+                      {project.description && (
+                        <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-white/55">{project.description}</p>
+                      )}
                     </div>
-                    {project.department && (
-                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#5CAFD6] mb-3">
-                        {project.department.name}
-                      </p>
-                    )}
-                    <h3 className="text-[1.05rem] font-bold text-[#0D1C2E] leading-snug">{project.title}</h3>
-                    {project.description && (
-                      <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-[#4B6075]">{project.description}</p>
-                    )}
                   </article>
                 ))}
               </div>
@@ -298,30 +341,11 @@ export default async function HomePage() {
         {/* ── Quick links (dark band) ───────────────────────────────── */}
         <section className="bg-[#060E18] py-20 border-t-[3px] border-[#5CAFD6]">
           <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
-
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-white/5">
               {[
-                {
-                  icon: BookOpen,
-                  title: "База знаний",
-                  desc: "Научные материалы, аналитика и методические публикации центра.",
-                  href: "/knowledge-base",
-                  cta: "Перейти",
-                },
-                {
-                  icon: Layers,
-                  title: "Документы",
-                  desc: "Нормативные акты, уставные документы и отчёты о деятельности.",
-                  href: "/documents",
-                  cta: "Открыть",
-                },
-                {
-                  icon: Users,
-                  title: "Партнёрам",
-                  desc: "Информация о сотрудничестве, грантах и совместных проектах.",
-                  href: "/partners",
-                  cta: "Узнать больше",
-                },
+                { icon: BookOpen, title: "База знаний", desc: "Научные материалы, аналитика и методические публикации центра.", href: "/knowledge-base", cta: "Перейти" },
+                { icon: Layers, title: "Документы", desc: "Нормативные акты, уставные документы и отчёты о деятельности.", href: "/documents", cta: "Открыть" },
+                { icon: Users, title: "Партнёрам", desc: "Информация о сотрудничестве, грантах и совместных проектах.", href: "/partners", cta: "Узнать больше" },
               ].map((block) => (
                 <div key={block.title} className="bg-[#060E18] p-10 group hover:bg-[#0D1C2E] transition-colors">
                   <div className="mb-6 inline-flex h-12 w-12 items-center justify-center border border-white/10 text-[#5CAFD6]">
