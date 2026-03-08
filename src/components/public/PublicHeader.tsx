@@ -12,7 +12,6 @@ const NAV = [
   { label: "Медиа", href: "/media" },
   { label: "Партнёрам", href: "/partners" },
   { label: "Документы", href: "/documents" },
-  { label: "Контакты", href: "/contacts" },
 ];
 
 export function PublicHeader() {
