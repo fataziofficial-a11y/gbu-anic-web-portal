@@ -33,11 +33,11 @@ export function PublicHeader() {
               А
             </div>
             <div>
-              <p className="text-[13px] font-black uppercase tracking-[0.16em] text-white leading-none">
-                ГБУ АНИЦ
+              <p className="text-[15px] font-black uppercase tracking-[0.12em] text-white leading-none">
+                АНИЦ
               </p>
               <p className="text-[10px] text-white/35 hidden sm:block mt-0.5">
-                Арктический научно-исследовательский центр
+                ГБУ Республики Саха (Якутия)
               </p>
             </div>
           </Link>

@@ -7,10 +7,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-roboto-mono), var(--font-pt-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-exo2), var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-roboto-mono), ui-monospace, monospace;
-  --font-display: var(--font-exo2), var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -171,11 +171,11 @@
 body {
   background: #ffffff;
   color: #0D1C2E;
-  font-family: var(--font-roboto-mono), var(--font-pt-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-exo2), var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Skip link for keyboard navigation */
@@ -386,7 +386,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .heading-display {
-  font-family: var(--font-exo2), var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   font-weight: 800;
   letter-spacing: -0.015em;
   line-height: 1;
@@ -395,7 +395,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .heading-serif {
-  font-family: var(--font-exo2), var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   font-weight: 800;
   letter-spacing: -0.015em;
   line-height: 1;
@@ -405,14 +405,14 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Light-theme compatibility for legacy public page classes */
 .anic-theme {
-  font-family: var(--font-pt-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 .anic-theme h1,
 .anic-theme h2,
 .anic-theme h3,
 .anic-theme h4 {
-  font-family: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   letter-spacing: -0.01em;
 }
 
@@ -581,8 +581,8 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.75;
 }
 .prose p { margin-bottom: 1rem; }
-.prose h2 { font-family: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif; font-size: 1.75rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 0.75rem; color: #0D2743; }
-.prose h3 { font-family: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif; font-size: 1.35rem; font-weight: 700; margin-top: 1.75rem; margin-bottom: 0.5rem; color: #1D4E89; }
+.prose h2 { font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif; font-size: 1.75rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 0.75rem; color: #0D2743; }
+.prose h3 { font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif; font-size: 1.35rem; font-weight: 700; margin-top: 1.75rem; margin-bottom: 0.5rem; color: #1D4E89; }
 .prose ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
 .prose ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
 .prose li { margin-bottom: 0.375rem; }

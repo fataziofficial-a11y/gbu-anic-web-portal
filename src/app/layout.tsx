@@ -1,41 +1,28 @@
 import type { Metadata } from "next";
-import { Exo_2, Roboto_Mono, Montserrat, PT_Sans } from "next/font/google";
+import { Manrope, Inter } from "next/font/google";
 import "./globals.css";
 
-const exo2 = Exo_2({
-  variable: "--font-exo2",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin", "cyrillic"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-const robotoMono = Roboto_Mono({
-  variable: "--font-roboto-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin", "cyrillic"],
-  weight: ["300", "400", "500", "700"],
-  display: "swap",
-});
-
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin", "cyrillic"],
-  display: "swap",
-});
-
-const ptSans = PT_Sans({
-  variable: "--font-pt-sans",
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "700"],
+  weight: ["300", "400", "500", "600"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "ГБУ АНИЦ — Арктический научно-исследовательский центр",
-    template: "%s | ГБУ АНИЦ",
+    default: "АНИЦ — Арктический научно-исследовательский центр",
+    template: "%s | АНИЦ",
   },
   description:
-    "Государственное бюджетное учреждение Арктический научно-исследовательский центр Республики Саха (Якутия)",
+    "Арктический научно-исследовательский центр Республики Саха (Якутия). Где наука встречается с будущим Арктики.",
 };
 
 export default function RootLayout({
@@ -48,7 +35,7 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body className={`${exo2.variable} ${robotoMono.variable} ${montserrat.variable} ${ptSans.variable} font-sans antialiased`}>{children}</body>
+      <body className={`${manrope.variable} ${inter.variable} font-sans antialiased`}>{children}</body>
     </html>
   );
 }
