@@ -89,20 +89,20 @@ export default async function HomePage() {
           <div className="relative mx-auto max-w-[1240px] px-4 sm:px-6 flex flex-col justify-center" style={{ minHeight: "92vh", paddingTop: "120px", paddingBottom: "80px" }}>
 
             {/* Eyebrow label */}
-            <div className="flex items-center gap-3 mb-8">
-              <div className="h-[2px] w-8 bg-[#5CAFD6]" />
-              <span className="text-[#5CAFD6] text-[11px] font-black uppercase tracking-[0.22em]">
-                Арктический научно-исследовательский центр
+            <div className="flex items-start gap-3 mb-8 max-w-[42ch]">
+              <div className="h-[2px] w-8 bg-[#5CAFD6] shrink-0 mt-[6px]" />
+              <span className="text-[#5CAFD6] text-[11px] font-black uppercase tracking-[0.18em] leading-relaxed">
+                Арктический научно-исследовательский центр Республики Саха (Якутия)
               </span>
             </div>
 
             {/* Main heading */}
-            <h1 className="text-[clamp(4rem,10vw,8rem)] font-black leading-[0.9] tracking-tight mb-8">
-              АНИЦ
+            <h1 className="text-[clamp(2.4rem,5.5vw,4.5rem)] font-black leading-[1.05] tracking-tight max-w-[18ch] mb-8">
+              Наука для развития Арктики
             </h1>
 
-            <p className="max-w-[40ch] text-[clamp(1rem,1.5vw,1.25rem)] leading-7 text-white/55 mb-10">
-              Где наука встречается с будущим Арктики
+            <p className="max-w-[48ch] text-[clamp(0.95rem,1.4vw,1.1rem)] leading-7 text-white/55 mb-10">
+              Исследования и научная основа для устойчивого развития Севера
             </p>
 
             {/* CTAs */}
