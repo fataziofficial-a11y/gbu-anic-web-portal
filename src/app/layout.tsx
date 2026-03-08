@@ -1,6 +1,20 @@
 import type { Metadata } from "next";
-import { Montserrat, PT_Sans } from "next/font/google";
+import { Exo_2, Roboto_Mono, Montserrat, PT_Sans } from "next/font/google";
 import "./globals.css";
+
+const exo2 = Exo_2({
+  variable: "--font-exo2",
+  subsets: ["latin", "cyrillic"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const robotoMono = Roboto_Mono({
+  variable: "--font-roboto-mono",
+  subsets: ["latin", "cyrillic"],
+  weight: ["300", "400", "500", "700"],
+  display: "swap",
+});
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -34,7 +48,7 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body className={`${montserrat.variable} ${ptSans.variable} font-sans antialiased`}>{children}</body>
+      <body className={`${exo2.variable} ${robotoMono.variable} ${montserrat.variable} ${ptSans.variable} font-sans antialiased`}>{children}</body>
     </html>
   );
 }

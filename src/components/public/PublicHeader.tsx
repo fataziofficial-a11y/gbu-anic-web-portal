@@ -31,6 +31,8 @@ export function PublicHeader() {
   const onWhite = scrolled || !isHome;
 
   return (
+    <>
+      <a href="#main-content" className="skip-link">Перейти к содержимому</a>
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         onWhite ? "bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm" : "bg-transparent"
@@ -123,5 +125,6 @@ export function PublicHeader() {
         </div>
       )}
     </header>
+    </>
   );
 }
