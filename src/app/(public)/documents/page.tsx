@@ -45,11 +45,14 @@ export default async function DocumentsPage({
 
   return (
     <div>
-      <section className="border-b border-[#DDE8F0] bg-[#F7FAFD] py-16">
+      <section className="bg-[#060E18] border-b-[3px] border-[#5CAFD6] py-16">
         <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Правовая база</p>
-          <h1 className="mt-2 text-4xl font-black text-[#0D1C2E] lg:text-5xl">Нормативные документы</h1>
-          <p className="mt-3 text-lg text-[#4B6075]">Регламенты, приказы и положения ГБУ АНИЦ</p>
+          <div className="flex items-center gap-3 mb-5">
+            <div className="h-[2px] w-6 bg-[#5CAFD6]" />
+            <span className="text-[#5CAFD6] text-[11px] font-black uppercase tracking-[0.22em]">Правовая база</span>
+          </div>
+          <h1 className="text-[clamp(2rem,4vw,3.5rem)] font-black text-white leading-[1.05]">Нормативные документы</h1>
+          <p className="mt-4 text-base text-white/50">Регламенты, приказы и положения ГБУ АНИЦ</p>
         </div>
       </section>
 

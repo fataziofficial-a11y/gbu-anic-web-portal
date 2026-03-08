@@ -24,12 +24,15 @@ export default async function AboutPage() {
 
   return (
     <div>
-      {/* Header */}
-      <section className="border-b border-[#DDE8F0] bg-[#F7FAFD] py-16">
+      {/* Page hero — ANL-style dark banner */}
+      <section className="bg-[#060E18] border-b-[3px] border-[#5CAFD6] py-16">
         <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">О нас</p>
-          <h1 className="mt-2 text-4xl font-black text-[#0D1C2E] lg:text-5xl">О центре</h1>
-          <p className="mt-3 max-w-2xl text-lg leading-relaxed text-[#4B6075]">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="h-[2px] w-6 bg-[#5CAFD6]" />
+            <span className="text-[#5CAFD6] text-[11px] font-black uppercase tracking-[0.22em]">О нас</span>
+          </div>
+          <h1 className="text-[clamp(2rem,4vw,3.5rem)] font-black text-white leading-[1.05]">О центре</h1>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/50">
             ГБУ АНИЦ — ведущая научная организация Республики Саха (Якутия),
             специализирующаяся на комплексных исследованиях арктических и субарктических территорий.
           </p>
@@ -40,7 +43,10 @@ export default async function AboutPage() {
         {/* Mission */}
         <section className="grid grid-cols-1 items-start gap-10 lg:grid-cols-5">
           <div className="lg:col-span-3">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Наша миссия</p>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-[2px] w-6 bg-[#5CAFD6]" />
+              <span className="text-[#5CAFD6] text-[11px] font-black uppercase tracking-[0.22em]">Наша миссия</span>
+            </div>
             <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Наука на службе Арктики</h2>
             <p className="mt-6 leading-relaxed text-[#4B6075]">
               Арктический научно-исследовательский центр создан для проведения фундаментальных

@@ -52,18 +52,18 @@ export default async function DynamicPage({
 
   return (
     <div>
-      <section className="border-b border-[#DDE8F0] bg-[#F7FAFD] py-16">
+      <section className="bg-[#060E18] border-b-[3px] border-[#5CAFD6] py-16">
         <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
           <Link
             href="/"
-            className="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[#1A3A6B] transition hover:text-[#5CAFD6]"
+            className="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-white/50 transition hover:text-[#5CAFD6]"
           >
             <ArrowLeft className="h-4 w-4" />
             На главную
           </Link>
-          <h1 className="text-4xl font-black text-[#0D1C2E] lg:text-5xl">{page.title}</h1>
+          <h1 className="text-[clamp(2rem,4vw,3.5rem)] font-black text-white leading-[1.05]">{page.title}</h1>
           {(page.updatedAt || page.createdAt) && (
-            <div className="mt-4 flex items-center gap-1.5 text-sm text-[#8B9BAD]">
+            <div className="mt-4 flex items-center gap-1.5 text-sm text-white/50">
               <Calendar className="h-4 w-4 text-[#5CAFD6]" />
               {new Date(page.updatedAt ?? page.createdAt!).toLocaleDateString("ru-RU", {
                 day: "numeric",
