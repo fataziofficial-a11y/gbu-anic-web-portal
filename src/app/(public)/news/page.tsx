@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { Newspaper, ChevronLeft, ChevronRight, Calendar, ArrowRight } from "lucide-react";
 import { NewsSearch } from "@/components/public/NewsSearch";
 import type { Metadata } from "next";
+import { PageBanner } from "@/components/public/PageBanner";
 
 export const metadata: Metadata = { title: "Новости" };
 export const revalidate = 60;
@@ -77,19 +78,11 @@ export default async function NewsListPage({
 
   return (
     <div>
-      {/* Page header */}
-      <section className="bg-[#060E18] border-b-[3px] border-[#5CAFD6] py-16">
-        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="h-[2px] w-6 bg-[#5CAFD6]" />
-            <span className="text-[#5CAFD6] text-[11px] font-black uppercase tracking-[0.22em]">Центр новостей</span>
-          </div>
-          <h1 className="text-[clamp(2rem,4vw,3.5rem)] font-black text-white leading-[1.05]">Новости</h1>
-          <p className="mt-4 text-base text-white/50">
-            {q ? `Результаты поиска «${q}»: ${total}` : "Актуальные события и публикации центра"}
-          </p>
-        </div>
-      </section>
+      <PageBanner
+        eyebrow="Центр новостей"
+        title="Новости"
+        description={q ? `Результаты поиска «${q}»: ${total}` : "Актуальные события и публикации центра"}
+      />
 
       <div className="mx-auto max-w-[1240px] px-4 py-10 sm:px-6">
         {/* Search + filters */}

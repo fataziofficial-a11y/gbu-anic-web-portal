@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Globe, ArrowRight, Handshake, FlaskConical } from "lucide-react";
 import type { Metadata } from "next";
+import { PageBanner } from "@/components/public/PageBanner";
 
 export const metadata: Metadata = { title: "Партнёрам" };
 export const revalidate = 3600;
@@ -17,18 +18,11 @@ export default async function PartnersPage() {
 
   return (
     <div>
-      <section className="bg-[#060E18] border-b-[3px] border-[#5CAFD6] py-16">
-        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="h-[2px] w-6 bg-[#5CAFD6]" />
-            <span className="text-[#5CAFD6] text-[11px] font-black uppercase tracking-[0.22em]">Сотрудничество</span>
-          </div>
-          <h1 className="text-[clamp(2rem,4vw,3.5rem)] font-black text-white leading-[1.05]">Партнёрам</h1>
-          <p className="mt-4 text-base text-white/50">
-            Организации, с которыми сотрудничает АНИЦ, и возможности для партнёрства
-          </p>
-        </div>
-      </section>
+      <PageBanner
+        eyebrow="Сотрудничество"
+        title="Партнёрам"
+        description="Организации, с которыми сотрудничает АНИЦ, и возможности для партнёрства"
+      />
 
       <div className="mx-auto max-w-[1240px] space-y-16 px-4 py-14 sm:px-6">
         {items.length > 0 && (

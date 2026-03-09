@@ -4,6 +4,7 @@ import { eq, desc, and, ilike, SQL } from "drizzle-orm";
 import Link from "next/link";
 import { BookOpen, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
+import { PageBanner } from "@/components/public/PageBanner";
 
 export const metadata: Metadata = { title: "Образовательный контент" };
 export const revalidate = 60;
@@ -42,18 +43,11 @@ export default async function EducationPage({
 
   return (
     <div>
-      <section className="bg-[#060E18] border-b-[3px] border-[#5CAFD6] py-16">
-        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="h-[2px] w-6 bg-[#5CAFD6]" />
-            <span className="text-[#5CAFD6] text-[11px] font-black uppercase tracking-[0.22em]">Знания для всех</span>
-          </div>
-          <h1 className="text-[clamp(2rem,4vw,3.5rem)] font-black text-white leading-[1.05]">Образовательный контент</h1>
-          <p className="mt-4 text-base text-white/50">
-            Статьи, материалы и научно-популярные публикации центра
-          </p>
-        </div>
-      </section>
+      <PageBanner
+        eyebrow="Знания для всех"
+        title="Образовательный контент"
+        description="Статьи, материалы и научно-популярные публикации центра"
+      />
 
       <div className="mx-auto max-w-[1240px] px-4 py-10 sm:px-6">
         {categories.length > 0 && (

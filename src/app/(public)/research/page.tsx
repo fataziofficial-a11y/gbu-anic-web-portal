@@ -3,6 +3,7 @@ import { projects, publications } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
 import { FlaskConical, Calendar, BookMarked, ExternalLink, TrendingUp, Clock, CheckCircle2 } from "lucide-react";
 import type { Metadata } from "next";
+import { PageBanner } from "@/components/public/PageBanner";
 
 export const metadata: Metadata = { title: "Исследования" };
 export const revalidate = 300;
@@ -44,18 +45,11 @@ export default async function ResearchPage() {
 
   return (
     <div>
-      <section className="bg-[#060E18] border-b-[3px] border-[#5CAFD6] py-16">
-        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="h-[2px] w-6 bg-[#5CAFD6]" />
-            <span className="text-[#5CAFD6] text-[11px] font-black uppercase tracking-[0.22em]">Наука</span>
-          </div>
-          <h1 className="text-[clamp(2rem,4vw,3.5rem)] font-black text-white leading-[1.05]">Исследования и проекты</h1>
-          <p className="mt-4 text-base text-white/50">
-            Научные проекты и исследовательские программы Арктического НИЦ
-          </p>
-        </div>
-      </section>
+      <PageBanner
+        eyebrow="Наука"
+        title="Исследования и проекты"
+        description="Научные проекты и исследовательские программы Арктического НИЦ"
+      />
 
       <div className="mx-auto max-w-[1240px] space-y-14 px-4 py-14 sm:px-6">
         {/* Stats */}

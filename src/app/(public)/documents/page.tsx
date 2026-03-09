@@ -3,6 +3,7 @@ import { documents } from "@/lib/db/schema";
 import { asc, desc, eq } from "drizzle-orm";
 import { FileText, Download } from "lucide-react";
 import type { Metadata } from "next";
+import { PageBanner } from "@/components/public/PageBanner";
 
 export const metadata: Metadata = { title: "Нормативные документы" };
 export const revalidate = 300;
@@ -15,16 +16,11 @@ export default async function DocumentsPage() {
 
   return (
     <div>
-      <section className="bg-[#060E18] border-b-[3px] border-[#5CAFD6] py-16">
-        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="h-[2px] w-6 bg-[#5CAFD6]" />
-            <span className="text-[#5CAFD6] text-[11px] font-black uppercase tracking-[0.22em]">Правовая база</span>
-          </div>
-          <h1 className="text-[clamp(2rem,4vw,3.5rem)] font-black text-white leading-[1.05]">Нормативные документы</h1>
-          <p className="mt-4 text-base text-white/50">Регламенты, приказы и положения ГБУ АНИЦ</p>
-        </div>
-      </section>
+      <PageBanner
+        eyebrow="Правовая база"
+        title="Нормативные документы"
+        description="Регламенты, приказы и положения ГБУ АНИЦ"
+      />
 
       <div className="mx-auto max-w-[900px] px-4 py-12 sm:px-6">
         {items.length === 0 ? (

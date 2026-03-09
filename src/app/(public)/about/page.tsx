@@ -4,6 +4,7 @@ import { asc } from "drizzle-orm";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Building2, Users, Target, Globe, Lightbulb } from "lucide-react";
+import { PageBanner } from "@/components/public/PageBanner";
 
 export const metadata: Metadata = { title: "О центре" };
 export const revalidate = 3600;
@@ -24,19 +25,11 @@ export default async function AboutPage() {
   return (
     <div>
       {/* Page hero — ANL-style dark banner */}
-      <section className="bg-[#060E18] border-b-[3px] border-[#5CAFD6] py-16">
-        <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="h-[2px] w-6 bg-[#5CAFD6]" />
-            <span className="text-[#5CAFD6] text-[11px] font-black uppercase tracking-[0.22em]">О нас</span>
-          </div>
-          <h1 className="text-[clamp(2rem,4vw,3.5rem)] font-black text-white leading-[1.05]">О центре</h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/50">
-            ГБУ АНИЦ — ведущая научная организация Республики Саха (Якутия),
-            специализирующаяся на комплексных исследованиях арктических и субарктических территорий.
-          </p>
-        </div>
-      </section>
+      <PageBanner
+        eyebrow="О нас"
+        title="О центре"
+        description="ГБУ АНИЦ — ведущая научная организация Республики Саха (Якутия), специализирующаяся на комплексных исследованиях арктических и субарктических территорий."
+      />
 
       <div className="mx-auto max-w-[1240px] space-y-20 px-4 py-16 sm:px-6">
         {/* Mission */}
