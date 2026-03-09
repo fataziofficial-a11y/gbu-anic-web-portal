@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { departments, teamMembers } from "@/lib/db/schema";
 import { asc } from "drizzle-orm";
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Building2, Users, Target, Globe, Lightbulb } from "lucide-react";
@@ -93,38 +94,94 @@ export default async function AboutPage() {
         </section>
 
         {/* Departments */}
-        {depts.length > 0 && (
-          <section>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Структура</p>
-            <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Научные подразделения</h2>
-            <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {depts.map((dept) => (
-                <Link
-                  key={dept.id}
-                  href={`/research/departments/${dept.slug}`}
-                  className="group flex items-start gap-4 rounded-2xl border border-[#DDE8F0] bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
-                    <Building2 className="h-5 w-5" />
+        <section>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Структура</p>
+          <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Научные подразделения</h2>
+          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {depts.length > 0
+              ? depts.map((dept) => (
+                  <Link
+                    key={dept.id}
+                    href={`/research/departments/${dept.slug}`}
+                    className="group flex items-start gap-4 rounded-2xl border border-[#DDE8F0] bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
+                      <Building2 className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-[#0D1C2E] transition-colors group-hover:text-[#1A3A6B]">
+                        {dept.name}
+                      </h3>
+                      {dept.head && (
+                        <p className="mt-1 text-xs text-[#8B9BAD]">Руководитель: {dept.head.name}</p>
+                      )}
+                      {dept.description && (
+                        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-[#4B6075]">{dept.description}</p>
+                      )}
+                    </div>
+                  </Link>
+                ))
+              : [
+                  "Отдел арктических исследований",
+                  "Лаборатория климата и экологии",
+                  "Сектор этнографии и культуры",
+                ].map((name) => (
+                  <div
+                    key={name}
+                    className="flex items-start gap-4 rounded-2xl border border-dashed border-[#DDE8F0] bg-[#FAFCFE] p-6"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]/40">
+                      <Building2 className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="h-4 w-40 rounded bg-[#DDE8F0]" />
+                      <div className="mt-2 h-3 w-28 rounded bg-[#EEF4FB]" />
+                      <div className="mt-2 space-y-1.5">
+                        <div className="h-3 w-full rounded bg-[#EEF4FB]" />
+                        <div className="h-3 w-4/5 rounded bg-[#EEF4FB]" />
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-[#0D1C2E] transition-colors group-hover:text-[#1A3A6B]">
-                      {dept.name}
-                    </h3>
-                    {dept.head && (
-                      <p className="mt-1 text-xs text-[#8B9BAD]">Руководитель: {dept.head.name}</p>
-                    )}
-                    {dept.description && (
-                      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-[#4B6075]">{dept.description}</p>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
+                ))}
+          </div>
+        </section>
 
-        {/* Team section intentionally hidden — will be added later with photos */}
+        {/* Team */}
+        <section>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Люди</p>
+          <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Наша команда</h2>
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {team.length > 0
+              ? team.map((member) => (
+                  <div key={member.id} className="rounded-2xl border border-[#DDE8F0] bg-white p-5 text-center">
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#EEF4FB] text-[#1A3A6B]">
+                      {member.photo ? (
+                        <Image src={member.photo.url} alt={member.name} width={64} height={64} className="rounded-full object-cover" />
+                      ) : (
+                        <Users className="h-7 w-7" />
+                      )}
+                    </div>
+                    <p className="font-bold text-[#0D1C2E]">{member.name}</p>
+                    {member.position && (
+                      <p className="mt-1 text-xs leading-snug text-[#4B6075]">{member.position}</p>
+                    )}
+                    {member.department && (
+                      <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-[#5CAFD6]">{member.department.name}</p>
+                    )}
+                  </div>
+                ))
+              : Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="rounded-2xl border border-dashed border-[#DDE8F0] bg-[#FAFCFE] p-5 text-center">
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#EEF4FB] text-[#1A3A6B]/30">
+                      <Users className="h-7 w-7" />
+                    </div>
+                    <div className="mx-auto h-4 w-24 rounded bg-[#DDE8F0]" />
+                    <div className="mx-auto mt-2 h-3 w-20 rounded bg-[#EEF4FB]" />
+                    <div className="mx-auto mt-1.5 h-3 w-16 rounded bg-[#EEF4FB]" />
+                  </div>
+                ))}
+          </div>
+        </section>
       </div>
     </div>
   );

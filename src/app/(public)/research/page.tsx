@@ -71,12 +71,34 @@ export default async function ResearchPage() {
 
         {/* Projects */}
         {allProjects.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#EEF4FB]">
-              <FlaskConical className="h-8 w-8 text-[#1A3A6B]" />
-            </div>
-            <p className="text-lg font-bold text-[#4B6075]">Проектов пока нет</p>
-          </div>
+          <>
+            <section>
+              <h2 className="mb-6 text-2xl font-black text-[#0D1C2E]">Активные проекты</h2>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="rounded-2xl border border-dashed border-[#DDE8F0] bg-[#FAFCFE] p-6">
+                    <div className="mb-3 flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-4">
+                        <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]/30">
+                          <FlaskConical className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="h-4 w-48 rounded bg-[#DDE8F0]" />
+                          <div className="mt-2 h-3 w-32 rounded bg-[#EEF4FB]" />
+                        </div>
+                      </div>
+                      <div className="h-6 w-20 shrink-0 rounded-full bg-[#EEF4FB]" />
+                    </div>
+                    <div className="ml-14 space-y-1.5">
+                      <div className="h-3 w-full rounded bg-[#EEF4FB]" />
+                      <div className="h-3 w-5/6 rounded bg-[#EEF4FB]" />
+                      <div className="h-3 w-3/4 rounded bg-[#EEF4FB]" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </>
         ) : (
           <>
             {[

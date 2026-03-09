@@ -25,55 +25,65 @@ export default async function PartnersPage() {
       />
 
       <div className="mx-auto max-w-[1240px] space-y-16 px-4 py-14 sm:px-6">
-        {items.length > 0 && (
-          <section>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Партнёры</p>
-            <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Наши партнёры</h2>
-            <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {items.map((item) => (
-                <div key={item.id} className="flex flex-col gap-4 rounded-2xl border border-[#DDE8F0] bg-white p-6">
-                  {item.logo ? (
-                    <div className="flex h-14 w-full items-center">
-                      <Image
-                        src={item.logo.url}
-                        alt={item.name}
-                        width={160}
-                        height={56}
-                        className="max-h-14 object-contain"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
-                      <Handshake className="h-5 w-5" />
-                    </div>
-                  )}
-
-                  <div className="flex-1">
-                    <h3 className="font-bold text-[#0D1C2E]">{item.name}</h3>
-                    {item.description && (
-                      <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-[#4B6075]">{item.description}</p>
+        <section>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Партнёры</p>
+          <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Наши партнёры</h2>
+          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {items.length > 0
+              ? items.map((item) => (
+                  <div key={item.id} className="flex flex-col gap-4 rounded-2xl border border-[#DDE8F0] bg-white p-6">
+                    {item.logo ? (
+                      <div className="flex h-14 w-full items-center">
+                        <Image
+                          src={item.logo.url}
+                          alt={item.name}
+                          width={160}
+                          height={56}
+                          className="max-h-14 object-contain"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
+                        <Handshake className="h-5 w-5" />
+                      </div>
                     )}
-                    {item.services && (
-                      <p className="mt-2 line-clamp-2 text-xs text-[#8B9BAD]">{item.services}</p>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-[#0D1C2E]">{item.name}</h3>
+                      {item.description && (
+                        <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-[#4B6075]">{item.description}</p>
+                      )}
+                      {item.services && (
+                        <p className="mt-2 line-clamp-2 text-xs text-[#8B9BAD]">{item.services}</p>
+                      )}
+                    </div>
+                    {item.websiteUrl && (
+                      <a
+                        href={item.websiteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-sm font-semibold text-[#1A3A6B] transition hover:text-[#5CAFD6]"
+                      >
+                        <Globe className="h-4 w-4" />
+                        Сайт организации
+                      </a>
                     )}
                   </div>
-
-                  {item.websiteUrl && (
-                    <a
-                      href={item.websiteUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm font-semibold text-[#1A3A6B] transition hover:text-[#5CAFD6]"
-                    >
-                      <Globe className="h-4 w-4" />
-                      Сайт организации
-                    </a>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+                ))
+              : Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="flex flex-col gap-4 rounded-2xl border border-dashed border-[#DDE8F0] bg-[#FAFCFE] p-6">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]/30">
+                      <Handshake className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 w-36 rounded bg-[#DDE8F0]" />
+                      <div className="h-3 w-full rounded bg-[#EEF4FB]" />
+                      <div className="h-3 w-4/5 rounded bg-[#EEF4FB]" />
+                    </div>
+                    <div className="h-3 w-28 rounded bg-[#EEF4FB]" />
+                  </div>
+                ))}
+          </div>
+        </section>
 
         {/* Cooperation info */}
         <section className="rounded-3xl bg-[#F7FAFD] p-8 lg:p-12">
