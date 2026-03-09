@@ -50,6 +50,14 @@ async function getHomeData() {
   }
 }
 
+// Category labels for news badge
+const CAT_LABELS: Record<string, string> = {
+  news: "Новости",
+  science: "Наука",
+  events: "События",
+  media: "Медиа",
+};
+
 // Gradient placeholders for news cards without photos
 const NEWS_PLACEHOLDERS = [
   "from-[#1A3A6B] to-[#0D1C2E]",
@@ -131,7 +139,7 @@ export default async function HomePage() {
             </h1>
 
             <p className="max-w-[48ch] text-[clamp(0.95rem,1.4vw,1.1rem)] leading-7 text-white/55 mb-10">
-              Исследования и научная основа для устойчивого развития Севера
+              Исследования и научная основа для устойчивого развития Республики Саха (Якутия)
             </p>
 
             {/* CTAs */}
@@ -152,14 +160,14 @@ export default async function HomePage() {
             </div>
 
             {/* Stats strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-0 border-t border-white/10">
+            <div className="flex flex-col sm:flex-row border-t border-white/10">
               {[
-                { value: newsCount > 0 ? `${newsCount}+` : "40+", label: "Публикаций" },
-                { value: activeProjects.length > 0 ? `${activeProjects.length}+` : "10+", label: "Активных проектов" },
-                { value: teamCount > 0 ? `${teamCount}+` : "80+", label: "Сотрудников" },
-                { value: "13+", label: "Лет исследований" },
+                { value: "216", label: "Публикаций" },
+                { value: "11", label: "Проектов в работе" },
+                { value: "27", label: "Сотрудников" },
+                { value: "20+", label: "Лет исследований" },
               ].map((s, i) => (
-                <div key={s.label} className={`py-6 pr-8 ${i < 3 ? "sm:border-r border-white/10" : ""}`}>
+                <div key={s.label} className={`flex-1 py-6 px-8 ${i === 0 ? "pl-0" : "border-t sm:border-t-0 sm:border-l border-white/10"}`}>
                   <p className="text-[2.5rem] font-black text-white leading-none">{s.value}</p>
                   <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-white/40">{s.label}</p>
                 </div>
@@ -201,12 +209,12 @@ export default async function HomePage() {
                   />
                   {/* Dark overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#060E18] via-[#060E18]/60 to-[#060E18]/20" />
-                  {/* Content */}
+                  {/* Content — fixed structure for cross-card alignment */}
                   <div className="absolute inset-0 flex flex-col justify-end p-8">
                     <p className="text-[10px] font-black text-[#5CAFD6]/60 tracking-[0.2em] mb-3">{area.num}</p>
-                    <h3 className="text-xl font-black text-white mb-3">{area.title}</h3>
-                    <p className="text-sm leading-relaxed text-white/60">{area.desc}</p>
-                    <div className="mt-5 h-[2px] w-0 bg-[#5CAFD6] group-hover:w-12 transition-all duration-300" />
+                    <h3 className="text-xl font-black text-white mb-3 leading-snug">{area.title}</h3>
+                    <p className="text-sm leading-relaxed text-white/60 h-[4.5rem] line-clamp-3">{area.desc}</p>
+                    <div className="mt-4 h-[2px] w-0 bg-[#5CAFD6] group-hover:w-12 transition-all duration-300" />
                   </div>
                 </article>
               ))}
@@ -261,7 +269,7 @@ export default async function HomePage() {
                       <div className="flex items-center gap-3 mb-3">
                         {item.category && (
                           <span className="text-[10px] font-black uppercase tracking-[0.18em] text-[#5CAFD6] border border-[#5CAFD6]/30 px-2.5 py-1">
-                            {item.category}
+                            {CAT_LABELS[item.category] ?? item.category}
                           </span>
                         )}
                         {item.publishedAt && (
@@ -320,15 +328,10 @@ export default async function HomePage() {
                       sizes="(max-width: 768px) 100vw, 33vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#060E18] via-[#060E18]/70 to-[#060E18]/30" />
-                    <div className="absolute inset-0 flex flex-col justify-end p-7">
-                      {project.department && (
-                        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#5CAFD6] mb-2">
-                          {project.department.name}
-                        </p>
-                      )}
+                    <div className="absolute inset-0 flex flex-col justify-center p-7">
                       <h3 className="text-[1rem] font-bold text-white leading-snug">{project.title}</h3>
                       {project.description && (
-                        <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-white/55">{project.description}</p>
+                        <p className="mt-2 line-clamp-3 text-[13px] leading-relaxed text-white/55">{project.description}</p>
                       )}
                     </div>
                   </article>
