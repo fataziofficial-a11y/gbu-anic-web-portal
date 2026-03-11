@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ImageCropUploader } from "@/components/admin/ImageCropUploader";
 import { CrosspostPanel } from "@/components/admin/CrosspostPanel";
+import { NewsCategorySelect } from "@/components/admin/NewsCategorySelect";
 import {
   Bold,
   Italic,
@@ -446,18 +447,7 @@ export function NewsForm({ initialData, mode }: Props) {
           {/* Категория */}
           <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
             <p className="text-sm font-medium text-gray-700">Категория</p>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger>
-                <SelectValue placeholder="Выберите категорию" />
-              </SelectTrigger>
-              <SelectContent>
-                {CATEGORIES.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <NewsCategorySelect value={category} onChange={setCategory} />
           </div>
 
           {/* Кросс-постинг при создании/черновике */}

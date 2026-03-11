@@ -144,6 +144,15 @@ export const publications = pgTable("publications", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// ==================== Категории новостей ====================
+export const newsCategories = pgTable("news_categories", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).unique().notNull(),
+  slug: varchar("slug", { length: 100 }).unique().notNull(),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // ==================== Категории базы знаний ====================
 export const kbCategories = pgTable("kb_categories", {
   id: serial("id").primaryKey(),

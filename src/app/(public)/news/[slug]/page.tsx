@@ -26,12 +26,39 @@ export async function generateMetadata({
   const { slug } = await params;
   const item = await db.query.news.findFirst({
     where: and(eq(news.slug, slug), eq(news.status, "published")),
-    columns: { title: true, seoTitle: true, seoDescription: true, excerpt: true },
+    columns: { title: true, seoTitle: true, seoDescription: true, excerpt: true, publishedAt: true },
+    with: { coverImage: { columns: { url: true, altText: true } } },
   });
   if (!item) return { title: "Новость не найдена" };
+
+  const base = process.env.NEXTAUTH_URL ?? "https://ase-msk.ru";
+  const pageUrl = `${base}/news/${slug}`;
+  const title = item.seoTitle || item.title;
+  const description = item.seoDescription || item.excerpt || undefined;
+  const image = (item as any).coverImage?.url
+    ? { url: (item as any).coverImage.url, width: 1200, height: 630, alt: (item as any).coverImage.altText ?? title }
+    : { url: "/anic-hero.png", width: 1200, height: 630, alt: title };
+
   return {
-    title: item.seoTitle || item.title,
-    description: item.seoDescription || item.excerpt || undefined,
+    title,
+    description,
+    alternates: { canonical: pageUrl },
+    openGraph: {
+      type: "article",
+      locale: "ru_RU",
+      url: pageUrl,
+      title,
+      description,
+      publishedTime: item.publishedAt?.toISOString(),
+      siteName: "АНИЦ",
+      images: [image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image.url],
+    },
   };
 }
 
