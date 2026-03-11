@@ -1,63 +1,52 @@
 import { db } from "@/lib/db";
 import { documents } from "@/lib/db/schema";
 import { asc, desc, eq } from "drizzle-orm";
-import { FileText, Download } from "lucide-react";
 import type { Metadata } from "next";
 import { PageBanner } from "@/components/public/PageBanner";
+import { DocumentsAccordion } from "@/components/public/DocumentsAccordion";
 
-export const metadata: Metadata = { title: "Нормативные документы" };
+export const metadata: Metadata = { title: "Документы" };
 export const revalidate = 300;
 
 export default async function DocumentsPage() {
   const items = await db.query.documents.findMany({
     where: eq(documents.status, "active"),
-    orderBy: [asc(documents.sortOrder), desc(documents.createdAt)],
+    orderBy: [
+      asc(documents.sectionOrder),
+      asc(documents.section),
+      desc(documents.issuedAt),
+      asc(documents.sortOrder),
+    ],
   });
+
+  // Группируем по разделу
+  const sectionMap = new Map<string, typeof items>();
+  for (const item of items) {
+    const key = item.section ?? "Прочее";
+    if (!sectionMap.has(key)) sectionMap.set(key, []);
+    sectionMap.get(key)!.push(item);
+  }
+
+  const sections = Array.from(sectionMap.entries()).map(([name, docs]) => ({
+    name,
+    docs: docs.map((d) => ({
+      id: d.id,
+      title: d.title,
+      fileUrl: d.fileUrl,
+      issuedAt: d.issuedAt,
+    })),
+  }));
 
   return (
     <div>
       <PageBanner
         eyebrow="Правовая база"
-        title="Нормативные документы"
+        title="Документы"
         description="Регламенты, приказы и положения ГБУ АНИЦ"
       />
 
-      <div className="mx-auto max-w-[900px] px-4 py-12 sm:px-6">
-        {items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="mb-5 flex h-16 w-16 items-center justify-center bg-[#EEF4FB]">
-              <FileText className="h-8 w-8 text-[#1A3A6B]" />
-            </div>
-            <p className="text-lg font-bold text-[#4B6075]">Документов пока нет</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-[#DDE8F0]">
-            {items.map((item) => (
-              <div key={item.id} className="flex items-center gap-4 py-4">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-[#EEF4FB] text-[#1A3A6B]">
-                  <FileText className="h-4 w-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-[#0D1C2E] leading-snug">{item.title}</p>
-                  {item.issuedAt && (
-                    <p className="text-xs text-[#8B9BAD] mt-0.5">{item.issuedAt}</p>
-                  )}
-                </div>
-                {item.fileUrl && (
-                  <a
-                    href={item.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0 flex items-center gap-1.5 text-[12px] font-bold text-[#1A3A6B] hover:text-[#5CAFD6] transition-colors"
-                  >
-                    <Download className="h-4 w-4" />
-                    <span className="hidden sm:inline">Открыть</span>
-                  </a>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+      <div className="mx-auto max-w-225 px-4 py-12 sm:px-6">
+        <DocumentsAccordion sections={sections} />
       </div>
     </div>
   );

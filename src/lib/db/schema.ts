@@ -256,6 +256,7 @@ export const partners = pgTable("partners", {
 export const documents = pgTable("documents", {
   id: serial("id").primaryKey(),
   title: varchar("title", { length: 1000 }).notNull(),
+  section: varchar("section", { length: 255 }).default("Прочее"), // название раздела-группы
   docType: varchar("doc_type", { length: 50 }).default("normative"),
   // "normative" | "order" | "regulation" | "other"
   fileId: integer("file_id").references(() => files.id),
@@ -263,6 +264,7 @@ export const documents = pgTable("documents", {
   issuedAt: date("issued_at"),
   status: varchar("status", { length: 20 }).default("active"), // "active" | "archived"
   sortOrder: integer("sort_order").default(0),
+  sectionOrder: integer("section_order").default(0), // порядок раздела
   createdAt: timestamp("created_at").defaultNow(),
 });
 
