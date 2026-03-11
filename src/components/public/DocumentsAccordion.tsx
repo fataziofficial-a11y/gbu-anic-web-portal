@@ -4,10 +4,9 @@ import { useState } from "react";
 import { FileText, Download, ChevronDown } from "lucide-react";
 
 type Doc = {
-  id: number;
+  id: string;
   title: string;
   fileUrl: string | null;
-  issuedAt: string | null;
 };
 
 type Section = {
@@ -109,15 +108,6 @@ export function DocumentsAccordion({ sections }: { sections: Section[] }) {
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                           <ExtBadge ext={ext} />
-                          {doc.issuedAt && (
-                            <span className="text-xs text-[#8B9BAD]">
-                              {new Date(doc.issuedAt).toLocaleDateString("ru-RU", {
-                                day: "numeric",
-                                month: "long",
-                                year: "numeric",
-                              })}
-                            </span>
-                          )}
                         </div>
                         <p className="mt-0.5 text-sm font-medium leading-snug text-[#0D1C2E]">
                           {doc.title}
