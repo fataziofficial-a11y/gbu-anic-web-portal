@@ -5,12 +5,23 @@ import { apiSuccess, apiError, withErrorHandler } from "@/lib/utils/api";
 import { desc, eq } from "drizzle-orm";
 import { postToTelegram } from "@/lib/crosspost/telegram";
 import { postToVk } from "@/lib/crosspost/vk";
+import { postToMax } from "@/lib/crosspost/max";
+import { postToDzen } from "@/lib/crosspost/dzen";
+import { postToOk } from "@/lib/crosspost/ok";
 import { z } from "zod";
+
+const PLATFORM_LABELS: Record<string, string> = {
+  telegram: "Telegram",
+  vk: "ВКонтакте",
+  max: "MAX",
+  dzen: "Яндекс.Дзен",
+  ok: "Одноклассники",
+};
 
 const crosspostSchema = z.object({
   contentType: z.enum(["news", "knowledge"]),
   contentId: z.number().int().positive(),
-  platforms: z.array(z.enum(["telegram", "vk"])).min(1),
+  platforms: z.array(z.enum(["telegram", "vk", "max", "dzen", "ok"])).min(1),
 });
 
 export async function GET(request: Request) {
@@ -27,7 +38,7 @@ export async function GET(request: Request) {
         ? (log, { and, eq }) => and(eq(log.contentType, contentType), eq(log.contentId, contentId))
         : undefined,
       orderBy: [desc(crosspostLog.createdAt)],
-      limit: 50,
+      limit: 100,
     });
 
     return apiSuccess({ items });
@@ -45,7 +56,6 @@ export async function POST(request: Request) {
 
     const { contentType, contentId, platforms } = parsed.data;
 
-    // Получаем данные для поста
     let title = "";
     let excerpt: string | undefined;
     let slug = "";
@@ -65,38 +75,52 @@ export async function POST(request: Request) {
     const results: { platform: string; ok: boolean; externalPostId?: string; externalUrl?: string; error?: string }[] = [];
 
     for (const platform of platforms) {
-      let result: { ok: boolean; messageId?: number; postId?: number; postUrl?: string; error?: string };
+      let ok = false;
+      let externalPostId: string | undefined;
+      let externalUrl: string | undefined;
+      let error: string | undefined;
 
       if (platform === "telegram") {
-        result = await postToTelegram({ title, excerpt, url });
-        results.push({
-          platform,
-          ok: result.ok,
-          externalPostId: result.messageId ? String(result.messageId) : undefined,
-          error: result.error,
-        });
+        const r = await postToTelegram({ title, excerpt, url });
+        ok = r.ok;
+        externalPostId = r.messageId ? String(r.messageId) : undefined;
+        error = r.error;
       } else if (platform === "vk") {
-        result = await postToVk({ title, excerpt, url });
-        results.push({
-          platform,
-          ok: result.ok,
-          externalPostId: result.postId ? String(result.postId) : undefined,
-          externalUrl: result.postUrl,
-          error: result.error,
-        });
+        const r = await postToVk({ title, excerpt, url });
+        ok = r.ok;
+        externalPostId = r.postId ? String(r.postId) : undefined;
+        externalUrl = r.postUrl;
+        error = r.error;
+      } else if (platform === "max") {
+        const r = await postToMax({ title, excerpt, url });
+        ok = r.ok;
+        externalPostId = r.postId;
+        error = r.error;
+      } else if (platform === "dzen") {
+        const r = await postToDzen({ title, excerpt, url });
+        ok = r.ok;
+        externalPostId = r.postId;
+        externalUrl = r.postUrl;
+        error = r.error;
+      } else if (platform === "ok") {
+        const r = await postToOk({ title, excerpt, url });
+        ok = r.ok;
+        externalPostId = r.postId;
+        externalUrl = r.postUrl;
+        error = r.error;
       }
 
-      // Пишем в лог
-      const r = results[results.length - 1];
+      results.push({ platform, ok, externalPostId, externalUrl, error });
+
       await db.insert(crosspostLog).values({
         contentType,
         contentId,
         platform,
-        status: r.ok ? "sent" : "failed",
-        externalPostId: r.externalPostId ?? null,
-        externalUrl: r.externalUrl ?? null,
-        errorMessage: r.error ?? null,
-        sentAt: r.ok ? new Date() : null,
+        status: ok ? "sent" : "failed",
+        externalPostId: externalPostId ?? null,
+        externalUrl: externalUrl ?? null,
+        errorMessage: error ?? null,
+        sentAt: ok ? new Date() : null,
       });
     }
 

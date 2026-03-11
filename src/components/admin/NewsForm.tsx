@@ -21,6 +21,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ImageCropUploader } from "@/components/admin/ImageCropUploader";
+import { CrosspostPanel } from "@/components/admin/CrosspostPanel";
 import {
   Bold,
   Italic,
@@ -41,7 +42,10 @@ import {
 
 const PLATFORMS = [
   { id: "telegram", label: "Telegram" },
-  { id: "vk", label: "ВКонтакте" },
+  { id: "vk",       label: "ВКонтакте" },
+  { id: "max",      label: "MAX" },
+  { id: "dzen",     label: "Яндекс.Дзен" },
+  { id: "ok",       label: "Одноклассники" },
 ] as const;
 
 interface NewsFormData {
@@ -456,31 +460,41 @@ export function NewsForm({ initialData, mode }: Props) {
             </Select>
           </div>
 
-          {/* Кросс-постинг */}
-          <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
-            <div className="flex items-center gap-2">
-              <Send className="h-4 w-4 text-gray-400" />
-              <p className="text-sm font-medium text-gray-700">Кросс-постинг</p>
+          {/* Кросс-постинг при создании/черновике */}
+          {status !== "published" && (
+            <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Send className="h-4 w-4 text-gray-400" />
+                <p className="text-sm font-medium text-gray-700">Кросс-постинг</p>
+              </div>
+              <p className="text-xs text-gray-400">Опубликовать одновременно в:</p>
+              <div className="space-y-2">
+                {PLATFORMS.map((p) => (
+                  <label key={p.id} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600"
+                      checked={crosspostPlatforms.includes(p.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) setCrosspostPlatforms([...crosspostPlatforms, p.id]);
+                        else setCrosspostPlatforms(crosspostPlatforms.filter((x) => x !== p.id));
+                      }}
+                    />
+                    <span className="text-sm text-gray-700">{p.label}</span>
+                  </label>
+                ))}
+              </div>
+              <p className="text-xs text-gray-400">Применяется только при нажатии «Опубликовать»</p>
             </div>
-            <p className="text-xs text-gray-400">Опубликовать одновременно в:</p>
-            <div className="space-y-2">
-              {PLATFORMS.map((p) => (
-                <label key={p.id} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600"
-                    checked={crosspostPlatforms.includes(p.id)}
-                    onChange={(e) => {
-                      if (e.target.checked) setCrosspostPlatforms([...crosspostPlatforms, p.id]);
-                      else setCrosspostPlatforms(crosspostPlatforms.filter((x) => x !== p.id));
-                    }}
-                  />
-                  <span className="text-sm text-gray-700">{p.label}</span>
-                </label>
-              ))}
-            </div>
-            <p className="text-xs text-gray-400">Применяется только при нажатии «Опубликовать»</p>
-          </div>
+          )}
+
+          {/* Статусы кросс-постинга (только в режиме редактирования) */}
+          {mode === "edit" && initialData?.id && (
+            <CrosspostPanel
+              newsId={initialData.id}
+              isPublished={status === "published"}
+            />
+          )}
 
           {/* Теги */}
           <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
