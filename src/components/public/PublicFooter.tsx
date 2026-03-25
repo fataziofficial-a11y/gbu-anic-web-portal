@@ -72,9 +72,19 @@ export async function PublicFooter() {
       <div className="border-t border-white/8">
         <div className="mx-auto flex max-w-[1240px] flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-white/25 sm:flex-row sm:px-6">
           <span>© {year} {s.site_name}. Все права защищены.</span>
-          <Link href="/admin" className="transition hover:text-white/60">
-            Панель управления
-          </Link>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://rutube.ru/channel/34969844/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-white/60"
+            >
+              Rutube
+            </a>
+            <Link href="/admin" className="transition hover:text-white/60">
+              Панель управления
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
