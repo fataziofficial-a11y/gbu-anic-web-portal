@@ -20,6 +20,7 @@ import {
   Handshake,
   ScrollText,
   ShoppingCart,
+  TicketCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -97,6 +98,11 @@ const NAV_ITEMS = [
     label: "Кросс-постинг",
     href: "/admin/crosspost",
     icon: Share2,
+  },
+  {
+    label: "Тикеты",
+    href: "/admin/tickets",
+    icon: TicketCheck,
   },
   {
     label: "Настройки",

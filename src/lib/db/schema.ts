@@ -403,3 +403,25 @@ export const documentsRelations = relations(documents, ({ one }) => ({
     references: [files.id],
   }),
 }));
+
+// ==================== Тикеты (обратная связь от сотрудников) ====================
+export const tickets = pgTable("tickets", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  type: varchar("type", { length: 20 }).notNull().default("bug"), // bug | suggestion | question
+  status: varchar("status", { length: 20 }).notNull().default("new"), // new | in_progress | resolved | closed
+  priority: varchar("priority", { length: 10 }).notNull().default("medium"), // low | medium | high
+  createdBy: integer("created_by").references(() => users.id),
+  adminComment: text("admin_comment"),
+  resolvedAt: timestamp("resolved_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const ticketsRelations = relations(tickets, ({ one }) => ({
+  author: one(users, {
+    fields: [tickets.createdBy],
+    references: [users.id],
+  }),
+}));
