@@ -21,6 +21,7 @@ import {
   ScrollText,
   ShoppingCart,
   TicketCheck,
+  UserCog,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -31,84 +32,33 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getUserSections, ROLE_LABELS, type Section } from "@/lib/permissions";
 
-const NAV_ITEMS = [
-  {
-    label: "Дашборд",
-    href: "/admin",
-    icon: LayoutDashboard,
-    exact: true,
-  },
-  {
-    label: "Новости",
-    href: "/admin/news",
-    icon: Newspaper,
-  },
-  {
-    label: "База знаний",
-    href: "/admin/knowledge",
-    icon: BookOpen,
-  },
-  {
-    label: "Проекты",
-    href: "/admin/projects",
-    icon: FlaskConical,
-  },
-  {
-    label: "Сотрудники",
-    href: "/admin/team",
-    icon: Users,
-  },
-  {
-    label: "Подразделения",
-    href: "/admin/departments",
-    icon: Building2,
-  },
-  {
-    label: "Публикации",
-    href: "/admin/publications",
-    icon: BookMarked,
-  },
-  {
-    label: "Медиа",
-    href: "/admin/media",
-    icon: Film,
-  },
-  {
-    label: "Партнёры",
-    href: "/admin/partners",
-    icon: Handshake,
-  },
-  {
-    label: "Документы",
-    href: "/admin/documents",
-    icon: ScrollText,
-  },
-  {
-    label: "Закупки",
-    href: "/admin/procurements",
-    icon: ShoppingCart,
-  },
-  {
-    label: "Файлы",
-    href: "/admin/files",
-    icon: FolderOpen,
-  },
-  {
-    label: "Кросс-постинг",
-    href: "/admin/crosspost",
-    icon: Share2,
-  },
-  {
-    label: "Тикеты",
-    href: "/admin/tickets",
-    icon: TicketCheck,
-  },
-  {
-    label: "Настройки",
-    href: "/admin/settings",
-    icon: Settings,
-  },
+interface NavItem {
+  label: string;
+  href: string;
+  icon: React.ElementType;
+  section?: Section; // undefined = всегда видно (дашборд)
+  exact?: boolean;
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { label: "Дашборд",         href: "/admin",                icon: LayoutDashboard, exact: true },
+  { label: "Новости",         href: "/admin/news",           icon: Newspaper,       section: "news" },
+  { label: "База знаний",     href: "/admin/knowledge",      icon: BookOpen,        section: "knowledge" },
+  { label: "Проекты",         href: "/admin/projects",       icon: FlaskConical,    section: "projects" },
+  { label: "Сотрудники",      href: "/admin/team",           icon: Users,           section: "team" },
+  { label: "Подразделения",   href: "/admin/departments",    icon: Building2,       section: "departments" },
+  { label: "Публикации",      href: "/admin/publications",   icon: BookMarked,      section: "publications" },
+  { label: "Медиа",           href: "/admin/media",          icon: Film,            section: "media" },
+  { label: "Партнёры",        href: "/admin/partners",       icon: Handshake,       section: "partners" },
+  { label: "Документы",       href: "/admin/documents",      icon: ScrollText,      section: "documents" },
+  { label: "Закупки",         href: "/admin/procurements",   icon: ShoppingCart,    section: "procurements" },
+  { label: "Файлы",           href: "/admin/files",          icon: FolderOpen,      section: "files" },
+  { label: "Кросс-постинг",   href: "/admin/crosspost",      icon: Share2,          section: "crosspost" },
+  { label: "Тикеты",          href: "/admin/tickets",        icon: TicketCheck,     section: "tickets" },
+  { label: "Пользователи",    href: "/admin/users",          icon: UserCog,         section: "users" },
+  { label: "Настройки",       href: "/admin/settings",       icon: Settings,        section: "settings" },
 ];
 
 interface SidebarProps {
@@ -116,16 +66,23 @@ interface SidebarProps {
     name?: string | null;
     email?: string | null;
     role?: string;
+    permissions?: string[] | null;
   };
 }
 
 export function AdminSidebar({ user }: SidebarProps) {
   const pathname = usePathname();
+  const role = user.role ?? "author";
+  const allowedSections = getUserSections(role, user.permissions);
 
   function isActive(href: string, exact?: boolean) {
     if (exact) return pathname === href;
     return pathname.startsWith(href);
   }
+
+  const visibleItems = NAV_ITEMS.filter(
+    (item) => !item.section || allowedSections.includes(item.section)
+  );
 
   const initials = (user.name ?? "A")
     .split(" ")
@@ -133,12 +90,6 @@ export function AdminSidebar({ user }: SidebarProps) {
     .slice(0, 2)
     .join("")
     .toUpperCase();
-
-  const roleLabel: Record<string, string> = {
-    admin: "Администратор",
-    editor: "Редактор",
-    author: "Автор",
-  };
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -159,7 +110,7 @@ export function AdminSidebar({ user }: SidebarProps) {
         {/* Навигация */}
         <nav className="flex-1 overflow-y-auto px-2 py-3">
           <ul className="space-y-0.5">
-            {NAV_ITEMS.map((item) => {
+            {visibleItems.map((item) => {
               const active = isActive(item.href, item.exact);
               return (
                 <li key={item.href}>
@@ -206,7 +157,7 @@ export function AdminSidebar({ user }: SidebarProps) {
                 {user.name ?? "Пользователь"}
               </p>
               <p className="truncate text-xs text-gray-500">
-                {roleLabel[user.role ?? ""] ?? user.role}
+                {ROLE_LABELS[role] ?? role}
               </p>
             </div>
             <Button

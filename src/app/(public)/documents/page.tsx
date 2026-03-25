@@ -1,11 +1,12 @@
-import fs from "fs";
-import path from "path";
 import type { Metadata } from "next";
+import { db } from "@/lib/db";
+import { documents } from "@/lib/db/schema";
+import { eq, asc } from "drizzle-orm";
 import { PageBanner } from "@/components/public/PageBanner";
 import { DocumentsAccordion } from "@/components/public/DocumentsAccordion";
 
 export const metadata: Metadata = { title: "Документы" };
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 type DocItem = {
   id: string;
@@ -18,56 +19,37 @@ type Section = {
   docs: DocItem[];
 };
 
-/** Превращает имя файла в читаемый заголовок */
-function fileToTitle(filename: string): string {
-  return filename
-    .replace(/\.[a-zA-Z]+$/, "")       // убрать расширение
-    .replace(/^\d+\.\s*/, "")           // убрать "1. " в начале
-    .replace(/-/g, " ")                 // дефисы → пробелы
-    .replace(/\s+/g, " ")
-    .trim();
-}
+export default async function DocumentsPage() {
+  const rows = await db
+    .select({
+      id: documents.id,
+      title: documents.title,
+      fileUrl: documents.fileUrl,
+      section: documents.section,
+      sectionOrder: documents.sectionOrder,
+      sortOrder: documents.sortOrder,
+    })
+    .from(documents)
+    .where(eq(documents.status, "active"))
+    .orderBy(asc(documents.sectionOrder), asc(documents.sortOrder));
 
-/** Убирает "1. " префикс из названия папки */
-function folderToSection(folder: string): string {
-  return folder.replace(/^\d+\.\s*/, "").trim();
-}
+  // Группируем по разделам
+  const sectionMap = new Map<string, DocItem[]>();
+  for (const row of rows) {
+    const sectionName = row.section ?? "Прочее";
+    if (!sectionMap.has(sectionName)) sectionMap.set(sectionName, []);
+    if (row.fileUrl) {
+      sectionMap.get(sectionName)!.push({
+        id: String(row.id),
+        title: row.title,
+        fileUrl: row.fileUrl,
+      });
+    }
+  }
 
-function loadSections(): Section[] {
-  const docsRoot = path.join(process.cwd(), "public", "documents");
-
-  if (!fs.existsSync(docsRoot)) return [];
-
-  const folders = fs
-    .readdirSync(docsRoot, { withFileTypes: true })
-    .filter((d) => d.isDirectory())
-    .sort((a, b) => a.name.localeCompare(b.name, "ru"));
-
-  return folders.map((folder) => {
-    const folderPath = path.join(docsRoot, folder.name);
-    const files = fs
-      .readdirSync(folderPath, { withFileTypes: true })
-      .filter((f) => f.isFile() && !f.name.startsWith("."))
-      .sort((a, b) => a.name.localeCompare(b.name, "ru"));
-
-    const docs: DocItem[] = files.map((file) => {
-      const urlPath = `/documents/${encodeURIComponent(folder.name)}/${encodeURIComponent(file.name)}`;
-      return {
-        id: urlPath,
-        title: fileToTitle(file.name),
-        fileUrl: urlPath,
-      };
-    });
-
-    return {
-      name: folderToSection(folder.name),
-      docs,
-    };
-  });
-}
-
-export default function DocumentsPage() {
-  const sections = loadSections();
+  const sections: Section[] = Array.from(sectionMap.entries())
+    .filter(([, docs]) => docs.length > 0)
+    .map(([name, docs]) => ({ name, docs }));
 
   return (
     <div>

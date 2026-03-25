@@ -13,6 +13,8 @@ const updateSchema = z.object({
   issuedAt: z.string().optional().nullable(),
   status: z.enum(["active", "archived"]).optional(),
   sortOrder: z.number().int().optional(),
+  section: z.string().max(255).optional(),
+  sectionOrder: z.number().int().optional(),
 });
 
 function parseId(raw: string) { const id = parseInt(raw); return isNaN(id) ? null : id; }
@@ -43,6 +45,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     if (data.issuedAt !== undefined) updates.issuedAt = data.issuedAt ?? undefined;
     if (data.status !== undefined) updates.status = data.status;
     if (data.sortOrder !== undefined) updates.sortOrder = data.sortOrder;
+    if (data.section !== undefined) updates.section = data.section;
+    if (data.sectionOrder !== undefined) updates.sectionOrder = data.sectionOrder;
 
     const [updated] = await db.update(documents).set(updates).where(eq(documents.id, id)).returning();
     return apiSuccess(updated);

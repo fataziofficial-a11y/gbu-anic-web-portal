@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,8 @@ interface DocumentFormData {
   issuedAt?: string | null;
   status?: string;
   sortOrder?: number;
+  section?: string | null;
+  sectionOrder?: number;
 }
 
 interface Props {
@@ -48,6 +50,16 @@ export function DocumentForm({ initialData, mode }: Props) {
   const [issuedAt, setIssuedAt] = useState(initialData?.issuedAt ?? "");
   const [status, setStatus] = useState(initialData?.status ?? "active");
   const [sortOrder, setSortOrder] = useState(initialData?.sortOrder ?? 0);
+  const [section, setSection] = useState(initialData?.section ?? "");
+  const [sectionOrder, setSectionOrder] = useState(initialData?.sectionOrder ?? 0);
+  const [existingSections, setExistingSections] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("/api/documents/sections")
+      .then((r) => r.json())
+      .then((json) => { if (Array.isArray(json.data)) setExistingSections(json.data); })
+      .catch(() => {});
+  }, []);
 
   async function handleSave() {
     if (!title.trim()) { toast.error("Название обязательно"); return; }
@@ -59,6 +71,8 @@ export function DocumentForm({ initialData, mode }: Props) {
       issuedAt: issuedAt || null,
       status,
       sortOrder,
+      section: section || "Прочее",
+      sectionOrder,
     };
 
     startTransition(async () => {
@@ -131,6 +145,25 @@ export function DocumentForm({ initialData, mode }: Props) {
         </div>
 
         <div className="space-y-1.5">
+          <Label htmlFor="section">Раздел</Label>
+          <Input
+            id="section"
+            list="sections-list"
+            value={section}
+            onChange={(e) => setSection(e.target.value)}
+            placeholder="Название раздела (например: Устав, Кадровое обеспечение)"
+          />
+          {existingSections.length > 0 && (
+            <datalist id="sections-list">
+              {existingSections.map((s) => (
+                <option key={s} value={s} />
+              ))}
+            </datalist>
+          )}
+          <p className="text-xs text-gray-400">Введите название или выберите существующий раздел</p>
+        </div>
+
+        <div className="space-y-1.5">
           <Label htmlFor="fileUrl">Ссылка на документ (PDF / внешний ресурс)</Label>
           <Input
             id="fileUrl"
@@ -141,13 +174,17 @@ export function DocumentForm({ initialData, mode }: Props) {
           <p className="text-xs text-gray-400">Ссылка на файл на внешнем сервере или в хранилище</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <div className="space-y-1.5">
             <Label htmlFor="issuedAt">Дата принятия</Label>
             <Input id="issuedAt" type="date" value={issuedAt} onChange={(e) => setIssuedAt(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="sortOrder">Порядок</Label>
+            <Label htmlFor="sectionOrder">Порядок раздела</Label>
+            <Input id="sectionOrder" type="number" value={sectionOrder} onChange={(e) => setSectionOrder(parseInt(e.target.value) || 0)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="sortOrder">Порядок документа</Label>
             <Input id="sortOrder" type="number" value={sortOrder} onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)} />
           </div>
         </div>

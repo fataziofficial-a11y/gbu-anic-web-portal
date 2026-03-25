@@ -9,6 +9,7 @@ import {
   date,
   index,
 } from "drizzle-orm/pg-core";
+// Note: array type imported inline below
 import { relations } from "drizzle-orm";
 
 // ==================== Пользователи CMS ====================
@@ -17,7 +18,8 @@ export const users = pgTable("users", {
   email: varchar("email", { length: 255 }).unique().notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   passwordHash: varchar("password_hash", { length: 255 }).notNull(),
-  role: varchar("role", { length: 20 }).notNull().default("author"), // admin, editor, author
+  role: varchar("role", { length: 30 }).notNull().default("author"), // admin, news_editor, researcher, hr_specialist, procurement_specialist, editor, author
+  permissions: text("permissions").array(), // переопределение доступа к разделам; null = используются defaults роли
   avatarUrl: varchar("avatar_url", { length: 500 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -59,6 +61,7 @@ export const news = pgTable(
     publishedAt: timestamp("published_at"),
     seoTitle: varchar("seo_title", { length: 500 }),
     seoDescription: text("seo_description"),
+    sourceUrl: varchar("source_url", { length: 500 }).unique(), // для импорта/дедупликации
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },

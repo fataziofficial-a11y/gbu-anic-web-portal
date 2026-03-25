@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save, X } from "lucide-react";
+import { Loader2, Save, X, Wand2 } from "lucide-react";
 import { ImageCropUploader } from "@/components/admin/ImageCropUploader";
 
 interface MediaFormData {
@@ -47,6 +47,32 @@ export function MediaForm({ initialData, mode }: Props) {
   );
   const [eventDate, setEventDate] = useState(initialData?.eventDate ?? "");
   const [status, setStatus] = useState(initialData?.status ?? "published");
+  const [fetching, setFetching] = useState(false);
+
+  /** Автозаполнение по ссылке Rutube/VK */
+  async function handleFetchMeta() {
+    if (!videoUrl.trim()) { toast.error("Введите ссылку на видео"); return; }
+    setFetching(true);
+    try {
+      const res = await fetch(`/api/media/fetch-meta?url=${encodeURIComponent(videoUrl.trim())}`);
+      const json = await res.json();
+      if (!res.ok) { toast.error(json.error ?? "Ошибка получения данных"); return; }
+      const meta = json.data;
+      if (meta.title && !title) setTitle(meta.title);
+      else if (meta.title) setTitle(meta.title); // перезаписываем
+      if (meta.description) setDescription(meta.description);
+      if (meta.embedUrl) setVideoUrl(meta.embedUrl);
+      if (meta.eventDate) setEventDate(meta.eventDate);
+      if (meta.thumbnailId && meta.thumbnailUrl) {
+        setThumbnail({ id: meta.thumbnailId, url: meta.thumbnailUrl });
+      }
+      toast.success("Данные загружены");
+    } catch {
+      toast.error("Не удалось загрузить метаданные");
+    } finally {
+      setFetching(false);
+    }
+  }
 
   async function handleSave() {
     if (!title.trim()) { toast.error("Название обязательно"); return; }
@@ -77,6 +103,9 @@ export function MediaForm({ initialData, mode }: Props) {
     });
   }
 
+  // Определяем, является ли videoUrl embed-ссылкой для превью
+  const isEmbed = videoUrl.includes("/embed/") || videoUrl.includes("video_ext.php");
+
   return (
     <div className="p-6 space-y-6 max-w-3xl">
       <div className="flex items-center justify-between">
@@ -95,11 +124,6 @@ export function MediaForm({ initialData, mode }: Props) {
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-        <div className="space-y-1.5">
-          <Label htmlFor="title">Название *</Label>
-          <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Название видео или фотоотчёта" />
-        </div>
-
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label>Тип</Label>
@@ -126,14 +150,50 @@ export function MediaForm({ initialData, mode }: Props) {
         {type === "video" && (
           <div className="space-y-1.5">
             <Label htmlFor="videoUrl">Ссылка на видео (Rutube / VK)</Label>
-            <Input
-              id="videoUrl"
-              value={videoUrl}
-              onChange={(e) => setVideoUrl(e.target.value)}
-              placeholder="https://rutube.ru/video/... или https://vk.com/video..."
-            />
+            <div className="flex gap-2">
+              <Input
+                id="videoUrl"
+                value={videoUrl}
+                onChange={(e) => setVideoUrl(e.target.value)}
+                placeholder="https://rutube.ru/video/... или https://vk.com/video..."
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleFetchMeta}
+                disabled={fetching || !videoUrl.trim()}
+                title="Загрузить название, описание и превью автоматически"
+              >
+                {fetching
+                  ? <Loader2 className="h-4 w-4 animate-spin" />
+                  : <Wand2 className="h-4 w-4" />}
+                <span className="ml-2 hidden sm:inline">Заполнить</span>
+              </Button>
+            </div>
+            <p className="text-xs text-gray-400">
+              Вставьте ссылку и нажмите «Заполнить» — название, описание и превью загрузятся автоматически
+            </p>
+
+            {/* Превью embed */}
+            {isEmbed && videoUrl && (
+              <div className="mt-2 rounded-lg overflow-hidden border border-gray-200 bg-black aspect-video">
+                <iframe
+                  src={videoUrl}
+                  className="w-full h-full"
+                  allowFullScreen
+                  allow="encrypted-media"
+                  frameBorder="0"
+                />
+              </div>
+            )}
           </div>
         )}
+
+        <div className="space-y-1.5">
+          <Label htmlFor="title">Название *</Label>
+          <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Название видео или фотоотчёта" />
+        </div>
 
         <div className="space-y-1.5">
           <Label htmlFor="eventDate">Дата мероприятия</Label>

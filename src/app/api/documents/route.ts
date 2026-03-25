@@ -13,6 +13,8 @@ const createSchema = z.object({
   issuedAt: z.string().optional().nullable(),
   status: z.enum(["active", "archived"]).default("active"),
   sortOrder: z.number().int().default(0),
+  section: z.string().max(255).default("Прочее"),
+  sectionOrder: z.number().int().default(0),
 });
 
 export async function GET() {
@@ -43,6 +45,8 @@ export async function POST(request: Request) {
       issuedAt: data.issuedAt ?? undefined,
       status: data.status,
       sortOrder: data.sortOrder,
+      section: data.section,
+      sectionOrder: data.sectionOrder,
     }).returning();
 
     return apiSuccess(created, 201);

@@ -14,26 +14,32 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2, ImagePlus, X } from "lucide-react";
 
-const ASPECT = 16 / 9;
-const OUTPUT_WIDTH = 1200;
-const OUTPUT_HEIGHT = 675; // 1200 × 9/16
+const DEFAULT_ASPECT = 16 / 9;
+const DEFAULT_OUTPUT_WIDTH = 1200;
+const DEFAULT_OUTPUT_HEIGHT = 675;
 
 interface Props {
   value?: { id: number; url: string } | null;
   onChange: (file: { id: number; url: string } | null) => void;
+  aspect?: number;
+  outputWidth?: number;
+  outputHeight?: number;
+  hint?: string;
 }
 
-function centerAspectCrop(w: number, h: number) {
-  return centerCrop(makeAspectCrop({ unit: "%", width: 90 }, ASPECT, w, h), w, h);
+function centerAspectCrop(w: number, h: number, aspect: number) {
+  return centerCrop(makeAspectCrop({ unit: "%", width: 90 }, aspect, w, h), w, h);
 }
 
 async function getCroppedBlob(
   img: HTMLImageElement,
-  crop: PixelCrop
+  crop: PixelCrop,
+  outputWidth: number,
+  outputHeight: number,
 ): Promise<Blob> {
   const canvas = document.createElement("canvas");
-  canvas.width = OUTPUT_WIDTH;
-  canvas.height = OUTPUT_HEIGHT;
+  canvas.width = outputWidth;
+  canvas.height = outputHeight;
   const ctx = canvas.getContext("2d")!;
 
   const scaleX = img.naturalWidth / img.width;
@@ -47,8 +53,8 @@ async function getCroppedBlob(
     crop.height * scaleY,
     0,
     0,
-    OUTPUT_WIDTH,
-    OUTPUT_HEIGHT
+    outputWidth,
+    outputHeight
   );
 
   return new Promise((resolve, reject) => {
@@ -59,7 +65,14 @@ async function getCroppedBlob(
   });
 }
 
-export function ImageCropUploader({ value, onChange }: Props) {
+export function ImageCropUploader({
+  value,
+  onChange,
+  aspect = DEFAULT_ASPECT,
+  outputWidth = DEFAULT_OUTPUT_WIDTH,
+  outputHeight = DEFAULT_OUTPUT_HEIGHT,
+  hint,
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
 
@@ -84,8 +97,8 @@ export function ImageCropUploader({ value, onChange }: Props) {
 
   const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget;
-    setCrop(centerAspectCrop(width, height));
-  }, []);
+    setCrop(centerAspectCrop(width, height, aspect));
+  }, [aspect]);
 
   async function handleApply() {
     if (!imgRef.current || !completedCrop) {
@@ -94,7 +107,7 @@ export function ImageCropUploader({ value, onChange }: Props) {
     }
     setUploading(true);
     try {
-      const blob = await getCroppedBlob(imgRef.current, completedCrop);
+      const blob = await getCroppedBlob(imgRef.current, completedCrop, outputWidth, outputHeight);
       const form = new FormData();
       form.append("file", blob, "cover.jpg");
 
@@ -133,7 +146,7 @@ export function ImageCropUploader({ value, onChange }: Props) {
             src={value.url}
             alt="Обложка"
             className="w-full object-cover"
-            style={{ aspectRatio: "16/9" }}
+            style={{ aspectRatio: `${outputWidth}/${outputHeight}` }}
           />
           <div className="absolute top-2 right-2 flex gap-1">
             <Button
@@ -164,7 +177,9 @@ export function ImageCropUploader({ value, onChange }: Props) {
         >
           <ImagePlus className="h-8 w-8 text-gray-300" />
           <span>Нажмите, чтобы выбрать фото</span>
-          <span className="text-xs text-gray-300">Будет обрезано до 1200×675 (16:9)</span>
+          <span className="text-xs text-gray-300">
+            {hint ?? `Будет обрезано до ${outputWidth}×${outputHeight}`}
+          </span>
         </button>
       )}
 
@@ -172,7 +187,7 @@ export function ImageCropUploader({ value, onChange }: Props) {
       <Dialog open={!!srcUrl} onOpenChange={(v) => { if (!v) setSrcUrl(null); }}>
         <DialogContent className="sm:max-w-[700px]">
           <DialogHeader>
-            <DialogTitle>Обрежьте фото (16:9)</DialogTitle>
+            <DialogTitle>Обрежьте фото ({outputWidth}×{outputHeight})</DialogTitle>
           </DialogHeader>
 
           <div className="flex justify-center bg-gray-900 rounded-lg overflow-hidden">
@@ -181,7 +196,7 @@ export function ImageCropUploader({ value, onChange }: Props) {
                 crop={crop}
                 onChange={(c) => setCrop(c)}
                 onComplete={(c) => setCompletedCrop(c)}
-                aspect={ASPECT}
+                aspect={aspect}
                 minWidth={100}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -197,7 +212,7 @@ export function ImageCropUploader({ value, onChange }: Props) {
           </div>
 
           <p className="text-xs text-gray-400 text-center">
-            Перетащите рамку, чтобы выбрать нужный фрагмент. Результат: 1200×675 px.
+            Перетащите рамку, чтобы выбрать нужный фрагмент. Результат: {outputWidth}×{outputHeight} px.
           </p>
 
           <DialogFooter>

@@ -93,7 +93,14 @@ export function PartnerForm({ initialData, mode }: Props) {
 
         <div className="space-y-1.5">
           <Label>Логотип</Label>
-          <ImageCropUploader value={logo} onChange={setLogo} />
+          <ImageCropUploader
+            value={logo}
+            onChange={setLogo}
+            aspect={1}
+            outputWidth={400}
+            outputHeight={400}
+            hint="Логотип 400×400 px (квадрат)"
+          />
         </div>
 
         <div className="space-y-1.5">
