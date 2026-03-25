@@ -12,6 +12,10 @@ export const revalidate = 60;
 
 function getVideoEmbed(url: string): string | null {
   if (!url) return null;
+  // Already an embed URL
+  if (url.includes("rutube.ru/play/embed/")) return url.endsWith("/") ? url : `${url}/`;
+  if (url.includes("vk.com/video_ext.php")) return url;
+  // Convert video page URL to embed
   const rutubeMatch = url.match(/rutube\.ru\/video\/([a-zA-Z0-9]+)/);
   if (rutubeMatch) return `https://rutube.ru/play/embed/${rutubeMatch[1]}/`;
   const vkMatch = url.match(/vk\.com\/video(-?\d+_\d+)/);
