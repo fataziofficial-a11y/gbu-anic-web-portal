@@ -65,7 +65,7 @@ export const ROLE_DEFAULT_SECTIONS: Record<string, Section[]> = {
   admin: ALL_SECTIONS,
   news_editor: ["knowledge", "news", "media", "crosspost", "tickets"],
   researcher: ["knowledge", "projects", "publications", "tickets"],
-  hr_specialist: ["knowledge", "departments", "team", "documents", "tickets", "users"],
+  hr_specialist: ["knowledge", "departments", "team", "documents", "tickets"],
   procurement_specialist: ["knowledge", "documents", "procurements", "tickets"],
   // Legacy
   editor: ["knowledge", "news", "media", "crosspost", "tickets"],

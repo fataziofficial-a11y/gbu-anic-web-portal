@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { news, pages, knowledgeItems, teamMembers, files } from "@/lib/db/schema";
+import { news, pages, knowledgeItems, teamMembers, files, users } from "@/lib/db/schema";
 import { eq, count, desc } from "drizzle-orm";
 import { formatDate } from "@/lib/utils/format";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,7 @@ import {
   FileText,
   BookOpen,
   Users,
+  UserCog,
   Plus,
   TrendingUp,
   Clock,
@@ -33,6 +34,7 @@ async function getStats() {
     kbTotal,
     teamTotal,
     filesTotal,
+    usersTotal,
   ] = await Promise.all([
     db.select({ count: count() }).from(news),
     db.select({ count: count() }).from(news).where(eq(news.status, "published")),
@@ -41,6 +43,7 @@ async function getStats() {
     db.select({ count: count() }).from(knowledgeItems),
     db.select({ count: count() }).from(teamMembers),
     db.select({ count: count() }).from(files),
+    db.select({ count: count() }).from(users),
   ]);
 
   return {
@@ -49,6 +52,7 @@ async function getStats() {
     kb: kbTotal[0].count,
     team: teamTotal[0].count,
     files: filesTotal[0].count,
+    users: usersTotal[0].count,
   };
 }
 
@@ -71,6 +75,8 @@ export default async function DashboardPage() {
   if (!session) redirect("/admin/login");
 
   const [stats, recentNews] = await Promise.all([getStats(), getRecentNews()]);
+
+  const isAdmin = session.user.role === "admin";
 
   const statCards = [
     {
@@ -109,6 +115,15 @@ export default async function DashboardPage() {
       color: "text-orange-600",
       bg: "bg-orange-50",
     },
+    ...(isAdmin ? [{
+      title: "Пользователи",
+      value: stats.users,
+      sub: "учётных записей CMS",
+      icon: UserCog,
+      href: "/admin/users",
+      color: "text-violet-600",
+      bg: "bg-violet-50",
+    }] : []),
   ];
 
   return (
@@ -130,7 +145,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Статистика */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className={`grid grid-cols-2 gap-4 ${isAdmin ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
         {statCards.map((card) => (
           <Link key={card.href} href={card.href}>
             <Card className="transition-shadow hover:shadow-md cursor-pointer">
