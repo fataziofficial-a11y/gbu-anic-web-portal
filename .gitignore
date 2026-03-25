@@ -50,3 +50,5 @@ next-env.d.ts
 # Backups
 /backups/
 docs/closing-docs/
+project-rules/
+project-plan/
