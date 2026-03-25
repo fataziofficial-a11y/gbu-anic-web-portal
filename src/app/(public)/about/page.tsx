@@ -146,42 +146,7 @@ export default async function AboutPage() {
           </div>
         </section>
 
-        {/* Team */}
-        <section>
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Люди</p>
-          <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Наша команда</h2>
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {team.length > 0
-              ? team.map((member) => (
-                  <div key={member.id} className="rounded-2xl border border-[#DDE8F0] bg-white p-5 text-center">
-                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#EEF4FB] text-[#1A3A6B]">
-                      {member.photo ? (
-                        <Image src={member.photo.url} alt={member.name} width={64} height={64} className="rounded-full object-cover" />
-                      ) : (
-                        <Users className="h-7 w-7" />
-                      )}
-                    </div>
-                    <p className="font-bold text-[#0D1C2E]">{member.name}</p>
-                    {member.position && (
-                      <p className="mt-1 text-xs leading-snug text-[#4B6075]">{member.position}</p>
-                    )}
-                    {member.department && (
-                      <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-[#5CAFD6]">{member.department.name}</p>
-                    )}
-                  </div>
-                ))
-              : Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="rounded-2xl border border-dashed border-[#DDE8F0] bg-[#FAFCFE] p-5 text-center">
-                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#EEF4FB] text-[#1A3A6B]/30">
-                      <Users className="h-7 w-7" />
-                    </div>
-                    <div className="mx-auto h-4 w-24 rounded bg-[#DDE8F0]" />
-                    <div className="mx-auto mt-2 h-3 w-20 rounded bg-[#EEF4FB]" />
-                    <div className="mx-auto mt-1.5 h-3 w-16 rounded bg-[#EEF4FB]" />
-                  </div>
-                ))}
-          </div>
-        </section>
+        {/* Team — скрыт до решения заказчика */}
       </div>
     </div>
   );
