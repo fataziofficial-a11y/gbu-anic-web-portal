@@ -43,6 +43,13 @@
       "when": 1774435768071,
       "tag": "0005_public_zuras",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1774500000000,
+      "tag": "0006_users_permissions",
+      "breakpoints": true
     }
   ]
 }
