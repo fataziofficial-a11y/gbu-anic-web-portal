@@ -116,7 +116,7 @@ export async function GET(req: NextRequest) {
     );
 
     let title = "";
-    let description = "";
+    const description = "";
     let embedUrl = "";
     let thumbnailUrl: string | null = null;
     let thumbnailId: number | null = null;

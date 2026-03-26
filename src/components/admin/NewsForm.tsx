@@ -19,7 +19,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { ImageCropUploader } from "@/components/admin/ImageCropUploader";
 import { CrosspostPanel } from "@/components/admin/CrosspostPanel";
 import { NewsCategorySelect } from "@/components/admin/NewsCategorySelect";
@@ -68,16 +67,6 @@ interface Props {
   initialData?: NewsFormData;
   mode: "create" | "edit";
 }
-
-const CATEGORIES = [
-  "Наука",
-  "Экспедиции",
-  "Инфраструктура",
-  "Финансирование",
-  "Мероприятия",
-  "Публикации",
-  "Международное сотрудничество",
-];
 
 export function NewsForm({ initialData, mode }: Props) {
   const router = useRouter();

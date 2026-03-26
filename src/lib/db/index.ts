@@ -8,7 +8,6 @@ const connectionString = process.env.DATABASE_URL!;
 // Next.js HMR пересоздаёт модули, но глобальная переменная сохраняется,
 // что предотвращает "too many clients already" при разработке.
 declare global {
-  // eslint-disable-next-line no-var
   var __pgClient: postgres.Sql | undefined;
 }
 

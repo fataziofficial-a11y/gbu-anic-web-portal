@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { knowledgeItems, kbCategories } from "@/lib/db/schema";
+import { knowledgeItems } from "@/lib/db/schema";
 import { eq, and, ne } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";

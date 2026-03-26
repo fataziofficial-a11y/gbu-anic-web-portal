@@ -4,13 +4,6 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -18,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { FileUploader } from "@/components/admin/FileUploader";
 import { DeleteButton } from "@/components/admin/DeleteButton";
-import { Upload, HardDrive, FileText, File, Image, Loader2 } from "lucide-react";
+import { Upload, HardDrive, FileText, File, Image as ImageIcon, Loader2 } from "lucide-react";
 
 interface FileItem {
   id: number;
@@ -40,7 +33,7 @@ function formatBytes(bytes: number) {
 }
 
 function FileIcon({ mimeType, className }: { mimeType: string; className?: string }) {
-  if (mimeType.startsWith("image/")) return <Image className={className ?? "h-5 w-5 text-blue-400"} />;
+  if (mimeType.startsWith("image/")) return <ImageIcon className={className ?? "h-5 w-5 text-blue-400"} />;
   if (mimeType.includes("pdf")) return <FileText className={className ?? "h-5 w-5 text-red-400"} />;
   return <File className={className ?? "h-5 w-5 text-gray-400"} />;
 }
@@ -132,6 +125,7 @@ export default function FilesPage() {
               {/* Превью */}
               <div className="aspect-square bg-gray-50 flex items-center justify-center">
                 {file.mimeType.startsWith("image/") ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={file.url}
                     alt={file.altText ?? file.originalName}

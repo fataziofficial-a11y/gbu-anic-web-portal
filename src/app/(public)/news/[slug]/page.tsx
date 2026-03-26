@@ -35,8 +35,9 @@ export async function generateMetadata({
   const pageUrl = `${base}/news/${slug}`;
   const title = item.seoTitle || item.title;
   const description = item.seoDescription || item.excerpt || undefined;
-  const image = (item as any).coverImage?.url
-    ? { url: (item as any).coverImage.url, width: 1200, height: 630, alt: (item as any).coverImage.altText ?? title }
+  const cover = item as typeof item & { coverImage?: { url: string; altText?: string | null } | null };
+  const image = cover.coverImage?.url
+    ? { url: cover.coverImage.url, width: 1200, height: 630, alt: cover.coverImage.altText ?? title }
     : { url: "/anic-hero.png", width: 1200, height: 630, alt: title };
 
   return {

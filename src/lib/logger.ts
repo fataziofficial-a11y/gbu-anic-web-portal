@@ -44,7 +44,6 @@ function emit(level: Level, msg: string, ctx?: LogContext) {
     const color = COLORS[level];
     const prefix = `${color}[${level.toUpperCase()}]${RESET}`;
     const ctxStr = ctx && Object.keys(ctx).length > 0 ? " " + JSON.stringify(ctx) : "";
-    // eslint-disable-next-line no-console
     const fn = level === "error" ? console.error : level === "warn" ? console.warn : console.log;
     fn(`${prefix} ${msg}${ctxStr}`);
   }

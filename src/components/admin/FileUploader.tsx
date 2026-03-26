@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, X, Loader2, FileText, Image, File } from "lucide-react";
+import { Upload, X, Loader2, FileText, Image as ImageIcon, File } from "lucide-react";
 
 interface UploadedFile {
   id: number;
@@ -27,7 +27,7 @@ interface Props {
 }
 
 function FileIcon({ mimeType }: { mimeType: string }) {
-  if (mimeType.startsWith("image/")) return <Image className="h-6 w-6 text-blue-500" />;
+  if (mimeType.startsWith("image/")) return <ImageIcon className="h-6 w-6 text-blue-500" />;
   if (mimeType.includes("pdf") || mimeType.includes("document")) return <FileText className="h-6 w-6 text-red-500" />;
   return <File className="h-6 w-6 text-gray-500" />;
 }
@@ -175,9 +175,10 @@ export function FileUploader({ onUploaded, onClose }: Props) {
                   <p className="text-xs text-gray-400">{formatBytes(file.sizeBytes)}</p>
                 </div>
                 {file.mimeType.startsWith("image/") && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={file.url}
-                    alt=""
+                    alt="Превью"
                     className="h-10 w-10 rounded object-cover flex-shrink-0"
                   />
                 )}

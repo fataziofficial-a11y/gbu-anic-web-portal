@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Search, UserCog, Trash2, Edit } from "lucide-react";
 import {
-  ALL_SECTIONS,
   SECTION_LABELS,
   ROLE_LABELS,
   ROLE_DEFAULT_SECTIONS,
@@ -84,8 +83,6 @@ export default function UsersPage() {
 
     // Текущий эффективный набор прав
     const current = getUserSections(user.role, user.permissions);
-    const hasCustom = user.permissions && user.permissions.length > 0;
-
     let next: string[];
     if (current.includes(section)) {
       // Убираем

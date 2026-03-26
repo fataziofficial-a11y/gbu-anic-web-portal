@@ -16,7 +16,6 @@ import * as fs from "fs";
 import * as path from "path";
 import * as https from "https";
 import * as http from "http";
-import * as url from "url";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const postgres = require("postgres") as (conn: string, opts?: Record<string, unknown>) => ReturnType<typeof import("postgres")>;
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -127,7 +126,7 @@ async function downloadImage(imgUrl: string): Promise<string | null> {
     });
 
     return `/uploads/${filename}`;
-  } catch (err) {
+  } catch {
     console.warn(`    ⚠ не удалось скачать изображение: ${imgUrl}`);
     return null;
   }

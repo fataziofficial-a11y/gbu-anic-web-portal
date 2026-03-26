@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import { pages } from "@/lib/db/schema";
 import { PageForm } from "@/components/admin/PageForm";
 
 export const dynamic = "force-dynamic";

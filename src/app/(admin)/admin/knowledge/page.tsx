@@ -4,7 +4,7 @@ import { desc } from "drizzle-orm";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, BookOpen, Edit, Tag } from "lucide-react";
+import { Plus, BookOpen, Edit } from "lucide-react";
 import { DeleteButton } from "@/components/admin/DeleteButton";
 import { KnowledgeCategoriesManager } from "@/components/admin/KnowledgeCategoriesManager";
 

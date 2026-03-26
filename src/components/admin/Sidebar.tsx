@@ -6,7 +6,6 @@ import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   Newspaper,
-  FileText,
   BookOpen,
   Users,
   Building2,

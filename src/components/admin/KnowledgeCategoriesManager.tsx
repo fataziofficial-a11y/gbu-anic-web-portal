@@ -24,7 +24,7 @@ export function KnowledgeCategoriesManager() {
   const [loading, setLoading] = useState(false);
   const [editTarget, setEditTarget] = useState<Category | undefined>(undefined);
   const [createOpen, setCreateOpen] = useState(false);
-  const [deletingId, startDeleteTransition] = useTransition();
+  const [, startDeleteTransition] = useTransition();
 
   const load = useCallback(async () => {
     setLoading(true);

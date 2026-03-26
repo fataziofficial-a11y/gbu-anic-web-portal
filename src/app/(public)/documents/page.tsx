@@ -20,31 +20,26 @@ type Section = {
 };
 
 export default async function DocumentsPage() {
-  const rows = await db
-    .select({
-      id: documents.id,
-      title: documents.title,
-      fileUrl: documents.fileUrl,
-      section: documents.section,
-      sectionOrder: documents.sectionOrder,
-      sortOrder: documents.sortOrder,
-    })
-    .from(documents)
-    .where(eq(documents.status, "active"))
-    .orderBy(asc(documents.sectionOrder), asc(documents.sortOrder));
+  const rows = await db.query.documents.findMany({
+    where: eq(documents.status, "active"),
+    orderBy: [asc(documents.sectionOrder), asc(documents.sortOrder)],
+    with: { file: { columns: { url: true } } },
+  });
 
   // Группируем по разделам
   const sectionMap = new Map<string, DocItem[]>();
   for (const row of rows) {
     const sectionName = row.section ?? "Прочее";
+    // Приоритет: загруженный файл → внешняя ссылка
+    const url = (row as typeof row & { file?: { url: string } | null }).file?.url ?? row.fileUrl;
+    if (!url) continue;
+
     if (!sectionMap.has(sectionName)) sectionMap.set(sectionName, []);
-    if (row.fileUrl) {
-      sectionMap.get(sectionName)!.push({
-        id: String(row.id),
-        title: row.title,
-        fileUrl: row.fileUrl,
-      });
-    }
+    sectionMap.get(sectionName)!.push({
+      id: String(row.id),
+      title: row.title,
+      fileUrl: url,
+    });
   }
 
   const sections: Section[] = Array.from(sectionMap.entries())

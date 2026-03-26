@@ -10,13 +10,6 @@ import { postToDzen } from "@/lib/crosspost/dzen";
 import { postToOk } from "@/lib/crosspost/ok";
 import { z } from "zod";
 
-const PLATFORM_LABELS: Record<string, string> = {
-  telegram: "Telegram",
-  vk: "ВКонтакте",
-  max: "MAX",
-  dzen: "Яндекс.Дзен",
-  ok: "Одноклассники",
-};
 
 const crosspostSchema = z.object({
   contentType: z.enum(["news", "knowledge"]),

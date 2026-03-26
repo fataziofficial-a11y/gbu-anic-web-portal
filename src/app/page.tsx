@@ -7,7 +7,7 @@ import Image from "next/image";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { AskAI } from "@/components/public/AskAI";
-import { ArrowRight, FlaskConical, Calendar, BookOpen, Users, Layers, ChevronRight } from "lucide-react";
+import { ArrowRight, Calendar, BookOpen, Users, Layers, ChevronRight } from "lucide-react";
 
 export const revalidate = 60;
 
@@ -88,7 +88,7 @@ const RESEARCH_AREAS = [
 ];
 
 export default async function HomePage() {
-  const { latestNews, activeProjects, teamCount, newsCount } = await getHomeData();
+  const { latestNews, activeProjects } = await getHomeData();
 
   return (
     <div className="flex min-h-screen flex-col bg-white text-[#0D1C2E]">

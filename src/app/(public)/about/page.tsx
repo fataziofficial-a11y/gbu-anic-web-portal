@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import { departments, teamMembers } from "@/lib/db/schema";
 import { asc } from "drizzle-orm";
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Building2, Users, Target, Globe, Lightbulb } from "lucide-react";

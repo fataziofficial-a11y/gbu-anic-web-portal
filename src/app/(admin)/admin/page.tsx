@@ -21,8 +21,6 @@ import {
   UserCog,
   Plus,
   TrendingUp,
-  Clock,
-  CheckCircle2,
 } from "lucide-react";
 
 async function getStats() {

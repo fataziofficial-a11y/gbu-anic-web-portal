@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { news, files } from "@/lib/db/schema";
+import { news } from "@/lib/db/schema";
 import { eq, desc, count, ilike, and, SQL } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
@@ -142,7 +142,8 @@ export default async function NewsListPage({
                 : null;
               const catLabel = item.category ? (CAT_LABELS[item.category] ?? item.category) : null;
               const placeholder = PLACEHOLDERS[idx % PLACEHOLDERS.length];
-              const imageUrl = (item as any).coverImage?.url ?? null;
+              const itemWithCover = item as typeof item & { coverImage?: { url: string; altText?: string | null } | null };
+              const imageUrl = itemWithCover.coverImage?.url ?? null;
 
               return (
                 <Link
@@ -155,7 +156,7 @@ export default async function NewsListPage({
                     {imageUrl ? (
                       <Image
                         src={imageUrl}
-                        alt={(item as any).coverImage?.altText ?? item.title}
+                        alt={itemWithCover.coverImage?.altText ?? item.title}
                         fill
                         className="object-cover transition group-hover:scale-105"
                         sizes="240px"

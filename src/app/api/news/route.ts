@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { news, users } from "@/lib/db/schema";
+import { news } from "@/lib/db/schema";
 import { apiSuccess, apiError, withErrorHandler } from "@/lib/utils/api";
 import { generateSlug } from "@/lib/utils/slug";
 import { desc, eq, ilike, or, count, and, SQL } from "drizzle-orm";
