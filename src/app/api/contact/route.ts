@@ -16,6 +16,15 @@ import nodemailer from "nodemailer";
 import { z } from "zod";
 import { logger } from "@/lib/logger";
 
+function escHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 const schema = z.object({
   name: z.string().min(2, "Имя слишком короткое").max(100),
   email: z.string().email("Некорректный email"),
@@ -102,12 +111,12 @@ export async function POST(req: NextRequest) {
         <div style="font-family:sans-serif;max-width:600px">
           <h2 style="color:#1e40af">Новое обращение с сайта</h2>
           <table style="border-collapse:collapse;width:100%">
-            <tr><td style="padding:6px 0;color:#6b7280;width:80px">Имя:</td><td><b>${name}</b></td></tr>
-            <tr><td style="padding:6px 0;color:#6b7280">Email:</td><td><a href="mailto:${email}">${email}</a></td></tr>
-            <tr><td style="padding:6px 0;color:#6b7280">Тема:</td><td>${subject}</td></tr>
+            <tr><td style="padding:6px 0;color:#6b7280;width:80px">Имя:</td><td><b>${escHtml(name)}</b></td></tr>
+            <tr><td style="padding:6px 0;color:#6b7280">Email:</td><td><a href="mailto:${escHtml(email)}">${escHtml(email)}</a></td></tr>
+            <tr><td style="padding:6px 0;color:#6b7280">Тема:</td><td>${escHtml(subject)}</td></tr>
           </table>
           <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb"/>
-          <p style="white-space:pre-wrap;color:#111827">${message}</p>
+          <p style="white-space:pre-wrap;color:#111827">${escHtml(message)}</p>
         </div>
       `,
     });

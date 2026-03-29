@@ -27,7 +27,12 @@ function renderMarks(text: string, marks?: TNode["marks"]): string {
       case "code":
         return `<code>${acc}</code>`;
       case "link": {
-        const href = escHtml(mark.attrs?.href ?? "#");
+        const rawHref = mark.attrs?.href ?? "#";
+        const hrefLower = rawHref.trim().toLowerCase();
+        if (hrefLower.startsWith("javascript:") || hrefLower.startsWith("data:")) {
+          return acc;
+        }
+        const href = escHtml(rawHref);
         return `<a href="${href}" target="_blank" rel="noopener noreferrer">${acc}</a>`;
       }
       default:
@@ -47,7 +52,7 @@ function renderNode(node: TNode): string {
     case "paragraph":
       return inner ? `<p>${inner}</p>` : "<p><br /></p>";
     case "heading": {
-      const lvl = node.attrs?.level ?? 2;
+      const lvl = Math.max(1, Math.min(6, Number(node.attrs?.level) || 2));
       return `<h${lvl}>${inner}</h${lvl}>`;
     }
     case "bulletList":

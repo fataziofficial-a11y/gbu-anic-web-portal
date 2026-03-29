@@ -3,6 +3,27 @@
 # Заменить YOUR_DOMAIN.RU на реальный домен
 # После: certbot --nginx -d YOUR_DOMAIN.RU
 
+# Rate limiting для login (5 запросов в минуту на IP)
+limit_req_zone $binary_remote_addr zone=login:10m rate=5r/m;
+
+# === ЗАЩИТА ОТ EXPOSED SUBDOMAINS ===
+# Default server — отклоняет запросы на неизвестные хосты (wildcard DNS)
+# Это закрывает все поддомены вида mongo.*, redis.*, jenkins.* и т.д.
+server {
+    listen 80 default_server;
+    listen 443 ssl default_server;
+    server_name _;
+
+    # Self-signed fallback cert (нужен для SSL default_server)
+    # Сгенерировать: openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
+    #   -keyout /etc/nginx/ssl/default.key -out /etc/nginx/ssl/default.crt -subj '/CN=_'
+    ssl_certificate /etc/nginx/ssl/default.crt;
+    ssl_certificate_key /etc/nginx/ssl/default.key;
+
+    # Сбрасывать соединение без ответа
+    return 444;
+}
+
 server {
     listen 80;
     server_name YOUR_DOMAIN.RU www.YOUR_DOMAIN.RU;
@@ -13,6 +34,9 @@ server {
     listen 443 ssl http2;
     server_name YOUR_DOMAIN.RU www.YOUR_DOMAIN.RU;
 
+    # Скрыть версию nginx
+    server_tokens off;
+
     # SSL (certbot заполнит автоматически)
     # ssl_certificate /etc/letsencrypt/live/YOUR_DOMAIN.RU/fullchain.pem;
     # ssl_certificate_key /etc/letsencrypt/live/YOUR_DOMAIN.RU/privkey.pem;
@@ -22,7 +46,9 @@ server {
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-XSS-Protection "1; mode=block" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+    add_header Permissions-Policy "geolocation=(), camera=(), microphone=()" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; frame-src 'self' https://rutube.ru https://vk.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'" always;
 
     # Gzip
     gzip on;
@@ -52,6 +78,24 @@ server {
         proxy_cache_valid 200 7d;
     }
 
+    # Rate limiting для login (все auth-эндпоинты)
+    location /api/auth/ {
+        limit_req zone=login burst=3 nodelay;
+        limit_req_status 429;
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_hide_header X-Powered-By;
+    }
+
+    # Блокировка WordPress-ботов
+    location ~* (wp-login\.php|wp-admin|xmlrpc\.php) {
+        return 404;
+    }
+
     # Основной прокси на Next.js
     location / {
         proxy_pass http://127.0.0.1:3000;
@@ -63,6 +107,7 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
+        proxy_hide_header X-Powered-By;
 
         # Таймауты
         proxy_connect_timeout 60s;
