@@ -28,58 +28,84 @@ export default async function PartnersPage() {
         <section>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#5CAFD6]">Партнёры</p>
           <h2 className="mt-2 text-3xl font-black text-[#0D1C2E]">Наши партнёры</h2>
-          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {/*
+            Subgrid: каждая карточка занимает 4 строки родительской сетки.
+            Это выравнивает лого → название → описание → ссылку по рядам.
+          */}
+          <div className="mt-8 grid grid-cols-1 gap-x-4 gap-y-0 md:grid-cols-2 lg:grid-cols-3">
             {items.length > 0
               ? items.map((item) => (
-                  <div key={item.id} className="flex flex-col gap-4 rounded-2xl border border-[#DDE8F0] bg-white p-6">
-                    {item.logo ? (
-                      <div className="flex h-14 w-full items-center">
-                        <Image
-                          src={item.logo.url}
-                          alt={item.name}
-                          width={160}
-                          height={56}
-                          className="max-h-14 object-contain"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
-                        <Handshake className="h-5 w-5" />
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <h3 className="font-bold text-[#0D1C2E]">{item.name}</h3>
-                      {item.description && (
-                        <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-[#4B6075]">{item.description}</p>
-                      )}
-                      {item.services && (
-                        <p className="mt-2 line-clamp-2 text-xs text-[#8B9BAD]">{item.services}</p>
+                  <div
+                    key={item.id}
+                    className="row-span-4 mb-4 grid [grid-template-rows:subgrid] rounded-2xl border border-[#DDE8F0] bg-white"
+                  >
+                    {/* Строка 1: логотип / иконка */}
+                    <div className="px-6 pt-6 pb-0">
+                      {item.logo ? (
+                        <div className="flex h-14 w-full items-center">
+                          <Image
+                            src={item.logo.url}
+                            alt={item.name}
+                            width={160}
+                            height={56}
+                            className="max-h-14 object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
+                          <Handshake className="h-5 w-5" />
+                        </div>
                       )}
                     </div>
-                    {item.websiteUrl && (
-                      <a
-                        href={item.websiteUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-sm font-semibold text-[#1A3A6B] transition hover:text-[#5CAFD6]"
-                      >
-                        <Globe className="h-4 w-4" />
-                        Сайт организации
-                      </a>
-                    )}
+
+                    {/* Строка 2: название */}
+                    <div className="px-6 pt-4">
+                      <h3 className="font-bold text-[#0D1C2E]">{item.name}</h3>
+                    </div>
+
+                    {/* Строка 3: описание (пустой блок если нет — держит высоту) */}
+                    <div className="px-6 pt-1">
+                      {item.description && (
+                        <p className="line-clamp-3 text-sm leading-relaxed text-[#4B6075]">{item.description}</p>
+                      )}
+                      {item.services && (
+                        <p className="mt-1 line-clamp-2 text-xs text-[#8B9BAD]">{item.services}</p>
+                      )}
+                    </div>
+
+                    {/* Строка 4: ссылка (пустой блок если нет) */}
+                    <div className="px-6 pt-3 pb-6">
+                      {item.websiteUrl && (
+                        <a
+                          href={item.websiteUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-sm font-semibold text-[#1A3A6B] transition hover:text-[#5CAFD6]"
+                        >
+                          <Globe className="h-4 w-4" />
+                          Сайт организации
+                        </a>
+                      )}
+                    </div>
                   </div>
                 ))
               : Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="flex flex-col gap-4 rounded-2xl border border-dashed border-[#DDE8F0] bg-[#FAFCFE] p-6">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]/30">
-                      <Handshake className="h-5 w-5" />
+                  <div key={i} className="row-span-4 mb-4 grid [grid-template-rows:subgrid] rounded-2xl border border-dashed border-[#DDE8F0] bg-[#FAFCFE]">
+                    <div className="px-6 pt-6 pb-0">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]/30">
+                        <Handshake className="h-5 w-5" />
+                      </div>
                     </div>
-                    <div className="flex-1 space-y-2">
+                    <div className="px-6 pt-4">
                       <div className="h-4 w-36 rounded bg-[#DDE8F0]" />
+                    </div>
+                    <div className="space-y-2 px-6 pt-2">
                       <div className="h-3 w-full rounded bg-[#EEF4FB]" />
                       <div className="h-3 w-4/5 rounded bg-[#EEF4FB]" />
                     </div>
-                    <div className="h-3 w-28 rounded bg-[#EEF4FB]" />
+                    <div className="px-6 pt-3 pb-6">
+                      <div className="h-3 w-28 rounded bg-[#EEF4FB]" />
+                    </div>
                   </div>
                 ))}
           </div>
