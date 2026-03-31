@@ -1,11 +1,11 @@
 import { db } from "@/lib/db";
 import { partners } from "@/lib/db/schema";
 import { asc } from "drizzle-orm";
-import Image from "next/image";
 import Link from "next/link";
 import { Globe, ArrowRight, Handshake, FlaskConical } from "lucide-react";
 import type { Metadata } from "next";
 import { PageBanner } from "@/components/public/PageBanner";
+import { PartnerLogo } from "@/components/public/PartnerLogo";
 
 export const metadata: Metadata = { title: "Партнёрам" };
 export const revalidate = 3600;
@@ -42,15 +42,7 @@ export default async function PartnersPage() {
                     {/* Строка 1: логотип / иконка */}
                     <div className="px-6 pt-6 pb-0">
                       {item.logo ? (
-                        <div className="flex h-14 w-full items-center">
-                          <Image
-                            src={item.logo.url}
-                            alt={item.name}
-                            width={160}
-                            height={56}
-                            className="max-h-14 object-contain"
-                          />
-                        </div>
+                        <PartnerLogo src={item.logo.url} name={item.name} />
                       ) : (
                         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
                           <Handshake className="h-5 w-5" />
