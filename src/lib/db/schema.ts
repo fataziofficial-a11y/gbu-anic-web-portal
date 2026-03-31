@@ -8,6 +8,7 @@ import {
   jsonb,
   date,
   index,
+  unique,
 } from "drizzle-orm/pg-core";
 // Note: array type imported inline below
 import { relations } from "drizzle-orm";
@@ -56,6 +57,8 @@ export const news = pgTable(
     coverImageId: integer("cover_image_id").references(() => files.id),
     category: varchar("category", { length: 100 }),
     tags: text("tags").array().default([]),
+    projectId: integer("project_id").references(() => projects.id, { onDelete: "set null" }),
+    rubricId: integer("rubric_id").references(() => projectRubrics.id, { onDelete: "set null" }),
     authorId: integer("author_id").references(() => users.id),
     status: varchar("status", { length: 20 }).default("draft"), // draft, published, archived
     publishedAt: timestamp("published_at"),
@@ -155,6 +158,20 @@ export const newsCategories = pgTable("news_categories", {
   sortOrder: integer("sort_order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+// ==================== Рубрики проектов ====================
+export const projectRubrics = pgTable(
+  "project_rubrics",
+  {
+    id: serial("id").primaryKey(),
+    projectId: integer("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 255 }).notNull(),
+    slug: varchar("slug", { length: 255 }).notNull(),
+    sortOrder: integer("sort_order").default(0),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => [unique("project_rubrics_project_slug").on(table.projectId, table.slug)]
+);
 
 // ==================== Категории базы знаний ====================
 export const kbCategories = pgTable("kb_categories", {
@@ -311,6 +328,14 @@ export const newsRelations = relations(news, ({ one }) => ({
     fields: [news.coverImageId],
     references: [files.id],
   }),
+  project: one(projects, {
+    fields: [news.projectId],
+    references: [projects.id],
+  }),
+  rubric: one(projectRubrics, {
+    fields: [news.rubricId],
+    references: [projectRubrics.id],
+  }),
 }));
 
 export const pagesRelations = relations(pages, ({ one }) => ({
@@ -342,11 +367,21 @@ export const teamMembersRelations = relations(teamMembers, ({ one }) => ({
   }),
 }));
 
-export const projectsRelations = relations(projects, ({ one }) => ({
+export const projectsRelations = relations(projects, ({ one, many }) => ({
   department: one(departments, {
     fields: [projects.departmentId],
     references: [departments.id],
   }),
+  rubrics: many(projectRubrics),
+  news: many(news),
+}));
+
+export const projectRubricsRelations = relations(projectRubrics, ({ one, many }) => ({
+  project: one(projects, {
+    fields: [projectRubrics.projectId],
+    references: [projects.id],
+  }),
+  news: many(news),
 }));
 
 export const publicationsRelations = relations(publications, ({ one }) => ({

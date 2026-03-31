@@ -41,6 +41,8 @@ export default async function EditNewsPage({ params }: Props) {
         excerpt: item.excerpt ?? undefined,
         category: item.category ?? undefined,
         tags: item.tags ?? [],
+        projectId: item.projectId ?? null,
+        rubricId: item.rubricId ?? null,
         status: item.status ?? "draft",
         seoTitle: item.seoTitle ?? undefined,
         seoDescription: item.seoDescription ?? undefined,

@@ -4,7 +4,7 @@ import { desc } from "drizzle-orm";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, FolderKanban, Edit } from "lucide-react";
+import { Plus, FolderKanban, Edit, LayoutList } from "lucide-react";
 import { DeleteButton } from "@/components/admin/DeleteButton";
 
 export const dynamic = "force-dynamic";
@@ -89,6 +89,11 @@ export default async function ProjectsListPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
+                      <Button asChild variant="ghost" size="icon" className="h-8 w-8" title="Рубрики и новости">
+                        <Link href={`/admin/projects/${item.id}`}>
+                          <LayoutList className="h-4 w-4" />
+                        </Link>
+                      </Button>
                       <Button asChild variant="ghost" size="icon" className="h-8 w-8">
                         <Link href={`/admin/projects/${item.id}/edit`}>
                           <Edit className="h-4 w-4" />

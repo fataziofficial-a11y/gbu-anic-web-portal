@@ -66,6 +66,12 @@ export default async function NewsListPage({
         coverImage: {
           columns: { url: true, altText: true },
         },
+        project: {
+          columns: { id: true, title: true },
+        },
+        rubric: {
+          columns: { id: true, name: true },
+        },
       },
     }),
     db.select({ count: count() }).from(news).where(where),
@@ -172,7 +178,17 @@ export default async function NewsListPage({
                   <div className="flex min-w-0 flex-1 flex-col justify-between">
                     <div>
                       <div className="mb-2 flex flex-wrap items-center gap-2">
-                        {catLabel && (
+                        {(item as typeof item & { project?: { title: string } | null }).project && (
+                          <span className="rounded-full bg-[#1A3A6B] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                            {(item as typeof item & { project?: { title: string } | null }).project!.title}
+                          </span>
+                        )}
+                        {(item as typeof item & { rubric?: { name: string } | null }).rubric && (
+                          <span className="rounded-full bg-[#EEF4FB] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#1A3A6B]">
+                            {(item as typeof item & { rubric?: { name: string } | null }).rubric!.name}
+                          </span>
+                        )}
+                        {catLabel && !(item as typeof item & { project?: { title: string } | null }).project && (
                           <span className="rounded-full bg-[#EEF4FB] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#1A3A6B]">
                             {catLabel}
                           </span>

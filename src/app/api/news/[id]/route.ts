@@ -13,6 +13,8 @@ const updateNewsSchema = z.object({
   excerpt: z.string().max(1000).optional().nullable(),
   category: z.string().max(100).optional().nullable(),
   tags: z.array(z.string()).optional(),
+  projectId: z.number().int().optional().nullable(),
+  rubricId: z.number().int().optional().nullable(),
   status: z.enum(["draft", "published", "archived"]).optional(),
   coverImageId: z.number().int().optional().nullable(),
   seoTitle: z.string().max(500).optional().nullable(),
@@ -89,6 +91,8 @@ export async function PATCH(
     if (data.excerpt !== undefined) updates.excerpt = data.excerpt ?? undefined;
     if (data.category !== undefined) updates.category = data.category ?? undefined;
     if (data.tags !== undefined) updates.tags = data.tags;
+    if (data.projectId !== undefined) updates.projectId = data.projectId ?? undefined;
+    if (data.rubricId !== undefined) updates.rubricId = data.rubricId ?? undefined;
     if (data.coverImageId !== undefined) updates.coverImageId = data.coverImageId ?? undefined;
     if (data.seoTitle !== undefined) updates.seoTitle = data.seoTitle ?? undefined;
     if (data.seoDescription !== undefined) updates.seoDescription = data.seoDescription ?? undefined;

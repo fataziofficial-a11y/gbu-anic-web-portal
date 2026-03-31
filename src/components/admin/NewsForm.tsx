@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { ImageCropUploader } from "@/components/admin/ImageCropUploader";
 import { CrosspostPanel } from "@/components/admin/CrosspostPanel";
 import { NewsCategorySelect } from "@/components/admin/NewsCategorySelect";
+import { ProjectRubricSelect } from "@/components/admin/ProjectRubricSelect";
 import {
   Bold,
   Italic,
@@ -55,6 +56,8 @@ interface NewsFormData {
   excerpt?: string;
   category?: string;
   tags?: string[];
+  projectId?: number | null;
+  rubricId?: number | null;
   status?: string;
   seoTitle?: string;
   seoDescription?: string;
@@ -75,6 +78,8 @@ export function NewsForm({ initialData, mode }: Props) {
   const [title, setTitle] = useState(initialData?.title ?? "");
   const [excerpt, setExcerpt] = useState(initialData?.excerpt ?? "");
   const [category, setCategory] = useState(initialData?.category ?? "");
+  const [projectId, setProjectId] = useState<number | null>(initialData?.projectId ?? null);
+  const [rubricId, setRubricId] = useState<number | null>(initialData?.rubricId ?? null);
   const [tags, setTags] = useState<string[]>(initialData?.tags ?? []);
   const [tagInput, setTagInput] = useState("");
   const [status, setStatus] = useState(initialData?.status ?? "draft");
@@ -132,6 +137,8 @@ export function NewsForm({ initialData, mode }: Props) {
       excerpt: excerpt || undefined,
       category: category || undefined,
       tags,
+      projectId: projectId ?? null,
+      rubricId: rubricId ?? null,
       status: publishNow ? "published" : status,
       coverImageId: coverImage?.id ?? null,
       seoTitle: seoTitle || undefined,
@@ -437,6 +444,17 @@ export function NewsForm({ initialData, mode }: Props) {
           <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
             <p className="text-sm font-medium text-gray-700">Категория</p>
             <NewsCategorySelect value={category} onChange={setCategory} />
+          </div>
+
+          {/* Проект и рубрика */}
+          <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
+            <p className="text-sm font-medium text-gray-700">Проект / Рубрика</p>
+            <ProjectRubricSelect
+              projectId={projectId}
+              rubricId={rubricId}
+              onProjectChange={(pid) => { setProjectId(pid); setRubricId(null); }}
+              onRubricChange={setRubricId}
+            />
           </div>
 
           {/* Кросс-постинг при создании/черновике */}
