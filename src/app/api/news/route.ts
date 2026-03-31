@@ -16,7 +16,7 @@ const createNewsSchema = z.object({
   projectId: z.number().int().optional().nullable(),
   rubricId: z.number().int().optional().nullable(),
   status: z.enum(["draft", "published", "archived"]).optional().default("draft"),
-  coverImageId: z.number().int().optional(),
+  coverImageId: z.number().int().optional().nullable(),
   seoTitle: z.string().max(500).optional(),
   seoDescription: z.string().optional(),
   slug: z.string().max(500).optional(),
