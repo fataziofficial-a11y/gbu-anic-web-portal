@@ -110,25 +110,19 @@ export default async function ResearchPage() {
               .map((group) => (
                 <section key={group.title}>
                   <h2 className="mb-6 text-2xl font-black text-[#0D1C2E]">{group.title}</h2>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-x-4 gap-y-0 md:grid-cols-2">
                     {group.items.map((project) => {
                       const status = project.status ?? "planned";
                       const StatusIcon = statusIcons[status] ?? Clock;
                       return (
-                        <div key={project.id} className="rounded-2xl border border-[#DDE8F0] bg-white p-6">
-                          <div className="mb-3 flex items-start justify-between gap-3">
+                        <div key={project.id} className="row-span-4 mb-4 grid [grid-template-rows:subgrid] rounded-2xl border border-[#DDE8F0] bg-white">
+                          {/* Строка 1: иконка + заголовок + статус */}
+                          <div className="flex items-start justify-between gap-3 px-6 pt-6 pb-0">
                             <div className="flex items-start gap-4">
                               <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF4FB] text-[#1A3A6B]">
                                 <FlaskConical className="h-5 w-5" />
                               </div>
-                              <div>
-                                <h3 className="font-bold leading-snug text-[#0D1C2E]">{project.title}</h3>
-                                {project.department && (
-                                  <p className="mt-1 text-xs font-bold uppercase tracking-wider text-[#5CAFD6]">
-                                    {project.department.name}
-                                  </p>
-                                )}
-                              </div>
+                              <h3 className="font-bold leading-snug text-[#0D1C2E]">{project.title}</h3>
                             </div>
                             <span className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${statusColors[status]}`}>
                               <StatusIcon className="h-3 w-3" />
@@ -136,18 +130,33 @@ export default async function ResearchPage() {
                             </span>
                           </div>
 
-                          {project.description && (
-                            <p className="ml-14 text-sm leading-relaxed text-[#4B6075]">
-                              {project.description}
-                            </p>
-                          )}
+                          {/* Строка 2: подразделение */}
+                          <div className="px-6 pt-2 pb-0 pl-[calc(1.5rem+2.5rem+1rem)]">
+                            {project.department && (
+                              <p className="text-xs font-bold uppercase tracking-wider text-[#5CAFD6]">
+                                {project.department.name}
+                              </p>
+                            )}
+                          </div>
 
-                          {(project.startDate || project.endDate) && (
-                            <div className="ml-14 mt-3 flex items-center gap-1.5 text-xs text-[#8B9BAD]">
-                              <Calendar className="h-3.5 w-3.5" />
-                              {project.startDate ?? "?"} — {project.endDate ?? "н.в."}
-                            </div>
-                          )}
+                          {/* Строка 3: описание */}
+                          <div className="px-6 pt-3 pb-0">
+                            {project.description && (
+                              <p className="text-sm leading-relaxed text-[#4B6075]">
+                                {project.description}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Строка 4: даты */}
+                          <div className="px-6 pt-3 pb-6">
+                            {(project.startDate || project.endDate) && (
+                              <div className="flex items-center gap-1.5 text-xs text-[#8B9BAD]">
+                                <Calendar className="h-3.5 w-3.5" />
+                                {project.startDate ?? "?"} — {project.endDate ?? "н.в."}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       );
                     })}
