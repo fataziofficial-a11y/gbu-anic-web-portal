@@ -6,6 +6,7 @@ import { desc } from "drizzle-orm";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
+import sharp from "sharp";
 
 export async function GET() {
   return withErrorHandler(async () => {
@@ -34,22 +35,46 @@ export async function POST(request: Request) {
     const safeFolder = allowedFolders.includes(folder) ? folder : "media";
 
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const rawBuffer = Buffer.from(bytes);
 
-    const ext = path.extname(file.name).toLowerCase();
-    const filename = `${uuidv4()}${ext}`;
+    // Авто-обработка изображений: ресайз до 1600px и конвертация в WebP
+    const isProcessableImage =
+      file.type.startsWith("image/") &&
+      file.type !== "image/gif" &&
+      file.type !== "image/svg+xml";
+
+    let fileBuffer: Buffer;
+    let filename: string;
+    let mimeType: string;
+    let sizeBytes: number;
+
+    if (isProcessableImage) {
+      fileBuffer = await sharp(rawBuffer)
+        .resize({ width: 1600, withoutEnlargement: true })
+        .webp({ quality: 85 })
+        .toBuffer();
+      filename = `${uuidv4()}.webp`;
+      mimeType = "image/webp";
+      sizeBytes = fileBuffer.length;
+    } else {
+      fileBuffer = rawBuffer;
+      const ext = path.extname(file.name).toLowerCase();
+      filename = `${uuidv4()}${ext}`;
+      mimeType = file.type || "application/octet-stream";
+      sizeBytes = file.size;
+    }
+
     const uploadDir = path.join(process.cwd(), "public", "uploads", safeFolder);
-
     await mkdir(uploadDir, { recursive: true });
-    await writeFile(path.join(uploadDir, filename), buffer);
+    await writeFile(path.join(uploadDir, filename), fileBuffer);
 
     const url = `/uploads/${safeFolder}/${filename}`;
 
     const [saved] = await db.insert(files).values({
       filename,
       originalName: file.name,
-      mimeType: file.type || "application/octet-stream",
-      sizeBytes: file.size,
+      mimeType,
+      sizeBytes,
       url,
       folder: safeFolder as "media" | "documents" | "knowledge",
       altText,

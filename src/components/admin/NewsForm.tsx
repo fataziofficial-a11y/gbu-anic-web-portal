@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Link from "@tiptap/extension-link";
+import TiptapImage from "@tiptap/extension-image";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,7 +40,10 @@ import {
   Save,
   X,
   Send,
+  ImagePlus,
+  Eye,
 } from "lucide-react";
+import NextLink from "next/link";
 
 const PLATFORMS = [
   { id: "telegram", label: "Telegram" },
@@ -74,6 +78,10 @@ interface Props {
 export function NewsForm({ initialData, mode }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [floatingPos, setFloatingPos] = useState<{ top: number; show: boolean }>({ top: 0, show: false });
+  const editorWrapRef = useRef<HTMLDivElement>(null);
 
   const [title, setTitle] = useState(initialData?.title ?? "");
   const [excerpt, setExcerpt] = useState(initialData?.excerpt ?? "");
@@ -92,6 +100,30 @@ export function NewsForm({ initialData, mode }: Props) {
     initialData?.seoDescription ?? ""
   );
 
+  const uploadAndInsertImage = useCallback(async (file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    setUploadingImage(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("folder", "media");
+      const res = await fetch("/api/files", { method: "POST", body: form });
+      const json = await res.json();
+      if (res.ok && json.data?.url) {
+        // editor доступен через замыкание после mount
+        editorRef.current?.chain().focus().setImage({ src: json.data.url }).run();
+      } else {
+        toast.error("Ошибка загрузки изображения");
+      }
+    } catch {
+      toast.error("Ошибка загрузки изображения");
+    } finally {
+      setUploadingImage(false);
+    }
+  }, []);
+
+  const editorRef = useRef<ReturnType<typeof useEditor>>(null);
+
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -100,15 +132,66 @@ export function NewsForm({ initialData, mode }: Props) {
         placeholder: "Начните писать текст новости...",
       }),
       Link.configure({ openOnClick: false }),
+      TiptapImage.configure({ inline: false, allowBase64: false }),
     ],
     content: initialData?.content ?? "",
     editorProps: {
       attributes: {
-        class:
-          "prose prose-sm max-w-none focus:outline-none min-h-[300px] px-4 py-3",
+        class: "prose prose-sm max-w-none focus:outline-none min-h-[300px] px-4 py-3",
+      },
+      handleDrop(_view, event) {
+        const file = event.dataTransfer?.files?.[0];
+        if (!file?.type.startsWith("image/")) return false;
+        event.preventDefault();
+        uploadAndInsertImage(file);
+        return true;
+      },
+      handlePaste(_view, event) {
+        const file = event.clipboardData?.files?.[0];
+        if (!file?.type.startsWith("image/")) return false;
+        event.preventDefault();
+        uploadAndInsertImage(file);
+        return true;
       },
     },
   });
+
+  // Синхронизируем ref с editor для uploadAndInsertImage
+  if (editor && editorRef.current !== editor) {
+    (editorRef as React.MutableRefObject<typeof editor>).current = editor;
+  }
+
+  // Floating "+" кнопка на пустых строках
+  useEffect(() => {
+    if (!editor) return;
+    function updateFloating() {
+      if (!editor || !editorWrapRef.current) return;
+      const { state, view } = editor;
+      const { selection } = state;
+      const { empty, $anchor } = selection;
+      const isEmptyParagraph =
+        empty &&
+        $anchor.parent.textContent === "" &&
+        $anchor.parent.type.name === "paragraph";
+
+      if (!isEmptyParagraph) {
+        setFloatingPos((p) => ({ ...p, show: false }));
+        return;
+      }
+
+      const domPos = view.coordsAtPos($anchor.pos);
+      const wrapRect = editorWrapRef.current.getBoundingClientRect();
+      const top = domPos.top - wrapRect.top + editorWrapRef.current.scrollTop;
+      setFloatingPos({ top, show: true });
+    }
+
+    editor.on("selectionUpdate", updateFloating);
+    editor.on("update", updateFloating);
+    return () => {
+      editor.off("selectionUpdate", updateFloating);
+      editor.off("update", updateFloating);
+    };
+  }, [editor]);
 
   function addTag(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter" || e.key === ",") {
@@ -218,6 +301,14 @@ export function NewsForm({ initialData, mode }: Props) {
             <X className="mr-2 h-4 w-4" />
             Отмена
           </Button>
+          {mode === "edit" && initialData?.id && (
+            <Button variant="outline" asChild>
+              <NextLink href={`/admin/news/${initialData.id}/preview`} target="_blank">
+                <Eye className="mr-2 h-4 w-4" />
+                Предпросмотр
+              </NextLink>
+            </Button>
+          )}
           <Button
             variant="outline"
             onClick={() => handleSave(false)}
@@ -365,10 +456,52 @@ export function NewsForm({ initialData, mode }: Props) {
                 >
                   <Redo className="h-4 w-4" />
                 </button>
+
+                <div className="mx-1 h-5 w-px bg-gray-200" />
+
+                <button
+                  type="button"
+                  className={toolbarBtn}
+                  onClick={() => imageInputRef.current?.click()}
+                  disabled={uploadingImage}
+                  title="Вставить изображение"
+                >
+                  {uploadingImage
+                    ? <Loader2 className="h-4 w-4 animate-spin" />
+                    : <ImagePlus className="h-4 w-4" />}
+                </button>
               </div>
 
               {/* Область редактирования */}
-              <EditorContent editor={editor} />
+              <div className="relative" ref={editorWrapRef}>
+                <EditorContent editor={editor} />
+                {floatingPos.show && (
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      imageInputRef.current?.click();
+                    }}
+                    className="absolute -left-9 flex h-6 w-6 items-center justify-center rounded-full border border-gray-300 bg-white shadow-sm hover:border-[#1A3A6B] hover:text-[#1A3A6B] transition-colors"
+                    style={{ top: floatingPos.top + 2 }}
+                    title="Добавить изображение"
+                  >
+                    <ImagePlus className="h-3.5 w-3.5 text-gray-400" />
+                  </button>
+                )}
+              </div>
+              {/* Скрытый input для загрузки изображений */}
+              <input
+                ref={imageInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) uploadAndInsertImage(file);
+                  e.target.value = "";
+                }}
+              />
             </div>
           </div>
 

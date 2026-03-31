@@ -69,6 +69,12 @@ function renderNode(node: TNode): string {
       return "<br />";
     case "horizontalRule":
       return "<hr />";
+    case "image": {
+      const src = escHtml(String(node.attrs?.src ?? ""));
+      const alt = escHtml(String(node.attrs?.alt ?? ""));
+      if (!src) return "";
+      return `<figure class="my-6"><img src="${src}" alt="${alt}" class="max-w-full rounded-xl mx-auto" loading="lazy" /></figure>`;
+    }
     default:
       return inner;
   }
