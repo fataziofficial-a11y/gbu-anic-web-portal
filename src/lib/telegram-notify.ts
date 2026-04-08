@@ -58,6 +58,6 @@ export function ticketNotifyText(opts: {
     ``,
     esc(desc),
     ``,
-    `<a href="https://ase-msk.ru/admin/tickets/${opts.id}">Открыть в CMS →</a>`,
+    `<a href="https://аниц.рф/admin/tickets/${opts.id}">Открыть в CMS →</a>`,
   ].join("\n");
 }

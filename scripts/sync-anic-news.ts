@@ -1,5 +1,5 @@
 /**
- * Синхронизация новостей с Tilda-сайта аниц.рф → ase-msk.ru
+ * Синхронизация новостей с Tilda-сайта аниц.рф → аниц.рф
  *
  * ЗАПУСК:
  *   DATABASE_URL='...' npx tsx scripts/sync-anic-news.ts

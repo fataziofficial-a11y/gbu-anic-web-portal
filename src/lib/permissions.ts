@@ -91,7 +91,7 @@ export function getUserSections(
   role: string,
   customPermissions?: string[] | null
 ): Section[] {
-  if (customPermissions && customPermissions.length > 0) {
+  if (customPermissions !== undefined && customPermissions !== null) {
     return customPermissions.filter((s) =>
       ALL_SECTIONS.includes(s as Section)
     ) as Section[];

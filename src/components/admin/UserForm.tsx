@@ -128,8 +128,21 @@ export function UserForm({ mode, initialData }: Props) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.error ?? "Ошибка сохранения");
+        const raw = await res.text();
+        let json: { error?: string } | null = null;
+
+        if (raw) {
+          try {
+            json = JSON.parse(raw) as { error?: string };
+          } catch {
+            json = null;
+          }
+        }
+
+        if (!res.ok) {
+          throw new Error(json?.error ?? "Ошибка сохранения");
+        }
+
         toast.success(mode === "edit" ? "Пользователь обновлён" : "Пользователь создан");
         router.push("/admin/users");
         router.refresh();

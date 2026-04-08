@@ -6,6 +6,8 @@ import { AdminSidebar } from "@/components/admin/Sidebar";
 import { SessionProvider } from "@/components/admin/SessionProvider";
 import { Toaster } from "@/components/ui/sonner";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "CMS — ГБУ АНИЦ",
   description: "Система управления контентом Арктического научно-исследовательского центра",

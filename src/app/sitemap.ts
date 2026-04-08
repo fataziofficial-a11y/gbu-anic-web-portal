@@ -16,7 +16,7 @@ const STATIC_PAGES = [
 export const revalidate = 3600; // обновляем каждый час
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.NEXTAUTH_URL ?? "https://ase-msk.ru";
+  const base = process.env.NEXTAUTH_URL ?? "https://аниц.рф";
 
   const staticUrls: MetadataRoute.Sitemap = STATIC_PAGES.map(({ path, priority, changeFreq }) => ({
     url: `${base}${path}`,

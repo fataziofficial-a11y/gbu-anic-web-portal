@@ -16,7 +16,7 @@ const inter = Inter({
   display: "swap",
 });
 
-const BASE_URL = process.env.NEXTAUTH_URL ?? "https://ase-msk.ru";
+const BASE_URL = process.env.NEXTAUTH_URL ?? "https://аниц.рф";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

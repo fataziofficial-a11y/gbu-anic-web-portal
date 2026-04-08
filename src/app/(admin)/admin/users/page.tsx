@@ -187,7 +187,7 @@ export default function UsersPage() {
             <tbody className="divide-y divide-gray-100">
               {users.map((user) => {
                 const effective = getUserSections(user.role, user.permissions);
-                const hasCustom = user.permissions && user.permissions.length > 0;
+                const hasCustom = user.permissions !== null;
                 return (
                   <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-3">

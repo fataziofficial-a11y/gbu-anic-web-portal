@@ -97,7 +97,16 @@ export function ImageCropUploader({
 
   const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget;
-    setCrop(centerAspectCrop(width, height, aspect));
+    const pct = centerAspectCrop(width, height, aspect);
+    setCrop(pct);
+    // Pre-compute pixel crop so "Apply" button is enabled without manual interaction
+    setCompletedCrop({
+      unit: "px",
+      x: Math.round((pct.x / 100) * width),
+      y: Math.round((pct.y / 100) * height),
+      width: Math.round((pct.width / 100) * width),
+      height: Math.round((pct.height / 100) * height),
+    });
   }, [aspect]);
 
   async function handleApply() {

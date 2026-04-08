@@ -20,7 +20,7 @@ export const users = pgTable("users", {
   name: varchar("name", { length: 255 }).notNull(),
   passwordHash: varchar("password_hash", { length: 255 }).notNull(),
   role: varchar("role", { length: 30 }).notNull().default("author"), // admin, news_editor, researcher, hr_specialist, procurement_specialist, editor, author
-  permissions: text("permissions").array(), // переопределение доступа к разделам; null = используются defaults роли
+  permissions: jsonb("permissions").$type<string[]>(), // переопределение доступа к разделам; null = используются defaults роли
   avatarUrl: varchar("avatar_url", { length: 500 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

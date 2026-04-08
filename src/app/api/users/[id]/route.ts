@@ -2,16 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { ALL_SECTIONS } from "@/lib/permissions";
+
+const sectionSchema = z.enum(ALL_SECTIONS);
 
 const updateSchema = z.object({
   name: z.string().min(2).max(255).optional(),
   email: z.string().email().optional(),
   password: z.string().min(6).optional(),
   role: z.enum(["admin", "news_editor", "researcher", "hr_specialist", "procurement_specialist", "editor", "author"]).optional(),
-  permissions: z.array(z.string()).nullable().optional(),
+  permissions: z.array(sectionSchema).nullable().optional(),
 });
 
 function parseId(raw: string) {
@@ -70,31 +73,44 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const updates: Record<string, unknown> = { updatedAt: new Date() };
 
-  if (parsed.data.name !== undefined) updates.name = parsed.data.name;
-  if (parsed.data.email !== undefined) updates.email = parsed.data.email;
+  if (parsed.data.name !== undefined) updates.name = parsed.data.name.trim();
+  if (parsed.data.email !== undefined) updates.email = parsed.data.email.trim().toLowerCase();
   if (parsed.data.role !== undefined) updates.role = parsed.data.role;
   if (parsed.data.password) {
     updates.passwordHash = await bcrypt.hash(parsed.data.password, 12);
   }
   // Только admin может менять permissions
   if (isAdmin && parsed.data.permissions !== undefined) {
-    updates.permissions = parsed.data.permissions;
+    updates.permissions =
+      parsed.data.permissions === null
+        ? null
+        : sql`${JSON.stringify(parsed.data.permissions)}::jsonb`;
   }
 
-  const [updated] = await db
-    .update(users)
-    .set(updates)
-    .where(eq(users.id, id))
-    .returning({
-      id: users.id,
-      name: users.name,
-      email: users.email,
-      role: users.role,
-      permissions: users.permissions,
-    });
+  try {
+    const [updated] = await db
+      .update(users)
+      .set(updates)
+      .where(eq(users.id, id))
+      .returning({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        permissions: users.permissions,
+      });
 
-  if (!updated) return NextResponse.json({ error: "Не найден" }, { status: 404 });
-  return NextResponse.json({ data: updated });
+    if (!updated) return NextResponse.json({ error: "Не найден" }, { status: 404 });
+    return NextResponse.json({ data: updated });
+  } catch (error) {
+    const dbError = error as { code?: string };
+    if (dbError.code === "23505") {
+      return NextResponse.json({ error: "Пользователь с таким email уже существует" }, { status: 409 });
+    }
+
+    console.error(`[api/users/${id}][PATCH]`, error);
+    return NextResponse.json({ error: "Не удалось обновить пользователя" }, { status: 500 });
+  }
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

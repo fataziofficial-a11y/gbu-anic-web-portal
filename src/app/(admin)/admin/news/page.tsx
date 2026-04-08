@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Plus, Pencil, Eye } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { NewsStatusActions } from "@/components/admin/NewsStatusActions";
 
 const STATUS_LABELS: Record<
@@ -110,11 +111,11 @@ export default async function NewsListPage({ searchParams }: Props) {
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50">
-              <TableHead className="w-[45%]">Заголовок</TableHead>
-              <TableHead>Статус</TableHead>
-              <TableHead>Автор</TableHead>
-              <TableHead>Дата</TableHead>
-              <TableHead className="text-right">Действия</TableHead>
+              <TableHead className="w-[100px] shrink-0">Дата</TableHead>
+              <TableHead>Заголовок</TableHead>
+              <TableHead className="w-[120px]">Статус</TableHead>
+              <TableHead className="w-[130px]">Автор</TableHead>
+              <TableHead className="w-[100px] text-right">Действия</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -129,31 +130,33 @@ export default async function NewsListPage({ searchParams }: Props) {
                 const statusInfo = STATUS_LABELS[item.status ?? "draft"];
                 return (
                   <TableRow key={item.id} className="hover:bg-gray-50">
-                    <TableCell>
-                      <div>
+                    <TableCell className="text-xs text-gray-500 whitespace-nowrap">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3 text-gray-300 shrink-0" />
+                        {new Date(item.createdAt ?? new Date()).toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "2-digit" })}
+                      </div>
+                    </TableCell>
+                    <TableCell className="max-w-0">
+                      <div className="truncate">
                         <Link
                           href={`/admin/news/${item.id}/edit`}
-                          className="font-medium text-gray-900 hover:text-blue-600 line-clamp-1"
+                          className="font-medium text-gray-900 hover:text-blue-600"
+                          title={item.title}
                         >
                           {item.title}
                         </Link>
-                        {item.category && (
-                          <span className="text-xs text-gray-400">
-                            {item.category}
-                          </span>
-                        )}
                       </div>
+                      {item.category && (
+                        <span className="text-xs text-gray-400">{item.category}</span>
+                      )}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={statusInfo.variant} className="text-xs">
+                      <Badge variant={statusInfo.variant} className="text-xs whitespace-nowrap">
                         {statusInfo.label}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-gray-600">
+                    <TableCell className="text-sm text-gray-600 max-w-[130px] truncate" title={item.author?.name ?? ""}>
                       {item.author?.name ?? "—"}
-                    </TableCell>
-                    <TableCell className="text-sm text-gray-500">
-                      {formatDate(item.createdAt ?? new Date())}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center justify-end gap-1">

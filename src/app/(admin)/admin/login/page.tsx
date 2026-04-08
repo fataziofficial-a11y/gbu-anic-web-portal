@@ -1,41 +1,93 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/admin";
+  const rawCallbackUrl = searchParams.get("callbackUrl");
+  const callbackUrl =
+    rawCallbackUrl && rawCallbackUrl.startsWith("/admin")
+      ? rawCallbackUrl
+      : "/admin";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [csrfToken, setCsrfToken] = useState("");
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    let active = true;
+
+    fetch("/api/auth/csrf", { credentials: "same-origin" })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Не удалось получить csrf token");
+        const data = (await res.json()) as { csrfToken?: string };
+        if (active) {
+          setCsrfToken(data.csrfToken ?? "");
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setError("Не удалось подготовить форму входа. Обновите страницу.");
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
     startTransition(async () => {
-      const result = await signIn("credentials", {
+      if (!csrfToken) {
+        setError("Форма входа ещё загружается. Попробуйте снова через секунду.");
+        return;
+      }
+
+      const body = new URLSearchParams({
         email,
         password,
-        redirect: false,
+        csrfToken,
+        callbackUrl,
+        json: "true",
       });
 
-      if (result?.error) {
-        setError("Неверный email или пароль");
-      } else {
-        router.push(callbackUrl);
-        router.refresh();
+      const response = await fetch("/api/auth/callback/credentials", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-Auth-Return-Redirect": "1",
+        },
+        credentials: "same-origin",
+        body,
+      });
+
+      const text = await response.text();
+      try {
+        if (text) JSON.parse(text);
+      } catch {
+        // ignore malformed body, ориентируемся на HTTP-статус
       }
+
+      if (!response.ok) {
+        setError("Неверный email или пароль");
+        return;
+      }
+
+      // Session cookie уже установлена auth callback-ом.
+      // Переходим только по внутреннему admin-маршруту и не доверяем внешнему url из ответа.
+      window.location.assign(callbackUrl);
     });
   }
 
@@ -68,7 +120,7 @@ export default function LoginPage() {
                   id="email"
                   type="email"
                   autoComplete="email"
-                  placeholder="admin@anic.ru"
+                  placeholder="Ваш логин"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -80,16 +132,32 @@ export default function LoginPage() {
                 <Label htmlFor="password" className="text-sm">
                   Пароль
                 </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isPending}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    placeholder="Ваш пароль"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={isPending}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+                    onClick={() => setShowPassword((value) => !value)}
+                    className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-gray-400 transition hover:text-gray-600"
+                    disabled={isPending}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               {error && (
@@ -99,12 +167,14 @@ export default function LoginPage() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full" disabled={isPending}>
+              <Button type="submit" className="w-full" disabled={isPending || !csrfToken}>
                 {isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Вход...
                   </>
+                ) : !csrfToken ? (
+                  "Подготовка..."
                 ) : (
                   "Войти"
                 )}

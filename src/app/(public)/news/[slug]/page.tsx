@@ -31,7 +31,7 @@ export async function generateMetadata({
   });
   if (!item) return { title: "Новость не найдена" };
 
-  const base = process.env.NEXTAUTH_URL ?? "https://ase-msk.ru";
+  const base = process.env.NEXTAUTH_URL ?? "https://аниц.рф";
   const pageUrl = `${base}/news/${slug}`;
   const title = item.seoTitle || item.title;
   const description = item.seoDescription || item.excerpt || undefined;

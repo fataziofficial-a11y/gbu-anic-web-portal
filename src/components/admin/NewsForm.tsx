@@ -147,11 +147,28 @@ export function NewsForm({ initialData, mode }: Props) {
         return true;
       },
       handlePaste(_view, event) {
+        // Check files[] first
         const file = event.clipboardData?.files?.[0];
-        if (!file?.type.startsWith("image/")) return false;
-        event.preventDefault();
-        uploadAndInsertImage(file);
-        return true;
+        if (file?.type.startsWith("image/")) {
+          event.preventDefault();
+          uploadAndInsertImage(file);
+          return true;
+        }
+        // Screenshots arrive via items (DataTransferItem), not files
+        const items = event.clipboardData?.items;
+        if (items) {
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].type.startsWith("image/")) {
+              const blob = items[i].getAsFile();
+              if (blob) {
+                event.preventDefault();
+                uploadAndInsertImage(blob);
+                return true;
+              }
+            }
+          }
+        }
+        return false;
       },
     },
   });
@@ -246,6 +263,13 @@ export function NewsForm({ initialData, mode }: Props) {
         toast.success(
           mode === "edit" ? "Новость обновлена" : "Новость создана"
         );
+
+        // После создания — переходим на страницу редактирования (там есть кнопка "Предпросмотр")
+        if (mode === "create" && json.data?.id) {
+          router.push(`/admin/news/${json.data.id}/edit`);
+          router.refresh();
+          return;
+        }
 
         // Кросс-постинг при публикации
         if (publishNow && crosspostPlatforms.length > 0 && json.data?.id) {

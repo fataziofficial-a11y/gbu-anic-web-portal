@@ -2,16 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
-import { ilike, or } from "drizzle-orm";
+import { ilike, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { ALL_SECTIONS } from "@/lib/permissions";
+
+const sectionSchema = z.enum(ALL_SECTIONS);
 
 const createSchema = z.object({
   name: z.string().min(2, "Имя слишком короткое").max(255),
   email: z.string().email("Неверный email"),
   password: z.string().min(6, "Минимум 6 символов"),
   role: z.enum(["admin", "news_editor", "researcher", "hr_specialist", "procurement_specialist", "editor", "author"]).default("author"),
-  permissions: z.array(z.string()).optional().nullable(),
+  permissions: z.array(sectionSchema).optional().nullable(),
 });
 
 /** Только admin и hr_specialist имеют доступ */
@@ -67,24 +70,36 @@ export async function POST(req: NextRequest) {
   // Только admin может выдавать произвольные permissions
   const permissions =
     session.user.role === "admin" ? (parsed.data.permissions ?? null) : null;
+  const normalizedPermissions =
+    permissions === null ? null : sql`${JSON.stringify(permissions)}::jsonb`;
 
   const passwordHash = await bcrypt.hash(parsed.data.password, 12);
 
-  const [created] = await db
-    .insert(users)
-    .values({
-      name: parsed.data.name,
-      email: parsed.data.email,
-      passwordHash,
-      role: parsed.data.role,
-      permissions,
-    })
-    .returning({
-      id: users.id,
-      name: users.name,
-      email: users.email,
-      role: users.role,
-    });
+  try {
+    const [created] = await db
+      .insert(users)
+      .values({
+        name: parsed.data.name.trim(),
+        email: parsed.data.email.trim().toLowerCase(),
+        passwordHash,
+        role: parsed.data.role,
+        permissions: normalizedPermissions,
+      })
+      .returning({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+      });
 
-  return NextResponse.json({ data: created }, { status: 201 });
+    return NextResponse.json({ data: created }, { status: 201 });
+  } catch (error) {
+    const dbError = error as { code?: string };
+    if (dbError.code === "23505") {
+      return NextResponse.json({ error: "Пользователь с таким email уже существует" }, { status: 409 });
+    }
+
+    console.error("[api/users][POST]", error);
+    return NextResponse.json({ error: "Не удалось создать пользователя" }, { status: 500 });
+  }
 }

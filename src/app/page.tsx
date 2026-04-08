@@ -1,52 +1,43 @@
 import { db } from "@/lib/db";
-import { news, projects, teamMembers } from "@/lib/db/schema";
-import { eq, desc, count } from "drizzle-orm";
+import { news } from "@/lib/db/schema";
+import { eq, desc } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import Link from "next/link";
 import Image from "next/image";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { AskAI } from "@/components/public/AskAI";
-import { ArrowRight, Calendar, BookOpen, Users, Layers, ChevronRight } from "lucide-react";
+import { ArrowRight, Calendar, BookOpen, Users, Layers, ChevronRight, ImageIcon } from "lucide-react";
+import {
+  CENTER_DESCRIPTION_PARAGRAPHS,
+  CENTER_MISSION,
+  HOME_HERO_SUMMARY,
+  HOME_HERO_TITLE,
+} from "@/lib/content/public-content";
 
 export const revalidate = 60;
 
 async function getHomeData() {
   if (!process.env.DATABASE_URL) {
     logger.warn("HomePage: DATABASE_URL is not set, rendering fallback data");
-    return { latestNews: [], activeProjects: [], teamCount: 0, newsCount: 0 };
+    return { latestNews: [] };
   }
 
   try {
-    const [latestNews, activeProjects, teamCountRows, newsCountRows] = await Promise.all([
-      db.query.news.findMany({
-        where: eq(news.status, "published"),
-        orderBy: [desc(news.publishedAt)],
-        limit: 3,
-        columns: { id: true, title: true, slug: true, category: true, publishedAt: true, excerpt: true },
-        with: { coverImage: { columns: { url: true, altText: true } } },
-      }),
-      db.query.projects.findMany({
-        where: eq(projects.status, "active"),
-        orderBy: [desc(projects.createdAt)],
-        limit: 3,
-        with: { department: true },
-      }),
-      db.select({ count: count() }).from(teamMembers),
-      db.select({ count: count() }).from(news).where(eq(news.status, "published")),
-    ]);
+    const latestNews = await db.query.news.findMany({
+      where: eq(news.status, "published"),
+      orderBy: [desc(news.publishedAt)],
+      limit: 5,
+      columns: { id: true, title: true, slug: true, category: true, publishedAt: true, excerpt: true },
+      with: { coverImage: { columns: { url: true, altText: true } } },
+    });
 
-    return {
-      latestNews,
-      activeProjects,
-      teamCount: teamCountRows[0]?.count ?? 0,
-      newsCount: newsCountRows[0]?.count ?? 0,
-    };
+    return { latestNews };
   } catch (error) {
     logger.error("HomePage: failed to load data, rendering fallback", {
       error: error instanceof Error ? error.message : "Unknown error",
     });
-    return { latestNews: [], activeProjects: [], teamCount: 0, newsCount: 0 };
+    return { latestNews: [] };
   }
 }
 
@@ -65,30 +56,8 @@ const NEWS_PLACEHOLDERS = [
   "from-[#2C5F8A] to-[#060E18]",
 ];
 
-// Research area cards
-const RESEARCH_AREAS = [
-  {
-    title: "Климатология",
-    desc: "Мониторинг климатических изменений и разработка моделей адаптации северных территорий к глобальному потеплению.",
-    num: "01",
-    img: "/images/card-climate.jpg",
-  },
-  {
-    title: "Экология Арктики",
-    desc: "Изучение экосистем, биоразнообразия арктических регионов и влияния антропогенных факторов на природную среду.",
-    num: "02",
-    img: "/images/card-ecology.jpg",
-  },
-  {
-    title: "Устойчивое развитие",
-    desc: "Научная экспертиза и прикладные решения для экономики и социальной сферы арктических территорий.",
-    num: "03",
-    img: "/images/card-sustainability.jpg",
-  },
-];
-
 export default async function HomePage() {
-  const { latestNews, activeProjects } = await getHomeData();
+  const { latestNews } = await getHomeData();
 
   return (
     <div className="flex min-h-screen flex-col bg-white text-[#0D1C2E]">
@@ -135,11 +104,11 @@ export default async function HomePage() {
 
             {/* Main heading */}
             <h1 className="text-[clamp(2.4rem,5.5vw,4.5rem)] font-black leading-[1.05] tracking-tight max-w-[18ch] mb-8">
-              Наука для развития Арктики
+              {HOME_HERO_TITLE}
             </h1>
 
-            <p className="max-w-[48ch] text-[clamp(0.95rem,1.4vw,1.1rem)] leading-7 text-white/55 mb-10">
-              Исследования и научная основа для устойчивого развития Республики Саха (Якутия)
+            <p className="mb-10 max-w-[58ch] text-[clamp(0.98rem,1.22vw,1.05rem)] leading-7 text-white/72">
+              {HOME_HERO_SUMMARY}
             </p>
 
             {/* CTAs */}
@@ -176,48 +145,48 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* ── Research areas ────────────────────────────────────────── */}
+        {/* ── Center description ────────────────────────────────────── */}
         <section className="bg-white py-24">
           <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
-
-            <div className="flex items-end justify-between gap-6 mb-14">
-              <div>
-                <div className="flex items-center gap-3 mb-4">
+            <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(340px,0.95fr)]">
+              <div className="rounded-[2rem] border border-[#DDE8F0] bg-[#F4F8FB] p-8 sm:p-10">
+                <div className="mb-4 flex items-center gap-3">
                   <div className="h-[2px] w-6 bg-[#5CAFD6]" />
-                  <span className="text-[#5CAFD6] text-[11px] font-black uppercase tracking-[0.22em]">Направления</span>
+                  <span className="text-[11px] font-black uppercase tracking-[0.22em] text-[#5CAFD6]">О центре</span>
                 </div>
-                <h2 className="text-[clamp(1.8rem,3.5vw,2.75rem)] font-black text-[#0D1C2E] leading-[1.05]">
-                  Ключевые области<br className="hidden sm:block" /> исследований
+                <h2 className="text-[clamp(1.9rem,3.4vw,2.7rem)] font-black leading-[1.05] text-[#0D1C2E]">
+                  Научная координация для устойчивого развития Севера и Арктики
                 </h2>
+                <div className="mt-6 space-y-4 text-base leading-relaxed text-[#4B6075]">
+                  {CENTER_DESCRIPTION_PARAGRAPHS.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                  <p className="font-medium text-[#1A3A6B]">{CENTER_MISSION}</p>
+                </div>
+                <div className="mt-8">
+                  <Link
+                    href="/about"
+                    className="inline-flex items-center gap-2 text-[12px] font-black uppercase tracking-[0.14em] text-[#1A3A6B] border-b border-[#1A3A6B]/30 pb-1 hover:border-[#1A3A6B]"
+                  >
+                    Подробнее о центре <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
               </div>
-              <Link href="/research" className="hidden sm:inline-flex items-center gap-1.5 text-[13px] font-bold text-[#1A3A6B] border-b border-[#1A3A6B]/30 pb-0.5 hover:border-[#1A3A6B] transition-colors shrink-0">
-                Все исследования <ChevronRight className="h-4 w-4" />
-              </Link>
-            </div>
 
-            {/* Areas grid with photos */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {RESEARCH_AREAS.map((area) => (
-                <article key={area.title} className="group relative overflow-hidden" style={{ minHeight: "320px" }}>
-                  {/* Background photo */}
-                  <Image
-                    src={area.img}
-                    alt={area.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                  {/* Dark overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#060E18] via-[#060E18]/60 to-[#060E18]/20" />
-                  {/* Content — fixed structure for cross-card alignment */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-8">
-                    <p className="text-[10px] font-black text-[#5CAFD6]/60 tracking-[0.2em] mb-3">{area.num}</p>
-                    <h3 className="text-xl font-black text-white mb-3 leading-snug">{area.title}</h3>
-                    <p className="text-sm leading-relaxed text-white/60 h-[4.5rem] line-clamp-3">{area.desc}</p>
-                    <div className="mt-4 h-[2px] w-0 bg-[#5CAFD6] group-hover:w-12 transition-all duration-300" />
+              <div className="relative overflow-hidden rounded-[2rem] border border-dashed border-[#C6D8E6] bg-[#FAFCFE]">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(92,175,214,0.18),_transparent_42%),linear-gradient(145deg,rgba(244,248,251,1),rgba(232,240,246,1))]" />
+                <div className="relative flex min-h-[420px] flex-col items-center justify-center px-8 py-12 text-center">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-[#1A3A6B] shadow-sm">
+                    <ImageIcon className="h-7 w-7" />
                   </div>
-                </article>
-              ))}
+                  <p className="mt-6 text-[11px] font-black uppercase tracking-[0.18em] text-[#5CAFD6]">
+                    Фотография будет добавлена
+                  </p>
+                  <p className="mt-3 max-w-[28ch] text-sm leading-relaxed text-[#4B6075]">
+                    Здесь предусмотрено место под фотографию центра или редакционное изображение, которое будет передано позже.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -290,51 +259,6 @@ export default async function HomePage() {
                       </div>
                     </div>
                   </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ── Active projects ───────────────────────────────────────── */}
-        {activeProjects.length > 0 && (
-          <section className="bg-white py-24">
-            <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
-
-              <div className="flex items-end justify-between gap-6 mb-14">
-                <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="h-[2px] w-6 bg-[#5CAFD6]" />
-                    <span className="text-[#5CAFD6] text-[11px] font-black uppercase tracking-[0.22em]">Проекты</span>
-                  </div>
-                  <h2 className="text-[clamp(1.8rem,3.5vw,2.75rem)] font-black text-[#0D1C2E] leading-[1.05]">
-                    Активные проекты
-                  </h2>
-                </div>
-                <Link href="/research" className="hidden sm:inline-flex items-center gap-1.5 text-[13px] font-bold text-[#1A3A6B] border-b border-[#1A3A6B]/30 pb-0.5 hover:border-[#1A3A6B] transition-colors shrink-0">
-                  Все проекты <ChevronRight className="h-4 w-4" />
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {activeProjects.map((project) => (
-                  <article key={project.id} className="group relative overflow-hidden" style={{ minHeight: "260px" }}>
-                    {/* Background photo */}
-                    <Image
-                      src="/images/card-research.jpg"
-                      alt={project.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#060E18] via-[#060E18]/70 to-[#060E18]/30" />
-                    <div className="absolute inset-0 flex flex-col justify-center p-7">
-                      <h3 className="text-[1rem] font-bold text-white leading-snug">{project.title}</h3>
-                      {project.description && (
-                        <p className="mt-2 line-clamp-3 text-[13px] leading-relaxed text-white/55">{project.description}</p>
-                      )}
-                    </div>
-                  </article>
                 ))}
               </div>
             </div>
