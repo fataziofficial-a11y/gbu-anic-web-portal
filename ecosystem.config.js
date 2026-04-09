@@ -3,8 +3,7 @@ module.exports = {
   apps: [
     {
       name: "anic-portal",
-      script: "node",
-      args: ".next/standalone/server.js",
+      script: "/var/www/gbu-anic/scripts/start-prod.sh",
       cwd: "/var/www/gbu-anic",
       instances: 1,
       exec_mode: "fork",
