@@ -2,8 +2,8 @@
  * Seed script: перенести ACTUAL_WORKS и EDITORIAL_PROJECTS из public-content.ts в БД
  * Запуск: npx tsx scripts/seed-projects.ts
  */
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { projects } from "../src/lib/db/schema";
 import { eq } from "drizzle-orm";
 import * as dotenv from "dotenv";
@@ -143,8 +143,8 @@ function generateSlug(title: string): string {
 }
 
 async function main() {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  const db = drizzle(pool);
+  const client = postgres(process.env.DATABASE_URL!);
+  const db = drizzle(client);
 
   console.log("Seeding ACTUAL_WORKS...");
   for (const work of ACTUAL_WORKS) {
@@ -189,7 +189,7 @@ async function main() {
   }
 
   console.log("Done!");
-  await pool.end();
+  await client.end();
 }
 
 main().catch((err) => {
