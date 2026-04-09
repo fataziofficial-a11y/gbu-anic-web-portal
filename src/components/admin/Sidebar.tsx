@@ -44,9 +44,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: "Дашборд",         href: "/admin",                icon: LayoutDashboard, exact: true },
   { label: "Новости",         href: "/admin/news",           icon: Newspaper,       section: "news" },
-  { label: "База знаний",     href: "/admin/knowledge",      icon: BookOpen,        section: "knowledge" },
   { label: "Проекты",         href: "/admin/projects",       icon: FlaskConical,    section: "projects" },
-  { label: "Сотрудники",      href: "/admin/team",           icon: Users,           section: "team" },
   { label: "Подразделения",   href: "/admin/departments",    icon: Building2,       section: "departments" },
   { label: "Публикации",      href: "/admin/publications",   icon: BookMarked,      section: "publications" },
   { label: "Медиа",           href: "/admin/media",          icon: Film,            section: "media" },

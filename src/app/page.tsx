@@ -132,8 +132,8 @@ export default async function HomePage() {
             <div className="flex flex-col sm:flex-row border-t border-white/10">
               {[
                 { value: "216", label: "Публикаций" },
-                { value: "11", label: "Проектов в работе" },
-                { value: "27", label: "Сотрудников" },
+                { value: "12", label: "Проектов в работе" },
+                { value: "21", label: "Сотрудник" },
                 { value: "20+", label: "Лет исследований" },
               ].map((s, i) => (
                 <div key={s.label} className={`flex-1 py-6 px-8 ${i === 0 ? "pl-0" : "border-t sm:border-t-0 sm:border-l border-white/10"}`}>
@@ -270,7 +270,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-[1240px] px-4 sm:px-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-white/5">
               {[
-                { icon: BookOpen, title: "База знаний", desc: "Научные материалы, аналитика и методические публикации центра.", href: "/knowledge-base", cta: "Перейти" },
+                { icon: BookOpen, title: "Исследования и проекты", desc: "Актуальные научные работы и проектные инициативы Арктического научно-исследовательского центра.", href: "/research", cta: "Перейти" },
                 { icon: Layers, title: "Документы", desc: "Нормативные акты, уставные документы и отчёты о деятельности.", href: "/documents", cta: "Открыть" },
                 { icon: Users, title: "Партнёрам", desc: "Информация о сотрудничестве, грантах и совместных проектах.", href: "/partners", cta: "Узнать больше" },
               ].map((block) => (

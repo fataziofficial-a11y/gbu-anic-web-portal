@@ -29,6 +29,12 @@ interface ProjectFormData {
   status?: string;
   startDate?: string;
   endDate?: string;
+  type?: string;
+  lead?: string | null;
+  consultant?: string | null;
+  partnerOrg?: string | null;
+  partnersList?: string[] | null;
+  duration?: string | null;
 }
 
 interface Props {
@@ -49,12 +55,25 @@ export function ProjectForm({ initialData, mode, departments }: Props) {
   const [status, setStatus] = useState(initialData?.status ?? "planned");
   const [startDate, setStartDate] = useState(initialData?.startDate ?? "");
   const [endDate, setEndDate] = useState(initialData?.endDate ?? "");
+  const [type, setType] = useState(initialData?.type ?? "project");
+  const [lead, setLead] = useState(initialData?.lead ?? "");
+  const [consultant, setConsultant] = useState(initialData?.consultant ?? "");
+  const [partnerOrg, setPartnerOrg] = useState(initialData?.partnerOrg ?? "");
+  const [partnersListRaw, setPartnersListRaw] = useState(
+    (initialData?.partnersList ?? []).join("\n")
+  );
+  const [duration, setDuration] = useState(initialData?.duration ?? "");
 
   async function handleSave() {
     if (!title.trim()) {
       toast.error("Название обязательно");
       return;
     }
+
+    const partnersList = partnersListRaw
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
 
     const payload = {
       title: title.trim(),
@@ -63,6 +82,12 @@ export function ProjectForm({ initialData, mode, departments }: Props) {
       status,
       startDate: startDate || undefined,
       endDate: endDate || undefined,
+      type,
+      lead: lead.trim() || null,
+      consultant: consultant.trim() || null,
+      partnerOrg: partnerOrg.trim() || null,
+      partnersList,
+      duration: duration.trim() || null,
     };
 
     startTransition(async () => {
@@ -126,12 +151,75 @@ export function ProjectForm({ initialData, mode, departments }: Props) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Краткое описание проекта..."
-              rows={6}
+              rows={4}
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="duration">Сроки реализации (текст)</Label>
+            <Input
+              id="duration"
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              placeholder="Например: 2025-2028 годы"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="lead">Научный руководитель</Label>
+            <Input
+              id="lead"
+              value={lead}
+              onChange={(e) => setLead(e.target.value)}
+              placeholder="Научный руководитель: ..."
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="consultant">Научный консультант</Label>
+            <Input
+              id="consultant"
+              value={consultant}
+              onChange={(e) => setConsultant(e.target.value)}
+              placeholder="Научный консультант: ..."
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="partnerOrg">Индустриальный партнёр</Label>
+            <Input
+              id="partnerOrg"
+              value={partnerOrg}
+              onChange={(e) => setPartnerOrg(e.target.value)}
+              placeholder="Индустриальный партнер: ..."
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="partnersList">Партнёры (по одному на строку)</Label>
+            <Textarea
+              id="partnersList"
+              value={partnersListRaw}
+              onChange={(e) => setPartnersListRaw(e.target.value)}
+              placeholder={"Партнёр 1\nПартнёр 2"}
+              rows={4}
             />
           </div>
         </div>
 
         <div className="space-y-4">
+          <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
+            <p className="text-sm font-medium text-gray-700">Тип записи</p>
+            <Select value={type} onValueChange={setType}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="project">Проект</SelectItem>
+                <SelectItem value="actual_work">Актуальная работа</SelectItem>
+                <SelectItem value="editorial_project">Проектная инициатива</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
             <p className="text-sm font-medium text-gray-700">Статус</p>
             <Select value={status} onValueChange={setStatus}>
@@ -158,7 +246,7 @@ export function ProjectForm({ initialData, mode, departments }: Props) {
           </div>
 
           <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
-            <p className="text-sm font-medium text-gray-700">Сроки</p>
+            <p className="text-sm font-medium text-gray-700">Даты (опционально)</p>
             <div className="space-y-1.5">
               <Label htmlFor="startDate" className="text-xs">Начало</Label>
               <Input

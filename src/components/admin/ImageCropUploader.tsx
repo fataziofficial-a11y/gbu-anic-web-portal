@@ -21,14 +21,20 @@ const DEFAULT_OUTPUT_HEIGHT = 675;
 interface Props {
   value?: { id: number; url: string } | null;
   onChange: (file: { id: number; url: string } | null) => void;
+  /** Aspect ratio (e.g. 16/9). Omit for free crop. */
   aspect?: number;
   outputWidth?: number;
+  /** Required when aspect is set; when aspect is undefined, height is derived from crop. */
   outputHeight?: number;
   hint?: string;
 }
 
 function centerAspectCrop(w: number, h: number, aspect: number) {
   return centerCrop(makeAspectCrop({ unit: "%", width: 90 }, aspect, w, h), w, h);
+}
+
+function fullImageCrop(): Crop {
+  return { unit: "%", x: 0, y: 0, width: 100, height: 100 };
 }
 
 async function getCroppedBlob(
@@ -68,9 +74,9 @@ async function getCroppedBlob(
 export function ImageCropUploader({
   value,
   onChange,
-  aspect = DEFAULT_ASPECT,
-  outputWidth = DEFAULT_OUTPUT_WIDTH,
-  outputHeight = DEFAULT_OUTPUT_HEIGHT,
+  aspect,
+  outputWidth = aspect !== undefined ? DEFAULT_OUTPUT_WIDTH : 800,
+  outputHeight = aspect !== undefined ? DEFAULT_OUTPUT_HEIGHT : undefined,
   hint,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -91,22 +97,27 @@ export function ImageCropUploader({
     const url = URL.createObjectURL(file);
     setSrcUrl(url);
     setCrop(undefined);
-    // Reset input so the same file can be selected again
     e.target.value = "";
   }
 
   const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget;
-    const pct = centerAspectCrop(width, height, aspect);
-    setCrop(pct);
-    // Pre-compute pixel crop so "Apply" button is enabled without manual interaction
-    setCompletedCrop({
-      unit: "px",
-      x: Math.round((pct.x / 100) * width),
-      y: Math.round((pct.y / 100) * height),
-      width: Math.round((pct.width / 100) * width),
-      height: Math.round((pct.height / 100) * height),
-    });
+    if (aspect !== undefined) {
+      const pct = centerAspectCrop(width, height, aspect);
+      setCrop(pct);
+      setCompletedCrop({
+        unit: "px",
+        x: Math.round((pct.x / 100) * width),
+        y: Math.round((pct.y / 100) * height),
+        width: Math.round((pct.width / 100) * width),
+        height: Math.round((pct.height / 100) * height),
+      });
+    } else {
+      // Free crop: default to full image
+      const pct = fullImageCrop();
+      setCrop(pct);
+      setCompletedCrop({ unit: "px", x: 0, y: 0, width, height });
+    }
   }, [aspect]);
 
   async function handleApply() {
@@ -116,9 +127,13 @@ export function ImageCropUploader({
     }
     setUploading(true);
     try {
-      const blob = await getCroppedBlob(imgRef.current, completedCrop, outputWidth, outputHeight);
+      // When no fixed aspect, derive output height proportionally
+      const effectiveHeight = outputHeight ??
+        Math.round((completedCrop.height / completedCrop.width) * outputWidth);
+
+      const blob = await getCroppedBlob(imgRef.current, completedCrop, outputWidth, effectiveHeight);
       const form = new FormData();
-      form.append("file", blob, "cover.jpg");
+      form.append("file", blob, "image.jpg");
 
       const res = await fetch("/api/files", { method: "POST", body: form });
       const json = await res.json();
@@ -138,6 +153,11 @@ export function ImageCropUploader({
     onChange(null);
   }
 
+  const hasFixedAspect = aspect !== undefined && outputHeight !== undefined;
+  const dialogTitle = hasFixedAspect
+    ? `Обрежьте фото (${outputWidth}×${outputHeight})`
+    : "Обрежьте фото (свободный выбор)";
+
   return (
     <>
       <input
@@ -153,9 +173,13 @@ export function ImageCropUploader({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={value.url}
-            alt="Обложка"
-            className="w-full object-cover"
-            style={{ aspectRatio: `${outputWidth}/${outputHeight}` }}
+            alt="Изображение"
+            className="w-full object-contain"
+            style={
+              hasFixedAspect
+                ? { aspectRatio: `${outputWidth}/${outputHeight}` }
+                : { maxHeight: "240px" }
+            }
           />
           <div className="absolute top-2 right-2 flex gap-1">
             <Button
@@ -187,7 +211,7 @@ export function ImageCropUploader({
           <ImagePlus className="h-8 w-8 text-gray-300" />
           <span>Нажмите, чтобы выбрать фото</span>
           <span className="text-xs text-gray-300">
-            {hint ?? `Будет обрезано до ${outputWidth}×${outputHeight}`}
+            {hint ?? (hasFixedAspect ? `Будет обрезано до ${outputWidth}×${outputHeight}` : `Макс. ширина ${outputWidth} px`)}
           </span>
         </button>
       )}
@@ -196,7 +220,7 @@ export function ImageCropUploader({
       <Dialog open={!!srcUrl} onOpenChange={(v) => { if (!v) setSrcUrl(null); }}>
         <DialogContent className="sm:max-w-[700px]">
           <DialogHeader>
-            <DialogTitle>Обрежьте фото ({outputWidth}×{outputHeight})</DialogTitle>
+            <DialogTitle>{dialogTitle}</DialogTitle>
           </DialogHeader>
 
           <div className="flex justify-center bg-gray-900 rounded-lg overflow-hidden">
@@ -221,7 +245,9 @@ export function ImageCropUploader({
           </div>
 
           <p className="text-xs text-gray-400 text-center">
-            Перетащите рамку, чтобы выбрать нужный фрагмент. Результат: {outputWidth}×{outputHeight} px.
+            {hasFixedAspect
+              ? `Перетащите рамку, чтобы выбрать нужный фрагмент. Результат: ${outputWidth}×${outputHeight} px.`
+              : "Выберите нужную область. Пропорции сохранятся."}
           </p>
 
           <DialogFooter>

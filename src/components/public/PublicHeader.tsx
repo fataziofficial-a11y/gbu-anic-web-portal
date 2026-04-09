@@ -7,7 +7,7 @@ import { Menu, X } from "lucide-react";
 
 const NAV = [
   { label: "О центре", href: "/about" },
-  { label: "Исследования", href: "/research" },
+  { label: "Исследования и проекты", href: "/research" },
   { label: "Новости", href: "/news" },
   { label: "Медиа", href: "/media" },
   { label: "Партнёрам", href: "/partners" },

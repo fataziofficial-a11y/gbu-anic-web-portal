@@ -96,10 +96,8 @@ export function PartnerForm({ initialData, mode }: Props) {
           <ImageCropUploader
             value={logo}
             onChange={setLogo}
-            aspect={1}
-            outputWidth={400}
-            outputHeight={400}
-            hint="Логотип 400×400 px (квадрат)"
+            outputWidth={800}
+            hint="Логотип партнёра (любой формат)"
           />
         </div>
 

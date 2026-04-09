@@ -52,7 +52,18 @@ export default async function PartnersPage() {
 
                     {/* Строка 2: название */}
                     <div className="px-6 pt-4">
-                      <h3 className="font-bold text-[#0D1C2E]">{item.name}</h3>
+                      {item.websiteUrl ? (
+                        <a
+                          href={item.websiteUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-bold text-[#0D1C2E] hover:text-[#1A3A6B] transition-colors"
+                        >
+                          {item.name}
+                        </a>
+                      ) : (
+                        <h3 className="font-bold text-[#0D1C2E]">{item.name}</h3>
+                      )}
                     </div>
 
                     {/* Строка 3: описание (пустой блок если нет — держит высоту) */}

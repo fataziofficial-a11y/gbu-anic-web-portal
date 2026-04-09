@@ -133,6 +133,13 @@ export const projects = pgTable("projects", {
   status: varchar("status", { length: 20 }).default("active"), // active, completed, planned
   startDate: date("start_date"),
   endDate: date("end_date"),
+  // Тип записи: actual_work (актуальная работа) | editorial_project (проектная инициатива) | project (обычный проект)
+  type: varchar("type", { length: 30 }).default("project"),
+  lead: text("lead"),            // научный руководитель
+  consultant: text("consultant"), // научный консультант
+  partnerOrg: text("partner_org"), // индустриальный партнёр
+  partnersList: jsonb("partners_list").$type<string[]>().default([]), // партнёры (массив)
+  duration: varchar("duration", { length: 255 }), // строка сроков реализации
   createdAt: timestamp("created_at").defaultNow(),
 });
 

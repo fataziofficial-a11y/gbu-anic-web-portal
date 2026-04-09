@@ -14,6 +14,12 @@ const updateProjectSchema = z.object({
   status: z.enum(["active", "completed", "planned"]).optional(),
   startDate: z.string().optional().nullable(),
   endDate: z.string().optional().nullable(),
+  type: z.enum(["project", "actual_work", "editorial_project"]).optional(),
+  lead: z.string().optional().nullable(),
+  consultant: z.string().optional().nullable(),
+  partnerOrg: z.string().optional().nullable(),
+  partnersList: z.array(z.string()).optional(),
+  duration: z.string().max(255).optional().nullable(),
 });
 
 function parseId(raw: string) { const id = parseInt(raw); return isNaN(id) ? null : id; }
@@ -58,6 +64,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     if (data.status !== undefined) updates.status = data.status;
     if (data.startDate !== undefined) updates.startDate = data.startDate ?? undefined;
     if (data.endDate !== undefined) updates.endDate = data.endDate ?? undefined;
+    if (data.type !== undefined) updates.type = data.type;
+    if (data.lead !== undefined) updates.lead = data.lead ?? undefined;
+    if (data.consultant !== undefined) updates.consultant = data.consultant ?? undefined;
+    if (data.partnerOrg !== undefined) updates.partnerOrg = data.partnerOrg ?? undefined;
+    if (data.partnersList !== undefined) updates.partnersList = data.partnersList;
+    if (data.duration !== undefined) updates.duration = data.duration ?? undefined;
 
     const [updated] = await db.update(projects).set(updates).where(eq(projects.id, id)).returning();
     return apiSuccess(updated);

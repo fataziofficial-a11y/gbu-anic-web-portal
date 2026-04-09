@@ -14,6 +14,12 @@ const createProjectSchema = z.object({
   status: z.enum(["active", "completed", "planned"]).default("active"),
   startDate: z.string().optional().nullable(),
   endDate: z.string().optional().nullable(),
+  type: z.enum(["project", "actual_work", "editorial_project"]).default("project"),
+  lead: z.string().optional().nullable(),
+  consultant: z.string().optional().nullable(),
+  partnerOrg: z.string().optional().nullable(),
+  partnersList: z.array(z.string()).optional().default([]),
+  duration: z.string().max(255).optional().nullable(),
 });
 
 export async function GET(request: Request) {
@@ -63,6 +69,12 @@ export async function POST(request: Request) {
       status: data.status,
       startDate: data.startDate ?? undefined,
       endDate: data.endDate ?? undefined,
+      type: data.type,
+      lead: data.lead ?? undefined,
+      consultant: data.consultant ?? undefined,
+      partnerOrg: data.partnerOrg ?? undefined,
+      partnersList: data.partnersList,
+      duration: data.duration ?? undefined,
     }).returning();
 
     return apiSuccess(created, 201);
