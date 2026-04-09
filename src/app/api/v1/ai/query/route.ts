@@ -9,6 +9,8 @@
  *   DEEPSEEK_API_KEY  — ключ DeepSeek
  *   DEEPSEEK_MODEL    — модель (deepseek-chat по умолчанию)
  *   API_SECRET_KEY    — защита эндпоинта (опционально)
+ *
+ * SECURITY: таблица users (логины/пароли) намеренно исключена из поиска.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -16,7 +18,7 @@ import { V1_HEADERS } from "@/lib/utils/api-key";
 import { searchContent, SearchDoc } from "@/lib/search/meili";
 import { chatCompletion, isConfigured } from "@/lib/ai/deepseek";
 import { db } from "@/lib/db";
-import { knowledgeItems, news } from "@/lib/db/schema";
+import { knowledgeItems, news, projects, partners, publications, documents, departments } from "@/lib/db/schema";
 import { eq, ilike, and, or } from "drizzle-orm";
 import { z } from "zod";
 
@@ -82,39 +84,134 @@ async function retrieveContext(question: string): Promise<RetrieveResult> {
   return { items: dbItems, search_mode: "db_fallback" };
 }
 
+/**
+ * Полнотекстовый поиск по всем публичным таблицам.
+ * SECURITY: таблица users намеренно исключена — никаких email/password/role.
+ */
 async function dbFallbackSearch(question: string): Promise<ContextItem[]> {
   const pattern = `%${question.slice(0, 60)}%`;
   const results: ContextItem[] = [];
 
-  const kbResults = await db.query.knowledgeItems.findMany({
-    where: and(
-      eq(knowledgeItems.status, "published"),
-      ilike(knowledgeItems.title, pattern)
-    ),
-    columns: { title: true, slug: true },
-    limit: 3,
-  });
-  results.push(...kbResults.map((i) => ({ title: i.title, slug: i.slug, type: "knowledge", body: "" })));
-
+  // Новости
   const newsResults = await db.query.news.findMany({
     where: and(
       eq(news.status, "published"),
       or(ilike(news.title, pattern), ilike(news.excerpt, pattern))!
     ),
     columns: { title: true, slug: true, excerpt: true },
+    limit: 3,
+  });
+  results.push(...newsResults.map((i) => ({
+    title: i.title, slug: i.slug, type: "news", body: i.excerpt ?? "",
+  })));
+
+  // База знаний
+  const kbResults = await db.query.knowledgeItems.findMany({
+    where: and(eq(knowledgeItems.status, "published"), ilike(knowledgeItems.title, pattern)),
+    columns: { title: true, slug: true },
     limit: 2,
   });
-  results.push(...newsResults.map((i) => ({ title: i.title, slug: i.slug, type: "news", body: i.excerpt ?? "" })));
+  results.push(...kbResults.map((i) => ({ title: i.title, slug: i.slug, type: "knowledge", body: "" })));
+
+  // Проекты
+  const projectResults = await db.query.projects.findMany({
+    where: or(ilike(projects.title, pattern), ilike(projects.description, pattern))!,
+    columns: { title: true, slug: true, description: true, type: true, lead: true, duration: true },
+    limit: 3,
+  });
+  results.push(...projectResults.map((i) => ({
+    title: i.title,
+    slug: i.slug,
+    type: "project",
+    body: [i.description, i.lead, i.duration].filter(Boolean).join(" | "),
+  })));
+
+  // Партнёры
+  const partnerResults = await db.query.partners.findMany({
+    where: or(ilike(partners.name, pattern), ilike(partners.description, pattern), ilike(partners.services, pattern))!,
+    columns: { name: true, description: true, services: true, websiteUrl: true },
+    limit: 3,
+  });
+  results.push(...partnerResults.map((i) => ({
+    title: i.name,
+    slug: "partners",
+    type: "partner",
+    body: [i.description, i.services].filter(Boolean).join(" | "),
+  })));
+
+  // Публикации
+  const pubResults = await db.query.publications.findMany({
+    where: or(ilike(publications.title, pattern), ilike(publications.abstract, pattern), ilike(publications.authors, pattern))!,
+    columns: { title: true, authors: true, abstract: true, year: true, journal: true, doi: true },
+    limit: 3,
+  });
+  results.push(...pubResults.map((i) => ({
+    title: i.title,
+    slug: "publications",
+    type: "publication",
+    body: [i.authors, i.year ? String(i.year) : null, i.journal, i.abstract?.slice(0, 200)].filter(Boolean).join(" | "),
+  })));
+
+  // Документы
+  const docResults = await db.query.documents.findMany({
+    where: and(eq(documents.status, "active"), ilike(documents.title, pattern)),
+    columns: { title: true, section: true },
+    limit: 2,
+  });
+  results.push(...docResults.map((i) => ({
+    title: i.title,
+    slug: "documents",
+    type: "document",
+    body: i.section ?? "",
+  })));
+
+  // Подразделения
+  const deptResults = await db.query.departments.findMany({
+    where: or(ilike(departments.name, pattern), ilike(departments.description, pattern))!,
+    columns: { name: true, slug: true, description: true },
+    limit: 2,
+  });
+  results.push(...deptResults.map((i) => ({
+    title: i.name,
+    slug: i.slug,
+    type: "department",
+    body: i.description ?? "",
+  })));
 
   return results;
 }
 
+// ── Формирование URL источника по типу ───────────────────────────────────────
+function sourceUrl(type: string, slug: string): string {
+  switch (type) {
+    case "news":        return `/news/${slug}`;
+    case "knowledge":   return `/knowledge-base/${slug}`;
+    case "project":     return `/research/${slug}`;
+    case "partner":     return `/partners`;
+    case "publication": return `/publications`;
+    case "document":    return `/documents`;
+    case "department":  return `/about`;
+    default:            return `/${slug}`;
+  }
+}
+
 // ── System prompt ────────────────────────────────────────────────────────────
 function buildSystemPrompt(context: ContextItem[]): string {
+  const TYPE_LABELS: Record<string, string> = {
+    news: "Новость",
+    knowledge: "База знаний",
+    project: "Проект/исследование",
+    partner: "Партнёр",
+    publication: "Публикация",
+    document: "Документ",
+    department: "Подразделение",
+    page: "Страница",
+  };
+
   const contextText = context.length > 0
     ? context
         .map((c, i) =>
-          `[${i + 1}] ${c.type === "news" ? "Новость" : c.type === "knowledge" ? "База знаний" : "Страница"}: «${c.title}»\n${c.body ? c.body.slice(0, 400) : "(нет описания)"}`
+          `[${i + 1}] ${TYPE_LABELS[c.type] ?? c.type}: «${c.title}»\n${c.body ? c.body.slice(0, 400) : "(нет описания)"}`
         )
         .join("\n\n")
     : "Релевантных материалов не найдено.";
@@ -122,7 +219,7 @@ function buildSystemPrompt(context: ContextItem[]): string {
   return `Ты — ИИ-помощник Арктического научно-исследовательского центра Республики Саха (Якутия), АНИЦ.
 Отвечай на вопросы пользователей, опираясь на предоставленный контекст из материалов сайта.
 Если ответ не содержится в контексте, честно скажи об этом и порекомендуй обратиться на info@anic.ru.
-Отвечай кратко, чётко и на русском языке.
+Отвечай кратко, чётко и на русском языке. Не упоминай технические детали (базы данных, таблицы, поиск).
 
 Контекст из материалов АНИЦ:
 ${contextText}`;
@@ -192,21 +289,14 @@ export async function POST(req: NextRequest) {
 
   if (!answer) {
     return NextResponse.json(
-      {
-        error: "Ошибка обращения к ИИ. Попробуйте позже.",
-      },
+      { error: "Ошибка обращения к ИИ. Попробуйте позже." },
       { status: 502, headers: V1_HEADERS }
     );
   }
 
   const sources = context.map((c) => ({
     title: c.title,
-    url:
-      c.type === "news"
-        ? `/news/${c.slug}`
-        : c.type === "knowledge"
-        ? `/knowledge-base/${c.slug}`
-        : `/${c.slug}`,
+    url: sourceUrl(c.type, c.slug),
     type: c.type,
   }));
 
