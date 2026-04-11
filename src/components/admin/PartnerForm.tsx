@@ -96,8 +96,8 @@ export function PartnerForm({ initialData, mode }: Props) {
           <ImageCropUploader
             value={logo}
             onChange={setLogo}
-            outputWidth={800}
-            hint="Логотип партнёра (любой формат)"
+            noCrop
+            hint="Логотип партнёра — загружается без обрезки (PNG, SVG, JPG)"
           />
         </div>
 

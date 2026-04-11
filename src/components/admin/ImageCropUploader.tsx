@@ -27,6 +27,8 @@ interface Props {
   /** Required when aspect is set; when aspect is undefined, height is derived from crop. */
   outputHeight?: number;
   hint?: string;
+  /** Skip crop dialog entirely — upload original file as-is. Good for logos. */
+  noCrop?: boolean;
 }
 
 function centerAspectCrop(w: number, h: number, aspect: number) {
@@ -78,6 +80,7 @@ export function ImageCropUploader({
   outputWidth = aspect !== undefined ? DEFAULT_OUTPUT_WIDTH : 800,
   outputHeight = aspect !== undefined ? DEFAULT_OUTPUT_HEIGHT : undefined,
   hint,
+  noCrop = false,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -87,11 +90,33 @@ export function ImageCropUploader({
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [uploading, setUploading] = useState(false);
 
+  async function uploadRawFile(file: File) {
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append("file", file, file.name);
+      const res = await fetch("/api/files", { method: "POST", body: form });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? "Ошибка загрузки");
+      onChange({ id: json.data.id, url: json.data.url });
+      toast.success("Файл загружен");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Ошибка загрузки");
+    } finally {
+      setUploading(false);
+    }
+  }
+
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) {
       toast.error("Выберите изображение (JPEG, PNG, WebP)");
+      return;
+    }
+    if (noCrop) {
+      e.target.value = "";
+      uploadRawFile(file);
       return;
     }
     const url = URL.createObjectURL(file);
