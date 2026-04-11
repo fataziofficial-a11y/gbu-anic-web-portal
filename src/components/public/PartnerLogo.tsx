@@ -21,7 +21,7 @@ export function PartnerLogo({ src, name }: PartnerLogoProps) {
   }
 
   return (
-    <div className="flex h-14 w-full items-center">
+    <div className="flex h-14 w-full items-center justify-center">
       <Image
         src={src}
         alt={name}
