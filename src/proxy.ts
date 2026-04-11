@@ -63,13 +63,15 @@ export default auth((req: AuthenticatedRequest) => {
   const isAdminRoute = path.startsWith("/admin");
 
   if (isAdminRoute && !isLoginPage && !isLoggedIn) {
-    const loginUrl = new URL("/admin/login", req.nextUrl);
+    const base = process.env.AUTH_URL || process.env.NEXTAUTH_URL || req.nextUrl.origin;
+    const loginUrl = new URL("/admin/login", base);
     loginUrl.searchParams.set("callbackUrl", path);
     return NextResponse.redirect(loginUrl);
   }
 
   if (isLoginPage && isLoggedIn) {
-    return NextResponse.redirect(new URL("/admin", req.nextUrl));
+    const base = process.env.AUTH_URL || process.env.NEXTAUTH_URL || req.nextUrl.origin;
+    return NextResponse.redirect(new URL("/admin", base));
   }
 
   return NextResponse.next();
