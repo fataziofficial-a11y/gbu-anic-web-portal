@@ -96,15 +96,6 @@ export default async function DashboardPage() {
       bg: "bg-indigo-50",
     },
     {
-      title: "База знаний",
-      value: stats.kb,
-      sub: "материалов",
-      icon: BookOpen,
-      href: "/admin/knowledge",
-      color: "text-emerald-600",
-      bg: "bg-emerald-50",
-    },
-    {
       title: "Сотрудники",
       value: stats.team,
       sub: "в команде",
@@ -230,7 +221,6 @@ export default async function DashboardPage() {
             {[
               { label: "Написать новость", href: "/admin/news/new", icon: Newspaper },
               { label: "Добавить закупку", href: "/admin/procurements/new", icon: FileText },
-              { label: "Добавить в базу знаний", href: "/admin/knowledge/new", icon: BookOpen },
               { label: "Добавить сотрудника", href: "/admin/team/new", icon: Users },
             ].map((action) => (
               <Button

@@ -18,7 +18,7 @@ import { V1_HEADERS } from "@/lib/utils/api-key";
 import { searchContent, SearchDoc } from "@/lib/search/meili";
 import { chatCompletion, isConfigured } from "@/lib/ai/deepseek";
 import { db } from "@/lib/db";
-import { knowledgeItems, news, projects, partners, publications, documents, departments } from "@/lib/db/schema";
+import { news, projects, partners, publications, documents, departments } from "@/lib/db/schema";
 import { eq, ilike, and, or } from "drizzle-orm";
 import { z } from "zod";
 
@@ -104,14 +104,6 @@ async function dbFallbackSearch(question: string): Promise<ContextItem[]> {
   results.push(...newsResults.map((i) => ({
     title: i.title, slug: i.slug, type: "news", body: i.excerpt ?? "",
   })));
-
-  // База знаний
-  const kbResults = await db.query.knowledgeItems.findMany({
-    where: and(eq(knowledgeItems.status, "published"), ilike(knowledgeItems.title, pattern)),
-    columns: { title: true, slug: true },
-    limit: 2,
-  });
-  results.push(...kbResults.map((i) => ({ title: i.title, slug: i.slug, type: "knowledge", body: "" })));
 
   // Проекты
   const projectResults = await db.query.projects.findMany({
