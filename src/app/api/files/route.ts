@@ -64,7 +64,7 @@ export async function POST(request: Request) {
       sizeBytes = file.size;
     }
 
-    const uploadDir = path.join(process.cwd(), "public", "uploads", safeFolder);
+    const uploadDir = path.join(process.env.APP_DIR || process.cwd(), "public", "uploads", safeFolder);
     await mkdir(uploadDir, { recursive: true });
     await writeFile(path.join(uploadDir, filename), fileBuffer);
 

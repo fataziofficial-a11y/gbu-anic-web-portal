@@ -14,6 +14,7 @@ module.exports = {
         NEXTAUTH_URL: "https://xn--80aqo1b.xn--p1ai",
         AUTH_URL: "https://xn--80aqo1b.xn--p1ai",
         AUTH_TRUST_HOST: "true",
+        APP_DIR: "/var/www/gbu-anic",
       },
       max_memory_restart: "512M",
       error_file: "/var/log/pm2/anic-portal-error.log",
