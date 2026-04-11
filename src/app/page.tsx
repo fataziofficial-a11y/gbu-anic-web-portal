@@ -7,7 +7,7 @@ import Image from "next/image";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { AskAI } from "@/components/public/AskAI";
-import { ArrowRight, Calendar, BookOpen, Users, Layers, ChevronRight, ImageIcon } from "lucide-react";
+import { ArrowRight, Calendar, BookOpen, Users, Layers, ChevronRight } from "lucide-react";
 import {
   CENTER_DESCRIPTION_PARAGRAPHS,
   CENTER_MISSION,
@@ -173,19 +173,15 @@ export default async function HomePage() {
                 </div>
               </div>
 
-              <div className="relative overflow-hidden rounded-[2rem] border border-dashed border-[#C6D8E6] bg-[#FAFCFE]">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(92,175,214,0.18),_transparent_42%),linear-gradient(145deg,rgba(244,248,251,1),rgba(232,240,246,1))]" />
-                <div className="relative flex min-h-[420px] flex-col items-center justify-center px-8 py-12 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-[#1A3A6B] shadow-sm">
-                    <ImageIcon className="h-7 w-7" />
-                  </div>
-                  <p className="mt-6 text-[11px] font-black uppercase tracking-[0.18em] text-[#5CAFD6]">
-                    Фотография будет добавлена
-                  </p>
-                  <p className="mt-3 max-w-[28ch] text-sm leading-relaxed text-[#4B6075]">
-                    Здесь предусмотрено место под фотографию центра или редакционное изображение, которое будет передано позже.
-                  </p>
-                </div>
+              <div className="relative overflow-hidden rounded-[2rem] min-h-[420px]">
+                <Image
+                  src="/uploads/anic-sev-siyan.png"
+                  alt="Северное сияние — символ арктической науки"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
               </div>
             </div>
           </div>
