@@ -34,6 +34,12 @@ export default async function EditProjectPage({
         status: item.status ?? "planned",
         startDate: item.startDate ?? "",
         endDate: item.endDate ?? "",
+        type: item.type ?? "project",
+        lead: item.lead ?? "",
+        consultant: item.consultant ?? "",
+        partnerOrg: item.partnerOrg ?? "",
+        partnersList: (item.partnersList as string[] | null) ?? [],
+        duration: item.duration ?? "",
       }}
     />
   );
