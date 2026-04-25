@@ -50,6 +50,13 @@
       "when": 1774500000000,
       "tag": "0006_users_permissions",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1777146870097,
+      "tag": "0007_add_news_project_rubric",
+      "breakpoints": true
     }
   ]
 }

@@ -30,6 +30,7 @@ async function main() {
       passwordHash: await bcrypt.hash("admin123", 10),
       role: "admin",
     })
+    .onConflictDoUpdate({ target: schema.users.email, set: { name: "Администратор", role: "admin" } })
     .returning();
 
   const [editor] = await db
@@ -40,9 +41,10 @@ async function main() {
       passwordHash: await bcrypt.hash("editor123", 10),
       role: "editor",
     })
+    .onConflictDoUpdate({ target: schema.users.email, set: { name: "Петрова Мария", role: "editor" } })
     .returning();
 
-  console.log("✅ Пользователи созданы");
+  console.log("✅ Пользователи готовы");
 
   // === Подразделения ===
   const [dept1] = await db
