@@ -2,11 +2,21 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { files } from "@/lib/db/schema";
 import { apiSuccess, apiError, withErrorHandler } from "@/lib/utils/api";
+import { putBlob } from "@/lib/blob";
 import { desc } from "drizzle-orm";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import sharp from "sharp";
+
+const isVercel = Boolean(process.env.VERCEL || process.env.BLOB_READ_WRITE_TOKEN);
+
+async function saveToDisk(buffer: Buffer, folder: string, filename: string): Promise<string> {
+  const { writeFile, mkdir } = await import("fs/promises");
+  const path = await import("path");
+  const uploadDir = path.join(process.env.APP_DIR || process.cwd(), "public", "uploads", folder);
+  await mkdir(uploadDir, { recursive: true });
+  await writeFile(path.join(uploadDir, filename), buffer);
+  return `/uploads/${folder}/${filename}`;
+}
 
 export async function GET() {
   return withErrorHandler(async () => {
@@ -37,7 +47,6 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const rawBuffer = Buffer.from(bytes);
 
-    // Авто-обработка изображений: ресайз до 1600px и конвертация в WebP
     const isProcessableImage =
       file.type.startsWith("image/") &&
       file.type !== "image/gif" &&
@@ -57,6 +66,7 @@ export async function POST(request: Request) {
       mimeType = "image/webp";
       sizeBytes = fileBuffer.length;
     } else {
+      const path = await import("path");
       fileBuffer = rawBuffer;
       const ext = path.extname(file.name).toLowerCase();
       filename = `${uuidv4()}${ext}`;
@@ -64,11 +74,13 @@ export async function POST(request: Request) {
       sizeBytes = file.size;
     }
 
-    const uploadDir = path.join(process.env.APP_DIR || process.cwd(), "public", "uploads", safeFolder);
-    await mkdir(uploadDir, { recursive: true });
-    await writeFile(path.join(uploadDir, filename), fileBuffer);
-
-    const url = `/uploads/${safeFolder}/${filename}`;
+    let url: string;
+    if (isVercel) {
+      const blob = await putBlob(`uploads/${safeFolder}/${filename}`, fileBuffer, mimeType);
+      url = blob.url;
+    } else {
+      url = await saveToDisk(fileBuffer, safeFolder, filename);
+    }
 
     const [saved] = await db.insert(files).values({
       filename,

@@ -2,9 +2,12 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { files } from "@/lib/db/schema";
 import { apiSuccess, apiError, withErrorHandler } from "@/lib/utils/api";
+import { deleteBlob } from "@/lib/blob";
 import { eq } from "drizzle-orm";
-import { unlink } from "fs/promises";
-import path from "path";
+
+function isBlobUrl(url: string): boolean {
+  return url.startsWith("https://") && url.includes(".public.blob.vercel-storage.com");
+}
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   return withErrorHandler(async () => {
@@ -21,9 +24,14 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     const isOwner = file.uploadedBy === parseInt(session.user.id);
     if (!isOwner && session.user.role !== "admin") return apiError("Доступ запрещён", 403);
 
-    // Удаляем с диска
-    const filePath = path.join(process.cwd(), "public", file.url);
-    try { await unlink(filePath); } catch { /* игнорируем если файл уже удалён */ }
+    if (isBlobUrl(file.url)) {
+      await deleteBlob(file.url);
+    } else {
+      const path = await import("path");
+      const { unlink } = await import("fs/promises");
+      const filePath = path.join(process.cwd(), "public", file.url);
+      try { await unlink(filePath); } catch { /* игнорируем если файл уже удалён */ }
+    }
 
     await db.delete(files).where(eq(files.id, id));
     return apiSuccess({ deleted: true });

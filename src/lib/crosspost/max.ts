@@ -28,10 +28,12 @@ export async function postToMax(opts: MaxPostOptions): Promise<MaxResult> {
     .join("");
 
   try {
-    // MAX Messenger Bot API (аналогично Telegram)
-    const res = await fetch(`https://botapi.max.ru/sendMessage?access_token=${token}`, {
+    const res = await fetch("https://botapi.max.ru/messages", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Authorization": token,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         chat_id: chatId,
         text,
@@ -40,10 +42,10 @@ export async function postToMax(opts: MaxPostOptions): Promise<MaxResult> {
     });
 
     const data = await res.json();
-    if (!res.ok || data.error) {
-      return { ok: false, error: data.message ?? data.error ?? "Ошибка MAX API" };
+    if (!res.ok || data.code) {
+      return { ok: false, error: data.message ?? data.code ?? "Ошибка MAX API" };
     }
-    return { ok: true, postId: String(data.message_id ?? "") };
+    return { ok: true, postId: String(data.id ?? "") };
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : "Сетевая ошибка" };
   }

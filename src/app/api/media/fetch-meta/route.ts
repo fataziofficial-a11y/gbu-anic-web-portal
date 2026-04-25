@@ -11,8 +11,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { files } from "@/lib/db/schema";
+import { putBlob } from "@/lib/blob";
 import path from "path";
-import fs from "fs";
+
+const isVercel = Boolean(process.env.VERCEL || process.env.BLOB_READ_WRITE_TOKEN);
 
 // ---------- Helpers ----------
 
@@ -41,9 +43,17 @@ async function downloadThumbnail(imgUrl: string): Promise<{ localUrl: string; si
     const buf = Buffer.from(await res.arrayBuffer());
     const ext = imgUrl.match(/\.(jpe?g|png|webp)/i)?.[1] ?? "jpg";
     const filename = `rutube-thumb-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const dest = path.join(process.cwd(), "public", "uploads", filename);
-    fs.writeFileSync(dest, buf);
-    return { localUrl: `/uploads/${filename}`, size: buf.length };
+
+    if (isVercel) {
+      const blob = await putBlob(`uploads/${filename}`, buf, "image/jpeg");
+      return { localUrl: blob.url, size: buf.length };
+    } else {
+      const path = await import("path");
+      const fs = await import("fs");
+      const dest = path.join(process.cwd(), "public", "uploads", filename);
+      fs.writeFileSync(dest, buf);
+      return { localUrl: `/uploads/${filename}`, size: buf.length };
+    }
   } catch {
     return null;
   }
