@@ -9,7 +9,7 @@ module.exports = {
       exec_mode: "fork",
       env: {
         NODE_ENV: "production",
-        PORT: 3000,
+        PORT: 3004,
         HOSTNAME: "0.0.0.0",
         NEXTAUTH_URL: "https://xn--80aqo1b.xn--p1ai",
         AUTH_URL: "https://xn--80aqo1b.xn--p1ai",
