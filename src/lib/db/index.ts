@@ -11,15 +11,15 @@ declare global {
   var __pgClient: postgres.Sql | undefined;
 }
 
-const isVercel = Boolean(process.env.VERCEL);
+const useSSL = connectionString.includes("sslmode=require") || connectionString.includes("neon.tech");
 
 const queryClient =
   global.__pgClient ??
   postgres(connectionString, {
-    max: isVercel ? 5 : 10, // Vercel serverless — меньший пул
+    max: 10,
     idle_timeout: 30,
     connect_timeout: 10,
-    ssl: isVercel ? "require" : false, // Neon требует SSL
+    ssl: useSSL ? "require" : false,
   });
 
 if (process.env.NODE_ENV !== "production") {

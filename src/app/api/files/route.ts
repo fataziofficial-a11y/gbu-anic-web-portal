@@ -2,12 +2,9 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { files } from "@/lib/db/schema";
 import { apiSuccess, apiError, withErrorHandler } from "@/lib/utils/api";
-import { putBlob } from "@/lib/blob";
 import { desc } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import sharp from "sharp";
-
-const isVercel = Boolean(process.env.VERCEL || process.env.BLOB_READ_WRITE_TOKEN);
 
 async function saveToDisk(buffer: Buffer, folder: string, filename: string): Promise<string> {
   const { writeFile, mkdir } = await import("fs/promises");
@@ -74,13 +71,7 @@ export async function POST(request: Request) {
       sizeBytes = file.size;
     }
 
-    let url: string;
-    if (isVercel) {
-      const blob = await putBlob(`uploads/${safeFolder}/${filename}`, fileBuffer, mimeType);
-      url = blob.url;
-    } else {
-      url = await saveToDisk(fileBuffer, safeFolder, filename);
-    }
+    const url = await saveToDisk(fileBuffer, safeFolder, filename);
 
     const [saved] = await db.insert(files).values({
       filename,

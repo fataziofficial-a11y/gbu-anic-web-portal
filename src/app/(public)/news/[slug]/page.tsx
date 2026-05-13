@@ -3,6 +3,7 @@ import { news } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { renderTiptap } from "@/lib/utils/tiptap-render";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
 import type { Metadata } from "next";
@@ -65,29 +66,53 @@ export async function generateMetadata({
 
 export default async function NewsDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ from?: string }>;
 }) {
   const { slug } = await params;
+  const { from } = await searchParams;
+  const backHref = from ? `/news?page=${from}` : "/news";
 
   const item = await db.query.news.findFirst({
     where: and(eq(news.slug, slug), eq(news.status, "published")),
-    with: { author: { columns: { name: true } } },
+    with: {
+      author: { columns: { name: true } },
+      coverImage: { columns: { url: true, altText: true } },
+    },
   });
 
   if (!item) notFound();
 
+  const itemWithCover = item as typeof item & {
+    coverImage?: { url: string; altText?: string | null } | null;
+  };
+  const cover = itemWithCover.coverImage;
   const html = renderTiptap(item.content);
 
   return (
     <div className="mx-auto max-w-[800px] px-4 py-12 sm:px-6">
       <Link
-        href="/news"
+        href={backHref}
         className="mb-8 inline-flex items-center gap-1.5 text-sm font-semibold text-[#1A3A6B] transition hover:text-[#5CAFD6]"
       >
         <ArrowLeft className="h-4 w-4" />
         Назад к новостям
       </Link>
+
+      {cover?.url && (
+        <div className="relative mb-8 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-[#EEF4FB]">
+          <Image
+            src={cover.url}
+            alt={cover.altText ?? item.title}
+            fill
+            priority
+            sizes="(max-width: 800px) 100vw, 800px"
+            className="object-cover"
+          />
+        </div>
+      )}
 
       <div className="mb-10">
         {item.category && (

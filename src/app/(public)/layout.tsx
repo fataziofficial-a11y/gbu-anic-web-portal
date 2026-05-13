@@ -1,6 +1,7 @@
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { AskAI } from "@/components/public/AskAI";
+import { ScrollToTop } from "@/components/public/ScrollToTop";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <main id="main-content" className="flex-1 pt-[67px]">{children}</main>
       <PublicFooter />
       <AskAI />
+      <ScrollToTop />
     </div>
   );
 }

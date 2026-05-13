@@ -81,9 +81,6 @@ export async function PublicFooter() {
             >
               Rutube
             </a>
-            <Link href="/admin" className="transition hover:text-white/60">
-              Панель управления
-            </Link>
           </div>
         </div>
       </div>

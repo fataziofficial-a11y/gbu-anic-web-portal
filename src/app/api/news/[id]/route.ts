@@ -88,14 +88,14 @@ export async function PATCH(
     }
     if (data.slug !== undefined) updates.slug = data.slug;
     if (data.content !== undefined) updates.content = data.content;
-    if (data.excerpt !== undefined) updates.excerpt = data.excerpt ?? undefined;
-    if (data.category !== undefined) updates.category = data.category ?? undefined;
+    if (data.excerpt !== undefined) updates.excerpt = data.excerpt;
+    if (data.category !== undefined) updates.category = data.category;
     if (data.tags !== undefined) updates.tags = data.tags;
-    if (data.projectId !== undefined) updates.projectId = data.projectId ?? undefined;
-    if (data.rubricId !== undefined) updates.rubricId = data.rubricId ?? undefined;
-    if (data.coverImageId !== undefined) updates.coverImageId = data.coverImageId ?? undefined;
-    if (data.seoTitle !== undefined) updates.seoTitle = data.seoTitle ?? undefined;
-    if (data.seoDescription !== undefined) updates.seoDescription = data.seoDescription ?? undefined;
+    if (data.projectId !== undefined) updates.projectId = data.projectId;
+    if (data.rubricId !== undefined) updates.rubricId = data.rubricId;
+    if (data.coverImageId !== undefined) updates.coverImageId = data.coverImageId;
+    if (data.seoTitle !== undefined) updates.seoTitle = data.seoTitle;
+    if (data.seoDescription !== undefined) updates.seoDescription = data.seoDescription;
 
     if (data.status !== undefined) {
       updates.status = data.status;

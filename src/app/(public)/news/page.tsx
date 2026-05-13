@@ -154,11 +154,11 @@ export default async function NewsListPage({
               return (
                 <Link
                   key={item.id}
-                  href={`/news/${item.slug}`}
-                  className="group flex gap-6 py-6 transition hover:bg-[#F7FAFD] -mx-4 px-4 sm:-mx-6 sm:px-6 rounded-2xl"
+                  href={`/news/${item.slug}${page > 1 ? `?from=${page}` : ""}`}
+                  className="group flex flex-col gap-4 py-6 transition hover:bg-[#F7FAFD] -mx-4 px-4 sm:-mx-6 sm:px-6 sm:flex-row sm:gap-6 rounded-2xl"
                 >
                   {/* Thumbnail */}
-                  <div className="relative h-[130px] w-[200px] flex-none overflow-hidden rounded-xl sm:h-[150px] sm:w-[240px]">
+                  <div className="relative h-[200px] w-full flex-none overflow-hidden rounded-xl sm:h-[150px] sm:w-[240px]">
                     {imageUrl ? (
                       <Image
                         src={imageUrl}
@@ -220,39 +220,51 @@ export default async function NewsListPage({
         )}
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="mt-12 flex items-center justify-center gap-1.5">
-            {page > 1 && (
-              <Link
-                href={`/news?page=${page - 1}${category ? `&category=${encodeURIComponent(category)}` : ""}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#DDE8F0] text-[#4B6075] transition hover:border-[#1A3A6B] hover:text-[#1A3A6B]"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Link>
-            )}
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-              <Link
-                key={p}
-                href={`/news?page=${p}${category ? `&category=${encodeURIComponent(category)}` : ""}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
-                className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold transition ${
-                  p === page
-                    ? "bg-[#1A3A6B] text-white"
-                    : "border border-[#DDE8F0] text-[#4B6075] hover:border-[#1A3A6B] hover:text-[#1A3A6B]"
-                }`}
-              >
-                {p}
-              </Link>
-            ))}
-            {page < totalPages && (
-              <Link
-                href={`/news?page=${page + 1}${category ? `&category=${encodeURIComponent(category)}` : ""}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#DDE8F0] text-[#4B6075] transition hover:border-[#1A3A6B] hover:text-[#1A3A6B]"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            )}
-          </div>
-        )}
+        {totalPages > 1 && (() => {
+          const qs = (p: number) =>
+            `/news?page=${p}${category ? `&category=${encodeURIComponent(category)}` : ""}${q ? `&q=${encodeURIComponent(q)}` : ""}`;
+
+          const range: (number | "…")[] = [];
+          if (totalPages <= 7) {
+            for (let i = 1; i <= totalPages; i++) range.push(i);
+          } else {
+            range.push(1);
+            if (page > 4) range.push("…");
+            for (let i = Math.max(2, page - 2); i <= Math.min(totalPages - 1, page + 2); i++) range.push(i);
+            if (page < totalPages - 3) range.push("…");
+            range.push(totalPages);
+          }
+
+          return (
+            <div className="mt-12 flex items-center justify-center gap-1.5 flex-wrap">
+              {page > 1 && (
+                <Link href={qs(page - 1)} className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#DDE8F0] text-[#4B6075] transition hover:border-[#1A3A6B] hover:text-[#1A3A6B]">
+                  <ChevronLeft className="h-4 w-4" />
+                </Link>
+              )}
+              {range.map((p, i) =>
+                p === "…" ? (
+                  <span key={`ellipsis-${i}`} className="flex h-10 w-10 items-center justify-center text-sm text-[#8B9BAD]">…</span>
+                ) : (
+                  <Link
+                    key={p}
+                    href={qs(p)}
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold transition ${
+                      p === page ? "bg-[#1A3A6B] text-white" : "border border-[#DDE8F0] text-[#4B6075] hover:border-[#1A3A6B] hover:text-[#1A3A6B]"
+                    }`}
+                  >
+                    {p}
+                  </Link>
+                )
+              )}
+              {page < totalPages && (
+                <Link href={qs(page + 1)} className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#DDE8F0] text-[#4B6075] transition hover:border-[#1A3A6B] hover:text-[#1A3A6B]">
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              )}
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

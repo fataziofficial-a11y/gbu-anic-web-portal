@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -30,9 +31,14 @@ export function PublicHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 shrink-0">
-            <div className="flex h-8 w-8 items-center justify-center bg-[#5CAFD6] text-[#060E18] font-black text-[13px] select-none">
-              А
-            </div>
+            <Image
+              src="/logo-anic.png"
+              alt="АНИЦ"
+              width={44}
+              height={44}
+              className="rounded-full"
+              priority
+            />
             <div>
               <p className="text-[15px] font-black uppercase tracking-[0.12em] text-white leading-none">
                 АНИЦ

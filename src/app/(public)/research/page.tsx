@@ -15,7 +15,7 @@ export default async function ResearchPage() {
   });
 
   const actualWorks = allProjects.filter((p) => p.type === "actual_work");
-  const editorialProjects = allProjects.filter((p) => p.type === "editorial_project");
+  const editorialProjects = allProjects.filter((p) => p.type === "editorial_project" || p.type === "project");
 
   return (
     <div>
@@ -28,8 +28,8 @@ export default async function ResearchPage() {
       <div className="mx-auto max-w-[1240px] space-y-16 px-4 py-14 sm:px-6">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {[
-            { label: "Актуальных работ", count: String(actualWorks.length || 5), icon: Microscope, color: "text-[#1A3A6B]", bg: "bg-[#EEF4FB]" },
-            { label: "Проектов", count: String(editorialProjects.length || 12), icon: FolderKanban, color: "text-[#1A7A5A]", bg: "bg-[#E8F5F0]" },
+            { label: "Актуальных работ", count: String(actualWorks.length), icon: Microscope, color: "text-[#1A3A6B]", bg: "bg-[#EEF4FB]" },
+            { label: "Проектов", count: String(editorialProjects.length), icon: FolderKanban, color: "text-[#1A7A5A]", bg: "bg-[#E8F5F0]" },
             { label: "Ключевой фокус", count: "Арктика", icon: Users, color: "text-[#8F5D24]", bg: "bg-[#F8F0E5]" },
           ].map((stat) => (
             <div key={stat.label} className="rounded-3xl border border-[#DDE8F0] bg-white p-6 text-center">

@@ -163,9 +163,6 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold leading-snug text-[#0D1C2E]">{item}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-[#4B6075]">
-                      Раздел отражает структуру, указанную заказчиком для публичной версии сайта.
-                    </p>
                   </div>
                 </div>
               </article>
