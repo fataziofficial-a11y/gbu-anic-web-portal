@@ -17,6 +17,7 @@ const updateNewsSchema = z.object({
   rubricId: z.number().int().optional().nullable(),
   status: z.enum(["draft", "published", "archived"]).optional(),
   coverImageId: z.number().int().optional().nullable(),
+  removeCover: z.boolean().optional(),
   seoTitle: z.string().max(500).optional().nullable(),
   seoDescription: z.string().optional().nullable(),
   slug: z.string().max(500).optional(),
@@ -93,7 +94,13 @@ export async function PATCH(
     if (data.tags !== undefined) updates.tags = data.tags;
     if (data.projectId !== undefined) updates.projectId = data.projectId;
     if (data.rubricId !== undefined) updates.rubricId = data.rubricId;
-    if (data.coverImageId !== undefined) updates.coverImageId = data.coverImageId;
+    // Обложка: null обнуляется ТОЛЬКО при явном removeCover:true.
+    // Так фронт не может случайным null (race / сброс state) стереть обложку.
+    if (data.removeCover === true) {
+      updates.coverImageId = null;
+    } else if (typeof data.coverImageId === "number") {
+      updates.coverImageId = data.coverImageId;
+    }
     if (data.seoTitle !== undefined) updates.seoTitle = data.seoTitle;
     if (data.seoDescription !== undefined) updates.seoDescription = data.seoDescription;
 

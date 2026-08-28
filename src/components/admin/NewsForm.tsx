@@ -94,6 +94,7 @@ export function NewsForm({ initialData, mode }: Props) {
   const [coverImage, setCoverImage] = useState<{ id: number; url: string } | null>(
     initialData?.coverImage ?? null
   );
+  const [coverRemoved, setCoverRemoved] = useState(false);
   const [crosspostPlatforms, setCrosspostPlatforms] = useState<string[]>([]);
   const [seoTitle, setSeoTitle] = useState(initialData?.seoTitle ?? "");
   const [seoDescription, setSeoDescription] = useState(
@@ -240,7 +241,11 @@ export function NewsForm({ initialData, mode }: Props) {
       projectId: projectId ?? null,
       rubricId: rubricId ?? null,
       status: publishNow ? "published" : status,
-      coverImageId: coverImage?.id ?? null,
+      // coverImageId шлём только когда есть выбранная обложка. Удаление —
+      // отдельным флагом removeCover, чтобы случайно «пустой» state
+      // (race с аплоадом, ремонт пропсов и т.п.) не стирал обложку в БД.
+      coverImageId: coverImage?.id,
+      removeCover: coverRemoved,
       seoTitle: seoTitle || undefined,
       seoDescription: seoDescription || undefined,
     };
@@ -579,7 +584,13 @@ export function NewsForm({ initialData, mode }: Props) {
           {/* Обложка */}
           <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
             <p className="text-sm font-medium text-gray-700">Обложка</p>
-            <ImageCropUploader value={coverImage} onChange={setCoverImage} />
+            <ImageCropUploader
+              value={coverImage}
+              onChange={(v) => {
+                setCoverImage(v);
+                setCoverRemoved(v === null);
+              }}
+            />
           </div>
 
           {/* Статус */}
