@@ -7,6 +7,17 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { upsertDoc, deleteDoc, newsDoc } from "@/lib/search/meili";
 
+/**
+ * «ГГГГ-ММ-ДД» → полдень UTC.
+ *
+ * Именно полдень, а не полночь: на сайте дата выводится без времени, и
+ * полночь при любом сдвиге часового пояса (сервер в UTC, редакция в Якутске,
+ * +9) показалась бы соседним днём. Полдень выдерживает сдвиг в ±11 часов.
+ */
+function parsePublishedDate(value: string): Date {
+  return new Date(`${value}T12:00:00.000Z`);
+}
+
 const updateNewsSchema = z.object({
   title: z.string().min(1).max(500).optional(),
   content: z.any().optional(),
@@ -16,6 +27,10 @@ const updateNewsSchema = z.object({
   projectId: z.number().int().optional().nullable(),
   rubricId: z.number().int().optional().nullable(),
   status: z.enum(["draft", "published", "archived"]).optional(),
+  // Дата публикации, «ГГГГ-ММ-ДД». Редактор ставит её сам: материалы часто
+  // готовятся задним числом (мероприятие прошло на прошлой неделе), и дата
+  // «сегодня» в ленте новостей вводит читателя в заблуждение.
+  publishedDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
   coverImageId: z.number().int().optional().nullable(),
   removeCover: z.boolean().optional(),
   seoTitle: z.string().max(500).optional().nullable(),
@@ -109,6 +124,12 @@ export async function PATCH(
       if (data.status === "published" && !existing.publishedAt) {
         updates.publishedAt = new Date();
       }
+    }
+
+    // Заданная руками дата важнее автоматической: ставим её последней, уже
+    // после блока выше, иначе публикация впервые затёрла бы выбор редактора.
+    if (data.publishedDate !== undefined) {
+      updates.publishedAt = data.publishedDate ? parsePublishedDate(data.publishedDate) : null;
     }
 
     const [updated] = await db

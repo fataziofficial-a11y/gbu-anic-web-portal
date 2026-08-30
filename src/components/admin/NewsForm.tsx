@@ -63,6 +63,7 @@ interface NewsFormData {
   projectId?: number | null;
   rubricId?: number | null;
   status?: string;
+  publishedAt?: string | Date | null;
   seoTitle?: string;
   seoDescription?: string;
   slug?: string;
@@ -95,6 +96,15 @@ export function NewsForm({ initialData, mode }: Props) {
     initialData?.coverImage ?? null
   );
   const [coverRemoved, setCoverRemoved] = useState(false);
+  // Дата публикации в виде «ГГГГ-ММ-ДД» — формат <input type="date"> и API.
+  // Берём из UTC-частей: дата хранится как полдень UTC, и toISOString даёт
+  // тот же день, тогда как локальные геттеры в Якутске сдвинули бы на сутки.
+  const [publishedDate, setPublishedDate] = useState(() => {
+    const raw = initialData?.publishedAt;
+    if (!raw) return "";
+    const d = new Date(raw);
+    return Number.isNaN(d.getTime()) ? "" : d.toISOString().slice(0, 10);
+  });
   const [crosspostPlatforms, setCrosspostPlatforms] = useState<string[]>([]);
   const [seoTitle, setSeoTitle] = useState(initialData?.seoTitle ?? "");
   const [seoDescription, setSeoDescription] = useState(
@@ -241,6 +251,9 @@ export function NewsForm({ initialData, mode }: Props) {
       projectId: projectId ?? null,
       rubricId: rubricId ?? null,
       status: publishNow ? "published" : status,
+      // Пустая строка = «дата не задана»: при публикации сервер поставит
+      // текущий момент, как было раньше.
+      publishedDate: publishedDate || null,
       // coverImageId шлём только когда есть выбранная обложка. Удаление —
       // отдельным флагом removeCover, чтобы случайно «пустой» state
       // (race с аплоадом, ремонт пропсов и т.п.) не стирал обложку в БД.
@@ -593,7 +606,7 @@ export function NewsForm({ initialData, mode }: Props) {
             />
           </div>
 
-          {/* Статус */}
+          {/* Статус и дата публикации */}
           <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
             <p className="text-sm font-medium text-gray-700">Статус</p>
             <Select value={status} onValueChange={setStatus}>
@@ -606,6 +619,34 @@ export function NewsForm({ initialData, mode }: Props) {
                 <SelectItem value="archived">Архив</SelectItem>
               </SelectContent>
             </Select>
+
+            <div className="space-y-1.5 pt-1">
+              <label htmlFor="published-date" className="text-sm font-medium text-gray-700">
+                Дата публикации
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  id="published-date"
+                  type="date"
+                  value={publishedDate}
+                  onChange={(e) => setPublishedDate(e.target.value)}
+                  className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#5CAFD6]"
+                />
+                {publishedDate && (
+                  <button
+                    type="button"
+                    onClick={() => setPublishedDate("")}
+                    className="text-xs text-gray-500 hover:text-gray-800 underline"
+                  >
+                    сбросить
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-gray-400">
+                Эта дата показывается на сайте и задаёт порядок в ленте новостей.
+                Оставьте пустой — при публикации проставится сегодняшняя.
+              </p>
+            </div>
           </div>
 
           {/* Категория */}

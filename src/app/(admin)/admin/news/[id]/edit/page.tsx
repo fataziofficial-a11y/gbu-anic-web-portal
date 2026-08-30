@@ -44,6 +44,9 @@ export default async function EditNewsPage({ params }: Props) {
         projectId: item.projectId ?? null,
         rubricId: item.rubricId ?? null,
         status: item.status ?? "draft",
+        // В ISO, чтобы форма получила ту же дату независимо от часового пояса
+        // браузера редактора.
+        publishedAt: item.publishedAt ? item.publishedAt.toISOString() : null,
         seoTitle: item.seoTitle ?? undefined,
         seoDescription: item.seoDescription ?? undefined,
         slug: item.slug,

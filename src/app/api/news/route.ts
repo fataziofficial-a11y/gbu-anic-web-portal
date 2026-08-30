@@ -7,6 +7,14 @@ import { desc, eq, ilike, or, count, and, SQL } from "drizzle-orm";
 import { z } from "zod";
 import { upsertDoc, newsDoc } from "@/lib/search/meili";
 
+/**
+ * «ГГГГ-ММ-ДД» → полдень UTC. Полдень, а не полночь: дата на сайте выводится
+ * без времени, и полночь при сдвиге часового пояса показалась бы соседним днём.
+ */
+function parsePublishedDate(value: string): Date {
+  return new Date(`${value}T12:00:00.000Z`);
+}
+
 const createNewsSchema = z.object({
   title: z.string().min(1, "Заголовок обязателен").max(500),
   content: z.any().optional(),
@@ -16,6 +24,8 @@ const createNewsSchema = z.object({
   projectId: z.number().int().optional().nullable(),
   rubricId: z.number().int().optional().nullable(),
   status: z.enum(["draft", "published", "archived"]).optional().default("draft"),
+  // Дата публикации, «ГГГГ-ММ-ДД» — см. parsePublishedDate ниже.
+  publishedDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
   coverImageId: z.number().int().optional().nullable(),
   seoTitle: z.string().max(500).optional(),
   seoDescription: z.string().optional(),
@@ -94,8 +104,13 @@ export async function POST(request: Request) {
       return apiError("Новость с таким slug уже существует", 409);
     }
 
-    const publishedAt =
-      data.status === "published" ? new Date() : undefined;
+    // Выбранная редактором дата важнее «сейчас». Без неё — прежнее поведение:
+    // публикуем текущим моментом, черновик остаётся без даты.
+    const publishedAt = data.publishedDate
+      ? parsePublishedDate(data.publishedDate)
+      : data.status === "published"
+        ? new Date()
+        : undefined;
 
     const [created] = await db
       .insert(news)
