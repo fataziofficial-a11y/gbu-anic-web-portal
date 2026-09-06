@@ -13,6 +13,7 @@ import {
   HOME_HERO_SUMMARY,
   HOME_HERO_TITLE,
 } from "@/lib/content/public-content";
+import { SiteSearch } from "@/components/public/SiteSearch";
 
 export const revalidate = 60;
 
@@ -287,6 +288,7 @@ export default async function HomePage() {
           </div>
         </section>
 
+        <SiteSearch />
       </main>
 
       <PublicFooter />
