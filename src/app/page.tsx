@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
-import { news } from "@/lib/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { news, newsCategories } from "@/lib/db/schema";
+import { eq, desc, asc } from "drizzle-orm";
 import { logger } from "@/lib/logger";
 import Link from "next/link";
 import Image from "next/image";
@@ -57,11 +57,17 @@ const NEWS_PLACEHOLDERS = [
 ];
 
 export default async function HomePage() {
+  // Рубрики новостей для выпадающего списка в шапке.
+  const rubrics = await db
+    .select({ name: newsCategories.name, slug: newsCategories.slug })
+    .from(newsCategories)
+    .orderBy(asc(newsCategories.sortOrder), asc(newsCategories.name));
+
   const { latestNews } = await getHomeData();
 
   return (
     <div className="flex min-h-screen flex-col bg-white text-[#0D1C2E]">
-      <PublicHeader />
+      <PublicHeader rubrics={rubrics} />
 
       <main className="flex-1">
 

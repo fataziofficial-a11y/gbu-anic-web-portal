@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 
 const NAV = [
   { label: "О центре", href: "/about" },
@@ -16,9 +16,15 @@ const NAV = [
   { label: "Закупки", href: "/procurement" },
 ];
 
-export function PublicHeader() {
+/** Рубрика новостей — приходит с сервера, ведёт на отфильтрованную ленту. */
+export type NewsRubric = { name: string; slug: string };
+
+export function PublicHeader({ rubrics = [] }: { rubrics?: NewsRubric[] }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  // Список рубрик под «Новостями». Открывается по наведению на широких
+  // экранах и по нажатию — на устройствах без мыши.
+  const [rubricsOpen, setRubricsOpen] = useState(false);
 
   return (
     <>
@@ -51,7 +57,53 @@ export function PublicHeader() {
 
           {/* Desktop nav */}
           <nav className="hidden items-center gap-6 xl:flex">
-            {NAV.map((item) => (
+            {NAV.map((item) =>
+              item.href === "/news" && rubrics.length > 0 ? (
+                <div
+                  key={item.href}
+                  className="relative"
+                  onMouseEnter={() => setRubricsOpen(true)}
+                  onMouseLeave={() => setRubricsOpen(false)}
+                >
+                  <div className="flex items-center gap-1">
+                    <Link
+                      href={item.href}
+                      className={`text-[13px] font-medium transition-colors duration-150 ${
+                        pathname.startsWith(item.href)
+                          ? "text-[#5CAFD6] font-semibold"
+                          : "text-white/60 hover:text-white"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setRubricsOpen((v) => !v)}
+                      aria-expanded={rubricsOpen}
+                      aria-label="Рубрики новостей"
+                      className="text-white/40 transition-colors hover:text-white"
+                    >
+                      <ChevronDown
+                        className={`h-3.5 w-3.5 transition-transform ${rubricsOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                  </div>
+                  {rubricsOpen && (
+                    <div className="absolute left-0 top-full min-w-[200px] border border-white/10 bg-[#0D2743] py-1 shadow-xl">
+                      {rubrics.map((r) => (
+                        <Link
+                          key={r.slug}
+                          href={`/news?category=${encodeURIComponent(r.name)}`}
+                          onClick={() => setRubricsOpen(false)}
+                          className="block px-4 py-2.5 text-[13px] text-white/70 transition-colors hover:bg-white/5 hover:text-white"
+                        >
+                          {r.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
               <Link
                 key={item.href}
                 href={item.href}
@@ -63,7 +115,8 @@ export function PublicHeader() {
               >
                 {item.label}
               </Link>
-            ))}
+              )
+            )}
           </nav>
 
           {/* CTA + mobile toggle */}
@@ -103,6 +156,20 @@ export function PublicHeader() {
                   {item.label}
                 </Link>
               ))}
+              {rubrics.length > 0 && (
+                <div className="mt-1 border-l border-white/10 pl-3">
+                  {rubrics.map((r) => (
+                    <Link
+                      key={r.slug}
+                      href={`/news?category=${encodeURIComponent(r.name)}`}
+                      onClick={() => setMobileOpen(false)}
+                      className="block px-4 py-2.5 text-sm text-white/50 transition-colors hover:bg-white/5 hover:text-white"
+                    >
+                      {r.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
               <Link
                 href="/contacts"
                 onClick={() => setMobileOpen(false)}
