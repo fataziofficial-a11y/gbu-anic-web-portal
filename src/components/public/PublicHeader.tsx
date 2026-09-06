@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SearchBox } from "@/components/public/SearchBox";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
@@ -66,8 +67,11 @@ export function PublicHeader() {
             ))}
           </nav>
 
-          {/* CTA + mobile toggle */}
+          {/* Поиск + CTA + mobile toggle */}
           <div className="flex items-center gap-3">
+            <div className="hidden xl:block">
+              <SearchBox />
+            </div>
             <Link
               href="/contacts"
               className="hidden xl:inline-flex items-center bg-[#5CAFD6] text-[#060E18] px-5 py-2 text-[13px] font-bold transition-colors hover:bg-[#7CC4E8]"
@@ -88,6 +92,9 @@ export function PublicHeader() {
         {/* Mobile menu */}
         {mobileOpen && (
           <div className="border-t border-white/8 bg-[#060E18] px-4 py-4 xl:hidden">
+            <div className="mb-3">
+              <SearchBox compact />
+            </div>
             <div className="flex flex-col gap-0.5">
               {NAV.map((item) => (
                 <Link

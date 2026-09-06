@@ -6,7 +6,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
-import { AskAI } from "@/components/public/AskAI";
 import { ArrowRight, Calendar, BookOpen, Users, Layers, ChevronRight } from "lucide-react";
 import {
   CENTER_DESCRIPTION_PARAGRAPHS,
@@ -291,7 +290,6 @@ export default async function HomePage() {
       </main>
 
       <PublicFooter />
-      <AskAI />
     </div>
   );
 }
