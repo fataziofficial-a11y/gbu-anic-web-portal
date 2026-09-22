@@ -1,3 +1,5 @@
+import { telegramCall } from "./telegram-transport";
+
 interface TelegramPostOptions {
   title: string;
   excerpt?: string;
@@ -27,18 +29,15 @@ export async function postToTelegram(opts: TelegramPostOptions): Promise<Telegra
     .join("");
 
   try {
-    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text,
-        parse_mode: "HTML",
-        disable_web_page_preview: false,
-      }),
+    // Через telegramCall, а не через fetch: с сервера в России прямой доступ
+    // к api.telegram.org закрыт, и запрос нужно вести через наш прокси.
+    const data = await telegramCall(token, "sendMessage", {
+      chat_id: chatId,
+      text,
+      parse_mode: "HTML",
+      disable_web_page_preview: false,
     });
 
-    const data = await res.json();
     if (!data.ok) {
       return { ok: false, error: data.description ?? "Ошибка Telegram API" };
     }
