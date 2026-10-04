@@ -101,3 +101,50 @@ export function telegramCall(
     req.end(body);
   });
 }
+
+/**
+ * Отправка с файлом (multipart/form-data) — например sendPhoto с обложкой.
+ * Файл грузим сами: превью по ссылке Telegram строит ненадёжно, а загрузка
+ * не зависит от того, достучится ли он до нашего сайта.
+ */
+export function telegramUpload(
+  token: string,
+  method: string,
+  fields: Record<string, string>,
+  file: { field: string; filename: string; contentType: string; data: Buffer },
+): Promise<{ ok: boolean; description?: string; result?: { message_id?: number } }> {
+  return new Promise((resolve, reject) => {
+    const boundary = "----anic" + Math.random().toString(16).slice(2);
+    const parts: Buffer[] = [];
+    for (const [k, v] of Object.entries(fields)) {
+      parts.push(Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="${k}"\r\n\r\n${v}\r\n`, "utf8"));
+    }
+    parts.push(Buffer.from(
+      `--${boundary}\r\nContent-Disposition: form-data; name="${file.field}"; filename="${file.filename}"\r\nContent-Type: ${file.contentType}\r\n\r\n`,
+      "utf8",
+    ));
+    parts.push(file.data, Buffer.from(`\r\n--${boundary}--\r\n`, "utf8"));
+    const body = Buffer.concat(parts);
+    const req = https.request(
+      {
+        host: "api.telegram.org",
+        port: 443,
+        method: "POST",
+        path: `/bot${token}/${method}`,
+        headers: { "Content-Type": `multipart/form-data; boundary=${boundary}`, "Content-Length": body.length },
+        agent: PROXY ? makeProxyAgent() : undefined,
+      },
+      (res) => {
+        let data = "";
+        res.on("data", (c) => (data += c));
+        res.on("end", () => {
+          try { resolve(JSON.parse(data)); } catch { reject(new Error(`Telegram вернул не JSON (${res.statusCode})`)); }
+        });
+      },
+    );
+    req.on("error", (e: Error) => reject(new Error(e.message || "сетевая ошибка")));
+    req.setTimeout(30_000, () => req.destroy(new Error("Telegram не ответил")));
+    req.write(body);
+    req.end();
+  });
+}

@@ -1,4 +1,4 @@
-import { telegramCall } from "./telegram-transport";
+import { telegramCall, telegramUpload } from "./telegram-transport";
 import { composePost } from "./compose";
 
 interface TelegramPostOptions {
@@ -7,8 +7,8 @@ interface TelegramPostOptions {
   url: string;
   /** Текст новости из редактора — пост дублирует новость целиком. */
   content?: unknown;
-  /** Обложка в JPEG — показываем крупно над текстом (превью ссылки). */
-  coverJpegUrl?: string | null;
+  /** Обложка в JPEG (файл) — уходит фотографией. */
+  coverJpeg?: Buffer | null;
 }
 
 interface TelegramResult {
@@ -25,25 +25,37 @@ export async function postToTelegram(opts: TelegramPostOptions): Promise<Telegra
     return { ok: false, error: "Telegram не настроен (нет TELEGRAM_BOT_TOKEN или TELEGRAM_CHANNEL_ID)" };
   }
 
-  // Полная новость; не влезает в 4096 — обрезка и «Читать полностью».
-  const text = opts.content !== undefined
+  const full = opts.content !== undefined
     ? composePost({ title: opts.title, excerpt: opts.excerpt, content: opts.content, url: opts.url, limit: 4096, flavor: "tg" }).text
     : [`<b>${escTg(opts.title)}</b>`, opts.excerpt ? `\n${escTg(opts.excerpt)}` : "", `\n\n<a href="${opts.url}">Читать полностью →</a>`].filter(Boolean).join("");
 
   try {
-    // Через telegramCall, а не через fetch: с сервера в России прямой доступ
-    // к api.telegram.org закрыт, и запрос нужно вести через наш прокси.
-    const data = await telegramCall(token, "sendMessage", {
-      chat_id: chatId,
-      text,
-      parse_mode: "HTML",
-      // Обложка — превью картинки над текстом; без обложки превью не нужно
-      // (иначе Telegram подставит карточку первой ссылки из текста).
-      link_preview_options: opts.coverJpegUrl
-        ? { url: opts.coverJpegUrl, prefer_large_media: true, show_above_text: true }
-        : { is_disabled: true },
-    });
+    // Через telegramCall/telegramUpload, а не fetch: с сервера в России прямой
+    // доступ к api.telegram.org закрыт, запрос идёт через наш прокси.
+    if (opts.coverJpeg) {
+      // Подпись к фото — до 1024 символов. Влезает — один пост: фото + весь
+      // текст. Не влезает — фото с заголовком и следом полный текст.
+      const fits = visibleLength(full) <= 1024;
+      const photo = await telegramUpload(token, "sendPhoto", {
+        chat_id: chatId,
+        caption: fits ? full : `<b>${escTg(opts.title)}</b>`,
+        parse_mode: "HTML",
+      }, { field: "photo", filename: "cover.jpg", contentType: "image/jpeg", data: opts.coverJpeg });
+      if (!photo.ok) return { ok: false, error: photo.description ?? "Ошибка Telegram API (фото)" };
+      if (fits) return { ok: true, messageId: photo.result?.message_id };
+      const body = opts.content !== undefined
+        ? composePost({ title: opts.title, excerpt: opts.excerpt, content: opts.content, url: opts.url, limit: 4096, flavor: "tg", noTitle: true }).text
+        : full;
+      const msg = await telegramCall(token, "sendMessage", {
+        chat_id: chatId, text: body, parse_mode: "HTML", link_preview_options: { is_disabled: true },
+      });
+      if (!msg.ok) return { ok: false, error: msg.description ?? "Ошибка Telegram API (текст)" };
+      return { ok: true, messageId: photo.result?.message_id };
+    }
 
+    const data = await telegramCall(token, "sendMessage", {
+      chat_id: chatId, text: full, parse_mode: "HTML", link_preview_options: { is_disabled: true },
+    });
     if (!data.ok) {
       return { ok: false, error: data.description ?? "Ошибка Telegram API" };
     }
@@ -51,6 +63,11 @@ export async function postToTelegram(opts: TelegramPostOptions): Promise<Telegra
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : "Сетевая ошибка" };
   }
+}
+
+/** Длина текста, как её считает Telegram: без тегов, сущности — одним знаком. */
+function visibleLength(html: string): number {
+  return html.replace(/<[^>]+>/g, "").replace(/&(amp|lt|gt|quot);/g, "_").length;
 }
 
 function escTg(text: string): string {

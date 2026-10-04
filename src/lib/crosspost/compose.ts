@@ -84,17 +84,19 @@ export function composePost(opts: {
   url: string;
   limit: number;
   flavor: Flavor;
+  /** Без заголовка — когда он уже ушёл подписью к фото. */
+  noTitle?: boolean;
 }): { text: string; truncated: boolean } {
-  const head = `<b>${esc(opts.title.trim())}</b>`;
+  const head = opts.noTitle ? "" : `<b>${esc(opts.title.trim())}</b>`;
   let body = opts.content && typeof opts.content === "object" ? blocks(opts.content as TNode, opts.flavor) : [];
   if (body.length === 0 && opts.excerpt) body = [esc(opts.excerpt.trim())];
 
-  const full = [head, ...body].join("\n\n");
+  const full = [head, ...body].filter(Boolean).join("\n\n");
   if (full.length <= opts.limit) return { text: full, truncated: false };
 
   const more = `\n\n<a href="${escAttr(opts.url)}">Читать полностью →</a>`;
   const room = opts.limit - more.length - 2; // «…» и запас
-  const parts = [head];
+  const parts = head ? [head] : [];
   let used = head.length;
   for (const b of body) {
     if (used + 2 + b.length <= room) { parts.push(b); used += 2 + b.length; continue; }

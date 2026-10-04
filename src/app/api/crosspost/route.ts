@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { coverJpegUrl } from "@/lib/crosspost/compose";
+import { loadCoverJpeg } from "@/lib/crosspost/cover";
 import { db } from "@/lib/db";
 import { crosspostLog, news } from "@/lib/db/schema";
 import { apiSuccess, apiError, withErrorHandler } from "@/lib/utils/api";
@@ -81,7 +82,7 @@ export async function POST(request: Request) {
       let error: string | undefined;
 
       if (platform === "telegram") {
-        const r = await postToTelegram({ title, excerpt, url, content, coverJpegUrl: coverJpeg });
+        const r = await postToTelegram({ title, excerpt, url, content, coverJpeg: await loadCoverJpeg(coverUrl) });
         ok = r.ok;
         externalPostId = r.messageId ? String(r.messageId) : undefined;
         error = r.error;
