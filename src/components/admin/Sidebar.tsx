@@ -22,6 +22,7 @@ import {
   TicketCheck,
   Inbox,
   UserCog,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -45,11 +46,14 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: "Дашборд",         href: "/admin",                icon: LayoutDashboard, exact: true },
   { label: "Новости",         href: "/admin/news",           icon: Newspaper,       section: "news" },
+  { label: "База знаний",     href: "/admin/knowledge",      icon: BookOpen,        section: "knowledge" },
   { label: "Проекты",         href: "/admin/projects",       icon: FlaskConical,    section: "projects" },
   { label: "Подразделения",   href: "/admin/departments",    icon: Building2,       section: "departments" },
+  { label: "Сотрудники",      href: "/admin/team",           icon: Users,           section: "team" },
   { label: "Публикации",      href: "/admin/publications",   icon: BookMarked,      section: "publications" },
   { label: "Медиа",           href: "/admin/media",          icon: Film,            section: "media" },
   { label: "Партнёры",        href: "/admin/partners",       icon: Handshake,       section: "partners" },
+  { label: "Страницы",        href: "/admin/pages",          icon: FileText,        section: "settings" },
   { label: "Документы",       href: "/admin/documents",      icon: ScrollText,      section: "documents" },
   { label: "Закупки",         href: "/admin/procurements",   icon: ShoppingCart,    section: "procurements" },
   { label: "Файлы",           href: "/admin/files",          icon: FolderOpen,      section: "files" },
