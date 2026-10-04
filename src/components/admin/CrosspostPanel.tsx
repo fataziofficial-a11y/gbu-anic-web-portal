@@ -30,9 +30,11 @@ interface Props {
   newsId: number;
   /** Показываем только если новость опубликована */
   isPublished: boolean;
+  /** Подключённые площадки — неподключённые в панели не показываем. */
+  platforms?: string[];
 }
 
-export function CrosspostPanel({ newsId, isPublished }: Props) {
+export function CrosspostPanel({ newsId, isPublished, platforms }: Props) {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [retrying, setRetrying] = useState<string | null>(null);
@@ -106,7 +108,7 @@ export function CrosspostPanel({ newsId, isPublished }: Props) {
       </div>
 
       <div className="space-y-2">
-        {ALL_PLATFORMS.map((p) => {
+        {ALL_PLATFORMS.filter((p) => !platforms || platforms.includes(p.id)).map((p) => {
           const entry = latestByPlatform.get(p.id);
           const isSent = entry?.status === "sent";
           const isFailed = entry?.status === "failed";

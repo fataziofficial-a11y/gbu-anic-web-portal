@@ -1,9 +1,14 @@
 import { telegramCall } from "./telegram-transport";
+import { composePost } from "./compose";
 
 interface TelegramPostOptions {
   title: string;
   excerpt?: string;
   url: string;
+  /** Текст новости из редактора — пост дублирует новость целиком. */
+  content?: unknown;
+  /** Обложка в JPEG — показываем крупно над текстом (превью ссылки). */
+  coverJpegUrl?: string | null;
 }
 
 interface TelegramResult {
@@ -20,13 +25,10 @@ export async function postToTelegram(opts: TelegramPostOptions): Promise<Telegra
     return { ok: false, error: "Telegram не настроен (нет TELEGRAM_BOT_TOKEN или TELEGRAM_CHANNEL_ID)" };
   }
 
-  const text = [
-    `<b>${escTg(opts.title)}</b>`,
-    opts.excerpt ? `\n${escTg(opts.excerpt)}` : "",
-    `\n\n<a href="${opts.url}">Читать полностью →</a>`,
-  ]
-    .filter(Boolean)
-    .join("");
+  // Полная новость; не влезает в 4096 — обрезка и «Читать полностью».
+  const text = opts.content !== undefined
+    ? composePost({ title: opts.title, excerpt: opts.excerpt, content: opts.content, url: opts.url, limit: 4096, flavor: "tg" }).text
+    : [`<b>${escTg(opts.title)}</b>`, opts.excerpt ? `\n${escTg(opts.excerpt)}` : "", `\n\n<a href="${opts.url}">Читать полностью →</a>`].filter(Boolean).join("");
 
   try {
     // Через telegramCall, а не через fetch: с сервера в России прямой доступ
@@ -35,7 +37,11 @@ export async function postToTelegram(opts: TelegramPostOptions): Promise<Telegra
       chat_id: chatId,
       text,
       parse_mode: "HTML",
-      disable_web_page_preview: false,
+      // Обложка — превью картинки над текстом; без обложки превью не нужно
+      // (иначе Telegram подставит карточку первой ссылки из текста).
+      link_preview_options: opts.coverJpegUrl
+        ? { url: opts.coverJpegUrl, prefer_large_media: true, show_above_text: true }
+        : { is_disabled: true },
     });
 
     if (!data.ok) {

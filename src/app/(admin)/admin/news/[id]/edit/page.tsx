@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { news } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { availablePlatforms } from "@/lib/crosspost/available";
 import { NewsForm } from "@/components/admin/NewsForm";
 
 interface Props {
@@ -34,6 +35,7 @@ export default async function EditNewsPage({ params }: Props) {
   return (
     <NewsForm
       mode="edit"
+      platforms={availablePlatforms()}
       initialData={{
         id: item.id,
         title: item.title,

@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { coverJpegUrl } from "@/lib/crosspost/compose";
 import { db } from "@/lib/db";
 import { crosspostLog, news } from "@/lib/db/schema";
 import { apiSuccess, apiError, withErrorHandler } from "@/lib/utils/api";
@@ -52,18 +53,24 @@ export async function POST(request: Request) {
     let title = "";
     let excerpt: string | undefined;
     let slug = "";
+    let content: unknown = undefined;
+    let coverUrl: string | null = null;
 
     if (contentType === "news") {
-      const item = await db.query.news.findFirst({ where: eq(news.id, contentId) });
+      const item = await db.query.news.findFirst({ where: eq(news.id, contentId), with: { coverImage: { columns: { url: true } } } });
       if (!item) return apiError("Новость не найдена", 404);
       if (item.status !== "published") return apiError("Публикуйте материал перед кросс-постингом", 400);
       title = item.title;
       excerpt = item.excerpt ?? undefined;
       slug = item.slug;
+      content = item.content;
+      coverUrl = item.coverImage?.url ?? null;
     }
 
     const siteUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
     const url = `${siteUrl}/news/${slug}`;
+    // Telegram и MAX дублируют новость целиком, с обложкой (в JPEG).
+    const coverJpeg = coverJpegUrl(siteUrl, coverUrl);
 
     const results: { platform: string; ok: boolean; externalPostId?: string; externalUrl?: string; error?: string }[] = [];
 
@@ -74,7 +81,7 @@ export async function POST(request: Request) {
       let error: string | undefined;
 
       if (platform === "telegram") {
-        const r = await postToTelegram({ title, excerpt, url });
+        const r = await postToTelegram({ title, excerpt, url, content, coverJpegUrl: coverJpeg });
         ok = r.ok;
         externalPostId = r.messageId ? String(r.messageId) : undefined;
         error = r.error;
@@ -85,7 +92,7 @@ export async function POST(request: Request) {
         externalUrl = r.postUrl;
         error = r.error;
       } else if (platform === "max") {
-        const r = await postToMax({ title, excerpt, url });
+        const r = await postToMax({ title, excerpt, url, content, coverJpegUrl: coverJpeg });
         ok = r.ok;
         externalPostId = r.postId;
         error = r.error;

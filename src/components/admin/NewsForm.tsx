@@ -74,9 +74,12 @@ interface NewsFormData {
 interface Props {
   initialData?: NewsFormData;
   mode: "create" | "edit";
+  /** Подключённые площадки кросс-постинга — только для них показываем галочки. */
+  platforms?: string[];
 }
 
-export function NewsForm({ initialData, mode }: Props) {
+export function NewsForm({ initialData, mode, platforms }: Props) {
+  const enabledPlatforms = PLATFORMS.filter((p) => !platforms || platforms.includes(p.id));
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -676,7 +679,7 @@ export function NewsForm({ initialData, mode }: Props) {
           </div>
 
           {/* Кросс-постинг при создании/черновике (пока новость не была опубликована) */}
-          {!wasPublished && (
+          {!wasPublished && enabledPlatforms.length > 0 && (
             <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
               <div className="flex items-center gap-2">
                 <Send className="h-4 w-4 text-gray-400" />
@@ -684,7 +687,7 @@ export function NewsForm({ initialData, mode }: Props) {
               </div>
               <p className="text-xs text-gray-400">Опубликовать одновременно в:</p>
               <div className="space-y-2">
-                {PLATFORMS.map((p) => (
+                {enabledPlatforms.map((p) => (
                   <label key={p.id} className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
@@ -708,6 +711,7 @@ export function NewsForm({ initialData, mode }: Props) {
             <CrosspostPanel
               newsId={initialData.id}
               isPublished={status === "published"}
+              platforms={platforms}
             />
           )}
 
