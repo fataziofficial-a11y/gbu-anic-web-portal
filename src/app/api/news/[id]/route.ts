@@ -128,8 +128,16 @@ export async function PATCH(
 
     // Заданная руками дата важнее автоматической: ставим её последней, уже
     // после блока выше, иначе публикация впервые затёрла бы выбор редактора.
+    // Пустое поле даты — «не задана», а не «стереть»: у опубликованной новости
+    // дата остаётся (или ставится сейчас), иначе публикация из редактирования
+    // оставляла новость без даты.
     if (data.publishedDate !== undefined) {
-      updates.publishedAt = data.publishedDate ? parsePublishedDate(data.publishedDate) : null;
+      if (data.publishedDate) {
+        updates.publishedAt = parsePublishedDate(data.publishedDate);
+      } else {
+        const finalStatus = data.status ?? existing.status;
+        updates.publishedAt = finalStatus === "published" ? (existing.publishedAt ?? new Date()) : null;
+      }
     }
 
     const [updated] = await db

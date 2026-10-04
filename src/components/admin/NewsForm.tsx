@@ -106,6 +106,9 @@ export function NewsForm({ initialData, mode }: Props) {
     return Number.isNaN(d.getTime()) ? "" : d.toISOString().slice(0, 10);
   });
   const [crosspostPlatforms, setCrosspostPlatforms] = useState<string[]>([]);
+  // Была ли новость опубликована до открытия формы — от этого зависит, запускать
+  // ли кросс-постинг при сохранении.
+  const wasPublished = initialData?.status === "published";
   const [seoTitle, setSeoTitle] = useState(initialData?.seoTitle ?? "");
   const [seoDescription, setSeoDescription] = useState(
     initialData?.seoDescription ?? ""
@@ -282,15 +285,12 @@ export function NewsForm({ initialData, mode }: Props) {
           mode === "edit" ? "Новость обновлена" : "Новость создана"
         );
 
-        // После создания — переходим на страницу редактирования (там есть кнопка "Предпросмотр")
-        if (mode === "create" && json.data?.id) {
-          router.push(`/admin/news/${json.data.id}/edit`);
-          router.refresh();
-          return;
-        }
-
-        // Кросс-постинг при публикации
-        if (publishNow && crosspostPlatforms.length > 0 && json.data?.id) {
+        // Кросс-постинг — когда новость становится опубликованной: кнопкой
+        // «Опубликовать» (в том числе сразу при создании) или выбором статуса
+        // «Опубликовано» + «Сохранить». Раньше при создании форма уходила на
+        // страницу редактирования раньше отправки, а смена статуса её не запускала.
+        const becamePublished = publishNow || (status === "published" && !wasPublished);
+        if (becamePublished && crosspostPlatforms.length > 0 && json.data?.id) {
           const cpRes = await fetch("/api/crosspost", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -300,14 +300,23 @@ export function NewsForm({ initialData, mode }: Props) {
               platforms: crosspostPlatforms,
             }),
           });
-          const cpJson = await cpRes.json();
+          const cpJson = await cpRes.json().catch(() => ({}));
           if (cpRes.ok) {
             const results: { platform: string; ok: boolean }[] = cpJson.data?.results ?? [];
             results.forEach((r) => {
               if (r.ok) toast.success(`Опубликовано в ${r.platform}`);
               else toast.error(`Ошибка кросс-поста в ${r.platform}`);
             });
+          } else {
+            toast.error("Кросс-постинг не выполнен — повторите в карточке новости");
           }
+        }
+
+        // После создания — переходим на страницу редактирования (там есть кнопка "Предпросмотр")
+        if (mode === "create" && json.data?.id) {
+          router.push(`/admin/news/${json.data.id}/edit`);
+          router.refresh();
+          return;
         }
 
         router.push("/admin/news");
@@ -666,8 +675,8 @@ export function NewsForm({ initialData, mode }: Props) {
             />
           </div>
 
-          {/* Кросс-постинг при создании/черновике */}
-          {status !== "published" && (
+          {/* Кросс-постинг при создании/черновике (пока новость не была опубликована) */}
+          {!wasPublished && (
             <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3">
               <div className="flex items-center gap-2">
                 <Send className="h-4 w-4 text-gray-400" />
