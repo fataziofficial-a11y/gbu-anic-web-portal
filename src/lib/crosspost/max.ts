@@ -39,7 +39,7 @@ export async function postToMax(opts: MaxPostOptions): Promise<MaxResult> {
     return { ok: false, error: "MAX не настроен (нет MAX_BOT_TOKEN или MAX_CHANNEL_ID)" };
   }
 
-  // Полная новость; не влезает — обрезка и «Читать полностью».
+  // Полная новость; не влезает — обрезка и ссылка «Читать на сайте».
   const text = composePost({
     title: opts.title, excerpt: opts.excerpt, content: opts.content ?? null, url: opts.url, limit: MAX_TEXT, flavor: "max",
   }).text;

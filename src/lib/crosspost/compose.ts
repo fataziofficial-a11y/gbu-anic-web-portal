@@ -1,7 +1,7 @@
 /**
  * Текст поста для Telegram и MAX из новости: заголовок + полный текст из
  * редактора (Tiptap JSON) с жирным, курсивом, списками и ссылками. Если пост
- * не влезает в лимит площадки — обрезаем по абзацам и ставим «Читать полностью».
+ * не влезает в лимит площадки — обрезаем по абзацам и ставим «Читать на сайте».
  *
  * Разметка — HTML-подмножество, которое понимают обе площадки: <b>, <i>, <s>,
  * <a>. Цитаты в Telegram — <blockquote>, в MAX — курсивом.
@@ -76,7 +76,7 @@ function blocks(node: TNode, flavor: Flavor): string[] {
 
 const stripTags = (s: string) => s.replace(/<[^>]+>/g, "");
 
-/** Пост целиком, а если не влезает в limit — обрезанный с «Читать полностью». */
+/** Пост целиком, а если не влезает в limit — обрезанный со ссылкой «Читать на сайте». */
 export function composePost(opts: {
   title: string;
   excerpt?: string | null;
@@ -86,20 +86,24 @@ export function composePost(opts: {
   flavor: Flavor;
   /** Без заголовка — когда он уже ушёл подписью к фото. */
   noTitle?: boolean;
+  /** Как считать длину: по умолчанию — длина строки с разметкой. Telegram
+   *  считает видимый текст (без тегов). */
+  measure?: (s: string) => number;
 }): { text: string; truncated: boolean } {
+  const len = opts.measure ?? ((s: string) => s.length);
   const head = opts.noTitle ? "" : `<b>${esc(opts.title.trim())}</b>`;
   let body = opts.content && typeof opts.content === "object" ? blocks(opts.content as TNode, opts.flavor) : [];
   if (body.length === 0 && opts.excerpt) body = [esc(opts.excerpt.trim())];
 
   const full = [head, ...body].filter(Boolean).join("\n\n");
-  if (full.length <= opts.limit) return { text: full, truncated: false };
+  if (len(full) <= opts.limit) return { text: full, truncated: false };
 
-  const more = `\n\n<a href="${escAttr(opts.url)}">Читать полностью →</a>`;
-  const room = opts.limit - more.length - 2; // «…» и запас
+  const more = `\n\n<a href="${escAttr(opts.url)}">Читать на сайте →</a>`;
+  const room = opts.limit - len(more) - 2; // «…» и запас
   const parts = head ? [head] : [];
-  let used = head.length;
+  let used = len(head);
   for (const b of body) {
-    if (used + 2 + b.length <= room) { parts.push(b); used += 2 + b.length; continue; }
+    if (used + 2 + len(b) <= room) { parts.push(b); used += 2 + len(b); continue; }
     // Абзац не влез целиком: берём его начало без разметки, по границе слова.
     const left = room - used - 2;
     if (left > 120) {
