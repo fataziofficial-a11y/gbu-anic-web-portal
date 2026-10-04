@@ -17,8 +17,12 @@ interface MaxResult {
   error?: string;
 }
 
-// Лимит текста сообщения в MAX — 4000 символов.
+// Пост в MAX оформляем так же, как в Telegram: обложка + текст до 1024 видимых
+// знаков (обрыв по абзацу) и ссылка «Читать на сайте». Сам MAX пускает до 4000 —
+// это предел для поста без обложки.
+const WITH_COVER = 1024;
 const MAX_TEXT = 4000;
+const visibleLength = (html: string) => html.replace(/<[^>]+>/g, "").replace(/&(amp|lt|gt|quot);/g, "_").length;
 
 async function send(token: string, chatId: string, body: Record<string, unknown>) {
   // Канал — в адресе запроса (?chat_id=), а не в теле: так требует MAX API.
@@ -39,9 +43,9 @@ export async function postToMax(opts: MaxPostOptions): Promise<MaxResult> {
     return { ok: false, error: "MAX не настроен (нет MAX_BOT_TOKEN или MAX_CHANNEL_ID)" };
   }
 
-  // Полная новость; не влезает — обрезка и ссылка «Читать на сайте».
   const text = composePost({
-    title: opts.title, excerpt: opts.excerpt, content: opts.content ?? null, url: opts.url, limit: MAX_TEXT, flavor: "max",
+    title: opts.title, excerpt: opts.excerpt, content: opts.content ?? null, url: opts.url,
+    limit: opts.coverJpegUrl ? WITH_COVER : MAX_TEXT, flavor: "max", measure: visibleLength,
   }).text;
   const base = { text, format: "html" };
 
