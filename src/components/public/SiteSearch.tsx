@@ -1,5 +1,6 @@
 "use client";
 
+import { searchHref, SEARCH_TYPE_LABEL } from "@/lib/search/labels";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Loader2, Search, X } from "lucide-react";
@@ -20,21 +21,14 @@ type Result = {
   id: number;
   title: string;
   slug?: string;
+  url?: string;
   excerpt?: string | null;
 };
 
-const TYPE_LABEL: Record<string, string> = {
-  news: "Новость",
-  knowledge: "База знаний",
-  page: "Страница",
-  pages: "Страница",
-};
+const TYPE_LABEL = SEARCH_TYPE_LABEL;
 
 function hrefFor(r: Result): string {
-  if (!r.slug) return "/";
-  if (r.type === "news") return `/news/${r.slug}`;
-  if (r.type === "knowledge") return `/knowledge-base/${r.slug}`;
-  return `/${r.slug}`;
+  return searchHref(r);
 }
 
 export function SiteSearch() {

@@ -464,6 +464,22 @@ export const tickets = pgTable("tickets", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Обращения граждан с публичной формы сайта («Контакты»). Отдельно от
+// тикетов: тикеты — внутренний трекер сотрудников, здесь — посетители.
+export const appeals = pgTable("appeals", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  subject: varchar("subject", { length: 200 }).notNull(),
+  message: text("message").notNull(),
+  status: varchar("status", { length: 20 }).notNull().default("new"), // new | in_progress | answered | closed
+  adminComment: text("admin_comment"),
+  handledBy: integer("handled_by").references(() => users.id),
+  ip: varchar("ip", { length: 64 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const ticketsRelations = relations(tickets, ({ one }) => ({
   author: one(users, {
     fields: [tickets.createdBy],

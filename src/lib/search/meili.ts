@@ -2,7 +2,10 @@
  * Meilisearch client + helpers.
  *
  * Единый индекс "site_content" — все публичные сущности.
- * Поле `type`: "news" | "knowledge" | "page"
+ * Поле `type`: раздел сайта (news, knowledge, page, document, project,
+ * publication, procurement, department, team, media, partner). Поле `url` —
+ * готовая ссылка на результат, чтобы страница поиска, виджет и API не
+ * повторяли правила адресов каждый у себя.
  *
  * Graceful degradation: если MEILISEARCH_HOST не задан, функции — no-op.
  */
@@ -12,10 +15,18 @@ import { logger } from "@/lib/logger";
 
 const INDEX_NAME = "site_content";
 
+export type SearchType =
+  | "news" | "knowledge" | "page" | "document" | "project" | "publication"
+  | "procurement" | "department" | "team" | "media" | "partner";
+
+export { SEARCH_TYPE_LABEL, searchHref } from "@/lib/search/labels";
+
 export type SearchDoc = {
   /** Уникальный ключ: "news_1", "kb_42", "page_7" */
   id: string;
-  type: "news" | "knowledge" | "page";
+  type: SearchType;
+  /** Ссылка на результат на сайте (или на файл документа). */
+  url?: string;
   /** Числовой id в БД (для удаления) */
   numericId: number;
   title: string;
@@ -56,7 +67,7 @@ export async function configureIndex() {
     searchableAttributes: ["title", "body", "tags", "category"],
     filterableAttributes: ["type", "publishedAt"],
     sortableAttributes: ["publishedAt"],
-    displayedAttributes: ["id", "type", "numericId", "title", "slug", "body", "category", "tags", "publishedAt"],
+    displayedAttributes: ["id", "type", "numericId", "title", "slug", "url", "body", "category", "tags", "publishedAt"],
     rankingRules: [
       "words",
       "typo",
@@ -93,7 +104,7 @@ export async function deleteDoc(docId: string): Promise<void> {
 /** Поиск по всему индексу. */
 export async function searchContent(
   query: string,
-  opts: { type?: SearchDoc["type"]; limit?: number } = {}
+  opts: { type?: string; limit?: number } = {}
 ): Promise<SearchDoc[] | null> {
   const client = getClient();
   if (!client) {
@@ -105,7 +116,8 @@ export async function searchContent(
     const index = client.index<SearchDoc>(INDEX_NAME);
     const { hits } = await index.search(query, {
       limit: opts.limit ?? 20,
-      filter: opts.type ? `type = "${opts.type}"` : undefined,
+      // Раздел приходит из запроса — пропускаем только латиницу.
+      filter: opts.type && /^[a-z]+$/.test(opts.type) ? `type = "${opts.type}"` : undefined,
       attributesToHighlight: ["title", "body"],
     });
     logger.info("Meili search OK", { query, hits: hits.length });
@@ -130,6 +142,7 @@ export function newsDoc(item: {
   return {
     id: `news_${item.id}`,
     type: "news",
+    url: `/news/${item.slug}`,
     numericId: item.id,
     title: item.title,
     slug: item.slug,
@@ -151,6 +164,7 @@ export function knowledgeDoc(item: {
   return {
     id: `kb_${item.id}`,
     type: "knowledge",
+    url: `/knowledge-base/${item.slug}`,
     numericId: item.id,
     title: item.title,
     slug: item.slug,
@@ -170,6 +184,7 @@ export function pageDoc(item: {
   return {
     id: `page_${item.id}`,
     type: "page",
+    url: `/${item.slug}`,
     numericId: item.id,
     title: item.title,
     slug: item.slug,

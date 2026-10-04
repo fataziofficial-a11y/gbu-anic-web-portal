@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import { db } from "@/lib/db";
 import { news, knowledgeItems, pages } from "@/lib/db/schema";
 import { and, eq, ilike, or } from "drizzle-orm";
-import { searchContent } from "@/lib/search/meili";
+import { searchContent, searchHref, SEARCH_TYPE_LABEL } from "@/lib/search/meili";
 
 /**
  * Поиск по сайту.
@@ -19,21 +19,10 @@ export const metadata = {
   description: "Поиск по новостям, страницам и базе знаний сайта АНИЦ",
 };
 
-const TYPE_LABEL: Record<string, string> = {
-  news: "Новость",
-  knowledge: "База знаний",
-  page: "Страница",
-  pages: "Страница",
-};
+const TYPE_LABEL = SEARCH_TYPE_LABEL;
+const hrefFor = (type: string, slug?: string | null, url?: string | null) => searchHref({ type, slug, url });
 
-function hrefFor(type: string, slug?: string | null): string {
-  if (!slug) return "/";
-  if (type === "news") return `/news/${slug}`;
-  if (type === "knowledge") return `/knowledge-base/${slug}`;
-  return `/${slug}`;
-}
-
-type Row = { type: string; title: string; slug: string | null; excerpt: string | null };
+type Row = { type: string; title: string; slug: string | null; url?: string | null; excerpt: string | null };
 
 async function findAll(q: string): Promise<Row[]> {
   const hits = await searchContent(q, { limit: 30 });
@@ -42,6 +31,7 @@ async function findAll(q: string): Promise<Row[]> {
       type: h.type,
       title: h.title,
       slug: h.slug ?? null,
+      url: h.url ?? null,
       excerpt: h.body ? h.body.slice(0, 220) : null,
     }));
   }
@@ -121,7 +111,7 @@ export default async function SearchPage({
                   {TYPE_LABEL[r.type] ?? r.type}
                 </span>
                 <Link
-                  href={hrefFor(r.type, r.slug)}
+                  href={hrefFor(r.type, r.slug, r.url)}
                   className="mt-1 block text-lg font-semibold text-[#060E18] hover:text-[#5CAFD6]"
                 >
                   {r.title}

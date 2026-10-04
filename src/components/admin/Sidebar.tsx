@@ -20,6 +20,7 @@ import {
   ScrollText,
   ShoppingCart,
   TicketCheck,
+  Inbox,
   UserCog,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -53,6 +54,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Закупки",         href: "/admin/procurements",   icon: ShoppingCart,    section: "procurements" },
   { label: "Файлы",           href: "/admin/files",          icon: FolderOpen,      section: "files" },
   { label: "Кросс-постинг",   href: "/admin/crosspost",      icon: Share2,          section: "crosspost" },
+  { label: "Обращения",       href: "/admin/appeals",        icon: Inbox,           section: "appeals" },
   { label: "Тикеты",          href: "/admin/tickets",        icon: TicketCheck,     section: "tickets" },
   { label: "Пользователи",    href: "/admin/users",          icon: UserCog,         section: "users" },
   { label: "Настройки",       href: "/admin/settings",       icon: Settings,        section: "settings" },

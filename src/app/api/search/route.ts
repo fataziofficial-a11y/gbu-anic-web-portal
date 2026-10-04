@@ -9,6 +9,7 @@ type SearchResult = {
   id: number;
   title: string;
   slug?: string;
+  url?: string;
   excerpt?: string | null;
 };
 
@@ -21,11 +22,8 @@ export async function GET(request: Request) {
     if (!q || q.length < 2) return apiError("Запрос слишком короткий (минимум 2 символа)", 400);
 
     // ── Meilisearch (если настроен) ─────────────────────────────────────────
-    const meiliType =
-      type === "news" ? ("news" as const) :
-      type === "knowledge" ? ("knowledge" as const) :
-      type === "pages" ? ("page" as const) :
-      undefined;
+    // type: all | news | knowledge | pages | document | project | publication | …
+    const meiliType = type === "all" ? undefined : type === "pages" ? "page" : type;
 
     const meiliHits = await searchContent(q, { type: meiliType, limit: 15 });
 
@@ -35,6 +33,7 @@ export async function GET(request: Request) {
         id: h.numericId,
         title: h.title,
         slug: h.slug,
+        url: h.url,
         excerpt: h.body || null,
       }));
       return apiSuccess({ results, query: q, total: results.length, source: "meili" });

@@ -4,7 +4,9 @@
  *
  * Query params:
  *   q     — поисковый запрос (обязательный, мин. 2 символа)
- *   type  — фильтр: news | knowledge | pages (по умолчанию все)
+ *   type  — фильтр по разделу: news | knowledge | pages | document | project |
+ *           publication | procurement | department | team | media | partner
+ *           (по умолчанию все)
  *   limit — макс. результатов (default 20, max 50)
  */
 import { NextRequest, NextResponse } from "next/server";
@@ -12,6 +14,7 @@ import { db } from "@/lib/db";
 import { news, knowledgeItems, pages } from "@/lib/db/schema";
 import { eq, and, ilike } from "drizzle-orm";
 import { validateApiKey, V1_HEADERS } from "@/lib/utils/api-key";
+import { searchContent } from "@/lib/search/meili";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +38,17 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  // Основной путь — поисковый индекс (все разделы, морфология, опечатки).
+  const hits = await searchContent(q, { type: type === "pages" ? "page" : type || undefined, limit });
+  if (hits !== null) {
+    const results = hits.map((h) => ({
+      type: h.type, id: h.numericId, title: h.title, slug: h.slug, url: h.url ?? null,
+      section: h.category || null, excerpt: h.body || null,
+    }));
+    return NextResponse.json({ data: results, meta: { q, count: results.length } }, { headers: V1_HEADERS });
+  }
+
+  // Индекс недоступен — поиск по базе (новости, база знаний, страницы).
   const pattern = `%${q}%`;
   const results: Array<{
     type: string;

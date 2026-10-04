@@ -12,6 +12,9 @@
  *   CONTACT_TO     — куда приходят письма (напр. info@anic.ru)
  */
 import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { appeals } from "@/lib/db/schema";
+import { notifyAdmin, appealNotifyText } from "@/lib/telegram-notify";
 import nodemailer from "nodemailer";
 import { z } from "zod";
 import { logger } from "@/lib/logger";
@@ -91,13 +94,28 @@ export async function POST(req: NextRequest) {
   }
 
   const { name, email, subject, message } = parsed.data;
+
+  // Главное — сохранить обращение: оно появится в разделе «Обращения» админки.
+  // Раньше форма только слала письмо, и без настроенной почты обращения терялись.
+  let appealId: number;
+  try {
+    const [row] = await db.insert(appeals).values({ name, email, subject, message, ip: ip.slice(0, 64) }).returning({ id: appeals.id });
+    appealId = row.id;
+  } catch (err) {
+    logger.error("Contact: обращение не сохранено", { name, email, subject, err: String(err) });
+    return NextResponse.json(
+      { error: "Не удалось отправить обращение. Попробуйте позже или позвоните нам." },
+      { status: 500 }
+    );
+  }
+  notifyAdmin(appealNotifyText({ id: appealId, name, email, subject, message })); // fire-and-forget
+
   const to = process.env.CONTACT_TO ?? process.env.SMTP_USER;
   const transport = createTransport();
 
   if (!transport || !to) {
-    // SMTP не настроен — логируем и возвращаем успех (не ломаем UX)
-    logger.warn("Contact: SMTP не настроен, письмо не отправлено", { name, email, subject });
-    return NextResponse.json({ ok: true, stub: true });
+    // Почта не настроена — обращение уже сохранено, письмо просто не уходит.
+    return NextResponse.json({ ok: true, id: appealId });
   }
 
   try {
@@ -122,12 +140,10 @@ export async function POST(req: NextRequest) {
     });
 
     logger.info("Contact: письмо отправлено", { to, subject });
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, id: appealId });
   } catch (err) {
+    // Обращение сохранено — для посетителя это успех, письмо лишь дубль.
     logger.error("Contact: ошибка отправки письма", { name, email, subject, err: String(err) });
-    return NextResponse.json(
-      { error: "Ошибка отправки. Попробуйте позже или напишите напрямую на info@anic.ru" },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: true, id: appealId });
   }
 }

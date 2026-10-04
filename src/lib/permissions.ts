@@ -21,6 +21,7 @@ export type Section =
   | "files"
   | "crosspost"
   | "tickets"
+  | "appeals"
   | "settings"
   | "users";
 
@@ -38,6 +39,7 @@ export const ALL_SECTIONS: Section[] = [
   "files",
   "crosspost",
   "tickets",
+  "appeals",
   "settings",
   "users",
 ];
@@ -56,6 +58,7 @@ export const SECTION_LABELS: Record<Section, string> = {
   files: "Файлы",
   crosspost: "Кросс-постинг",
   tickets: "Тикеты",
+  appeals: "Обращения",
   settings: "Настройки",
   users: "Пользователи",
 };

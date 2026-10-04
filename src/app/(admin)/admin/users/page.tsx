@@ -28,7 +28,7 @@ interface User {
 const MATRIX_SECTIONS: Section[] = [
   "news", "knowledge", "projects", "team", "departments",
   "publications", "media", "partners", "documents",
-  "procurements", "crosspost", "tickets",
+  "procurements", "crosspost", "tickets", "appeals",
 ];
 
 const SHORT_LABELS: Record<Section, string> = {
@@ -45,6 +45,7 @@ const SHORT_LABELS: Record<Section, string> = {
   files: "Файл",
   crosspost: "Кросс",
   tickets: "Тик",
+  appeals: "Обращ",
   settings: "Нас",
   users: "Польз",
 };
